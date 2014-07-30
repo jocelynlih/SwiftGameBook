@@ -10,19 +10,10 @@ import SpriteKit
 
 class GameScene : SKScene
 {
-	// At the moment, we only support boxes and lines.
-	//
-	// !TODO! - this should go away once we start to get our data from the level editor
-	enum ObjectType
-	{
-		case Box
-		case Line
-	}
+	// We draw our sketches directly into this full-screen sprite
+	var viewSprite: SKSpriteNode!
 	
 	// Material properties for sketch rendering
-	//
-	// !TODO! - These should be used as defaults, allowing a node's userData to contain keys that allow us to
-	// override them to tweak values.
 	struct SketchMaterial
 	{
 		var lineDensity: CGFloat = 4 // lower numbers are more dense
@@ -35,24 +26,9 @@ class GameScene : SKScene
 		var color: UIColor = UIColor.blackColor()
 	}
 	
-	// An object in our scene, consisting of its material, type (box/line) and points that define the object
-	//
-	// !TODO! this should be replaced with data from our level editor
-	struct SceneObject
-	{
-		var material: SketchMaterial
-		var type: ObjectType
-		var point0: CGVector
-		var point1: CGVector
-	}
-	
-	var viewSprite: SKSpriteNode!
-	
 	override func didMoveToView(view: SKView)
 	{
 		// Create a full-screen viewport
-		//
-		// !TODO! - this should go away when we switch to rendering SKNode layers directly
 		viewSprite = SKSpriteNode(color: UIColor(red: 0, green: 0, blue: 255, alpha: 0.2), size: frame.size)
 		viewSprite.position = CGPoint(x:frame.size.width/2, y:frame.size.height/2)
 		self.addChild(viewSprite)
@@ -61,26 +37,59 @@ class GameScene : SKScene
 	override func update(currentTime: CFTimeInterval)
 	{
 		// Draw the scene
-		//
-		// !TODO! - this should go away when we switch to rendering SKNode layers directly
 		renderScene()
 	}
 	
 	// -------------------------------------------------------------------------------------------------------------------
-	
+
 	func renderScene()
 	{
 		UIGraphicsBeginImageContext(frame.size)
 		var ctx = UIGraphicsGetCurrentContext()
 		
+		// For convenience, flip the context's coordinate space
+		CGContextScaleCTM(ctx, 1, -1)
+		CGContextTranslateCTM(ctx, 0, -frame.size.height)
+		
 		for child in children
 		{
-			var p0 = child.frame.origin.toCGVector()
-			p0.dy = frame.size.height - p0.dy
-			var p1 = p0 + CGVector(dx: child.frame.size.width, dy: -child.frame.size.height)
+			// Create a material
 			var m = SketchMaterial()
-			var obj = SceneObject(material: m, type: .Box, point0: p0, point1: p1)
-			drawObjectToContext(ctx, object: obj)
+			var drawPath: CGPath? = nil
+			
+			if let shape = child as? SKShapeNode
+			{
+				// Set the color
+				m.color = shape.strokeColor
+				
+				// Transform our path
+				var xform = createNodeTransform(shape)
+				drawPath = CGPathCreateCopyByTransformingPath(shape.path, &xform)
+			}
+			if let sprite = child as? SKSpriteNode
+			{
+				// Set the color
+				m.color = sprite.color
+				var r:CGFloat = 0
+				var g:CGFloat = 0
+				var b:CGFloat = 0
+				var a:CGFloat = 0
+				m.color.getRed(&r, green: &g, blue: &b, alpha: &a)
+				m.color = UIColor(red: r, green: g, blue: b, alpha: 1)
+				
+				var xform = createNodeTransform(sprite)
+				var rect = CGRectMake(-sprite.size.width / sprite.xScale / 2, -sprite.size.height / sprite.yScale / 2, sprite.size.width / sprite.xScale, sprite.size.height / sprite.yScale)
+				drawPath = CGPathCreateWithRect(rect, &xform)
+			}
+			
+			if let path = drawPath
+			{
+				// Get the path elements
+				var elements = ConvertPath(path)
+			
+				// Draw it!
+				drawPathToContext(ctx, pathElements: elements, material: m)
+			}
 		}
 		
 		var textureImage = UIGraphicsGetImageFromCurrentImageContext()
@@ -89,44 +98,56 @@ class GameScene : SKScene
 		UIGraphicsEndImageContext()
 	}
 	
-	func getObjectLines(object: SceneObject) -> [CGVector]
+	func createNodeTransform(node: SKNode) -> CGAffineTransform
 	{
-		var lines: [CGVector] = []
-		switch object.type
-		{
-		case .Box:
-			lines += object.point0
-			lines += CGVector(dx: object.point1.dx, dy: object.point0.dy)
-			lines += CGVector(dx: object.point1.dx, dy: object.point1.dy)
-			lines += CGVector(dx: object.point0.dx, dy: object.point1.dy)
-			lines += object.point0
-			
-		case .Line:
-			lines += object.point0
-			lines += object.point1
-		}
-		
-		return lines
+		// Transform the path as specified by the sprite
+		//
+		// Note the order of operations we want to happen are specified in reverse. We want to scale first,
+		// then rotate, then translate. If we do these out of order, then we might rotate around a different
+		// point (if we've already moved it) or scale the object in the wrong direction (if we've rotated it.)
+		var xform = CGAffineTransformIdentity
+		xform = CGAffineTransformTranslate(xform, node.position.x, node.position.y)
+		xform = CGAffineTransformRotate(xform, node.zRotation)
+		xform = CGAffineTransformScale(xform, node.xScale, node.yScale)
+		return xform
 	}
 	
-	func drawObjectToContext(context: CGContext, object: SceneObject)
+	func drawPathToContext(context: CGContext, pathElements: NSArray!, material: SketchMaterial)
 	{
-		var lines = getObjectLines(object)
-		
 		var path = UIBezierPath()
 		path.lineWidth = 1
 		
-		var startPoint = lines[0]
-		for endPoint in lines[1 ..< lines.count]
+		var startPoint: CGVector? = nil
+		var endPoint: CGVector? = nil
+		for element in pathElements
 		{
+			// Starting a new batch of lines?
+			if element.elementType == 0
+			{
+				startPoint = nil;
+				endPoint = element.point.toCGVector()
+				continue
+			}
+			else if element.elementType == 1 || element.elementType == 4
+			{
+				startPoint = endPoint
+				endPoint = element.point.toCGVector()
+			}
+			
+			// Make sure we have something to work with
+			if startPoint == nil || endPoint == nil
+			{
+				continue
+			}
+			
 			// The vector that defines our line
-			var lineVector = endPoint - startPoint
+			var lineVector = endPoint! - startPoint!
 			var lineDir = lineVector.normal
 			var lineDirPerp = lineDir.perpendicular()
 			
 			// Line extension
-			var lineP0 = startPoint - lineDir * CGFloat.randomValue(object.material.lineEndpointOverlapJitterDistance)
-			var lineP1 = endPoint + lineDir * CGFloat.randomValue(object.material.lineEndpointOverlapJitterDistance)
+			var lineP0 = startPoint! - lineDir * CGFloat.randomValue(material.lineEndpointOverlapJitterDistance)
+			var lineP1 = endPoint! + lineDir * CGFloat.randomValue(material.lineEndpointOverlapJitterDistance)
 			
 			// Recalculate our line vector since it has changed
 			lineVector = lineP1 - lineP0
@@ -140,7 +161,7 @@ class GameScene : SKScene
 			while lengthSoFar < lineLength && !done
 			{
 				// How far to draw for this segment?
-				var segmentLength = object.material.minSegmentLength + CGFloat.randomValue(object.material.maxSegmentLength - object.material.minSegmentLength)
+				var segmentLength = material.minSegmentLength + CGFloat.randomValue(material.maxSegmentLength - material.minSegmentLength)
 				
 				// Don't go past the end of our line
 				if segmentLength + lengthSoFar > lineLength
@@ -156,15 +177,15 @@ class GameScene : SKScene
 				// Add some overlap
 				if lengthSoFar != 0
 				{
-					segP0 -= lineDir * CGFloat.randomValue(object.material.lineInteriorOverlapJitterDistance)
+					segP0 -= lineDir * CGFloat.randomValue(material.lineInteriorOverlapJitterDistance)
 				}
 				
 				// Offset them a little, perpendicular to the direction of the line
-				segP0 += lineDirPerp * CGFloat.randomValueSigned(object.material.lineOffsetJitterDistance)
-				segP1 += lineDirPerp * CGFloat.randomValueSigned(object.material.lineOffsetJitterDistance)
+				segP0 += lineDirPerp * CGFloat.randomValueSigned(material.lineOffsetJitterDistance)
+				segP1 += lineDirPerp * CGFloat.randomValueSigned(material.lineOffsetJitterDistance)
 				
 				// Draw the segment
-				addPencilLineToPath(path, startPoint: segP0, endPoint: segP1, material: object.material)
+				addPencilLineToPath(path, startPoint: segP0, endPoint: segP1, material: material)
 				
 				// Track how much we've drawn so far
 				lengthSoFar += segmentLength
@@ -173,7 +194,7 @@ class GameScene : SKScene
 			startPoint = endPoint
 		}
 		
-		CGContextSetStrokeColorWithColor(context, object.material.color.CGColor)
+		CGContextSetStrokeColorWithColor(context, material.color.CGColor)
 		path.stroke()
 	}
 	

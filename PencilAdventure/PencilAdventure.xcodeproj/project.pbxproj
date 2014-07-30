@@ -14,6 +14,7 @@
 		018BAE29198779330067C10C /* PencilAdventureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018BAE28198779330067C10C /* PencilAdventureTests.swift */; };
 		018BAE3719877EDE0067C10C /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018BAE3619877EDE0067C10C /* GameScene.swift */; };
 		018BAE3919877F090067C10C /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 018BAE3819877F090067C10C /* SpriteKit.framework */; };
+		AE01006F19897BD600AFA442 /* PathApplier.m in Sources */ = {isa = PBXBuildFile; fileRef = AE01006E19897BD600AFA442 /* PathApplier.m */; };
 		AE5468431988D80000C55823 /* CGVector+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE5468411988D80000C55823 /* CGVector+Extensions.swift */; };
 		AE5468441988D80000C55823 /* CGFloat+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE5468421988D80000C55823 /* CGFloat+Extensions.swift */; };
 		AE5468471988D85500C55823 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = AE5468461988D85500C55823 /* GameScene.sks */; };
@@ -41,6 +42,9 @@
 		018BAE28198779330067C10C /* PencilAdventureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PencilAdventureTests.swift; sourceTree = "<group>"; };
 		018BAE3619877EDE0067C10C /* GameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		018BAE3819877F090067C10C /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
+		AE01006D19897BD500AFA442 /* PencilAdventure-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PencilAdventure-Bridging-Header.h"; sourceTree = "<group>"; };
+		AE01006E19897BD600AFA442 /* PathApplier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PathApplier.m; sourceTree = "<group>"; };
+		AE1D3CAB19899172000937FA /* PathApplier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathApplier.h; sourceTree = "<group>"; };
 		AE5468411988D80000C55823 /* CGVector+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGVector+Extensions.swift"; sourceTree = "<group>"; };
 		AE5468421988D80000C55823 /* CGFloat+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGFloat+Extensions.swift"; sourceTree = "<group>"; };
 		AE5468461988D85500C55823 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
@@ -87,6 +91,7 @@
 			isa = PBXGroup;
 			children = (
 				AE5468451988D80D00C55823 /* Extensions */,
+				AE1D3CAC1989AC36000937FA /* Objective-C */,
 				018BAE15198779330067C10C /* AppDelegate.swift */,
 				AE5468461988D85500C55823 /* GameScene.sks */,
 				018BAE17198779330067C10C /* GameViewController.swift */,
@@ -122,6 +127,16 @@
 				018BAE27198779330067C10C /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		AE1D3CAC1989AC36000937FA /* Objective-C */ = {
+			isa = PBXGroup;
+			children = (
+				AE01006D19897BD500AFA442 /* PencilAdventure-Bridging-Header.h */,
+				AE01006E19897BD600AFA442 /* PathApplier.m */,
+				AE1D3CAB19899172000937FA /* PathApplier.h */,
+			);
+			name = "Objective-C";
 			sourceTree = "<group>";
 		};
 		AE5468451988D80D00C55823 /* Extensions */ = {
@@ -237,6 +252,7 @@
 				AE5468441988D80000C55823 /* CGFloat+Extensions.swift in Sources */,
 				018BAE3719877EDE0067C10C /* GameScene.swift in Sources */,
 				018BAE18198779330067C10C /* GameViewController.swift in Sources */,
+				AE01006F19897BD600AFA442 /* PathApplier.m in Sources */,
 				018BAE16198779330067C10C /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -353,9 +369,12 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = PencilAdventure/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "PencilAdventure/PencilAdventure-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
 		};
@@ -364,9 +383,11 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = PencilAdventure/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "PencilAdventure/PencilAdventure-Bridging-Header.h";
 			};
 			name = Release;
 		};
