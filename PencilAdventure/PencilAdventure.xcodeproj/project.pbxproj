@@ -14,6 +14,9 @@
 		018BAE29198779330067C10C /* PencilAdventureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018BAE28198779330067C10C /* PencilAdventureTests.swift */; };
 		018BAE3719877EDE0067C10C /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018BAE3619877EDE0067C10C /* GameScene.swift */; };
 		018BAE3919877F090067C10C /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 018BAE3819877F090067C10C /* SpriteKit.framework */; };
+		AE5468431988D80000C55823 /* CGVector+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE5468411988D80000C55823 /* CGVector+Extensions.swift */; };
+		AE5468441988D80000C55823 /* CGFloat+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE5468421988D80000C55823 /* CGFloat+Extensions.swift */; };
+		AE5468471988D85500C55823 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = AE5468461988D85500C55823 /* GameScene.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +41,9 @@
 		018BAE28198779330067C10C /* PencilAdventureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PencilAdventureTests.swift; sourceTree = "<group>"; };
 		018BAE3619877EDE0067C10C /* GameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		018BAE3819877F090067C10C /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
+		AE5468411988D80000C55823 /* CGVector+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGVector+Extensions.swift"; sourceTree = "<group>"; };
+		AE5468421988D80000C55823 /* CGFloat+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGFloat+Extensions.swift"; sourceTree = "<group>"; };
+		AE5468461988D85500C55823 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,7 +86,9 @@
 		018BAE12198779330067C10C /* PencilAdventure */ = {
 			isa = PBXGroup;
 			children = (
+				AE5468451988D80D00C55823 /* Extensions */,
 				018BAE15198779330067C10C /* AppDelegate.swift */,
+				AE5468461988D85500C55823 /* GameScene.sks */,
 				018BAE17198779330067C10C /* GameViewController.swift */,
 				018BAE3619877EDE0067C10C /* GameScene.swift */,
 				018BAE19198779330067C10C /* Main.storyboard */,
@@ -114,6 +122,15 @@
 				018BAE27198779330067C10C /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		AE5468451988D80D00C55823 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				AE5468411988D80000C55823 /* CGVector+Extensions.swift */,
+				AE5468421988D80000C55823 /* CGFloat+Extensions.swift */,
+			);
+			name = Extensions;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -197,6 +214,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				018BAE1B198779330067C10C /* Main.storyboard in Resources */,
+				AE5468471988D85500C55823 /* GameScene.sks in Resources */,
 				018BAE1D198779330067C10C /* Images.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -215,6 +233,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AE5468431988D80000C55823 /* CGVector+Extensions.swift in Sources */,
+				AE5468441988D80000C55823 /* CGFloat+Extensions.swift in Sources */,
 				018BAE3719877EDE0067C10C /* GameScene.swift in Sources */,
 				018BAE18198779330067C10C /* GameViewController.swift in Sources */,
 				018BAE16198779330067C10C /* AppDelegate.swift in Sources */,
@@ -405,6 +425,7 @@
 				018BAE2E198779330067C10C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		018BAE2F198779330067C10C /* Build configuration list for PBXNativeTarget "PencilAdventureTests" */ = {
 			isa = XCConfigurationList;
@@ -413,6 +434,7 @@
 				018BAE31198779330067C10C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
