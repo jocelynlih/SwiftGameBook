@@ -10,19 +10,22 @@ import SpriteKit
 
 class GameScene : SKScene
 {
+	// Constants
+	let BytesPerPixel = 4
+	
 	// We draw our sketches directly into this full-screen sprite
 	var viewSprite: SKSpriteNode!
 	
 	// Material properties for sketch rendering
 	struct SketchMaterial
 	{
-		var lineDensity: CGFloat = 4 // lower numbers are more dense
-		var minSegmentLength: CGFloat = 23
-		var maxSegmentLength: CGFloat = 54
-		var pixJitterDistance: CGFloat = 2
-		var lineInteriorOverlapJitterDistance: CGFloat = 40
-		var lineEndpointOverlapJitterDistance: CGFloat = 11
-		var lineOffsetJitterDistance: CGFloat = 5
+		var lineDensity: CGFloat = 3 // lower numbers are more dense
+		var minSegmentLength: CGFloat = 3
+		var maxSegmentLength: CGFloat = 4
+		var pixJitterDistance: CGFloat = 1
+		var lineInteriorOverlapJitterDistance: CGFloat = 1
+		var lineEndpointOverlapJitterDistance: CGFloat = 1
+		var lineOffsetJitterDistance: CGFloat = 1
 		var color: UIColor = UIColor.blackColor()
 	}
 	
@@ -32,6 +35,12 @@ class GameScene : SKScene
 		viewSprite = SKSpriteNode(color: UIColor(red: 0, green: 0, blue: 255, alpha: 0.2), size: frame.size)
 		viewSprite.position = CGPoint(x:frame.size.width/2, y:frame.size.height/2)
 		self.addChild(viewSprite)
+		
+		// Load the level
+		let levelImage = UIImage(named: "level.png")
+		
+		// Process the level image into nodes
+		processLevelImage(levelImage)
 	}
 	
 	override func update(currentTime: CFTimeInterval)
@@ -41,6 +50,116 @@ class GameScene : SKScene
 	}
 	
 	// -------------------------------------------------------------------------------------------------------------------
+
+	// TODO: This routine probably needs a lot of error checking, especially if we're ever going to allow user-generated
+	// content. It should, at a minimum, ensure the image is wider than it is tall, meets a minimum height value and
+	// and has the proper bit depth/arrangement.
+	func processLevelImage(img: UIImage)
+	{
+		let w = Int(img.size.width)
+		let h = Int(img.size.height)
+		
+		// Stride is the number of bytes in a single scanline.
+		//
+		// One of the purposes of stride is to account for padding to specific byte boundaries, but here, it's just the
+		// width multiplied by the number of bytes per pixel.
+		let stride = w * BytesPerPixel
+		
+		var data = [UInt8](count: h * stride, repeatedValue: UInt8(0))
+		let colorSpace = CGColorSpaceCreateDeviceRGB()
+		let bitmapInfo = CGBitmapInfo.fromRaw(CGImageAlphaInfo.PremultipliedLast.toRaw() | CGBitmapInfo.ByteOrderDefault.toRaw())
+		let contextRef = CGBitmapContextCreate(&data, UInt(w), UInt(h), 8, UInt(stride), colorSpace, bitmapInfo!);
+		let cgImage = img.CGImage;
+		let rect = CGRectMake(0, 0, CGFloat(w), CGFloat(h));
+		CGContextDrawImage(contextRef, rect, cgImage);
+
+		// The size of each block is based on the height ratio between the viewport and the image. The taller the image,
+		// the higher the resolution, which will extend horizontally as well.
+		//
+		// The effective value we're calculating here, is the number of points per block
+		let pointsPerBlock = frame.size.height / img.size.height
+		
+		// Start scannng that data
+		for y in 0 ..< h
+		{
+			let scanlineIndex = (h-y-1) * stride
+			for x in 0 ..< w
+			{
+				var pixIndex = scanlineIndex + x * BytesPerPixel
+				var alpha = data[pixIndex+3]
+				if alpha != 0
+				{
+					var cColor = integerColorAtIndex(data, index: pixIndex)
+					var lColor = x == 0 ? cColor : integerColorAtIndex(data, index: pixIndex - BytesPerPixel)
+					var rColor = x == w-1 ? cColor : integerColorAtIndex(data, index: pixIndex + BytesPerPixel)
+					var tColor = y == 0 ? cColor : integerColorAtIndex(data, index: pixIndex + stride)
+					var bColor = y == h-1 ? cColor : integerColorAtIndex(data, index: pixIndex - stride)
+					
+					let sx = CGFloat(x) * pointsPerBlock
+					let sy = CGFloat(y) * pointsPerBlock
+					let p0 = CGPoint(x: sx, y: sy)
+					let p1 = CGPoint(x: CGFloat(sx) + pointsPerBlock, y: CGFloat(sy))
+					let p2 = CGPoint(x: CGFloat(sx) + pointsPerBlock, y: CGFloat(sy) + pointsPerBlock)
+					let p3 = CGPoint(x: CGFloat(sx), y: CGFloat(sy) + pointsPerBlock)
+					
+					var path = UIBezierPath()
+					var found = false
+					if (tColor&0xff000000) == 0
+					{
+						path.moveToPoint(p0)
+						path.addLineToPoint(p1)
+						found = true
+					}
+					if (rColor&0xff000000) == 0
+					{
+						path.moveToPoint(p1)
+						path.addLineToPoint(p2)
+						found = true
+					}
+					
+					if cColor != bColor
+					{
+						path.moveToPoint(p2)
+						path.addLineToPoint(p3)
+						found = true
+					}
+					
+					if cColor != lColor
+					{
+						path.moveToPoint(p3)
+						path.addLineToPoint(p0)
+						found = true
+					}
+
+					if (found)
+					{
+						var node = SKShapeNode(path: path.CGPath)
+						node.strokeColor = colorAtIndex(data, index: pixIndex)
+						node.hidden = true
+						addChild(node)
+					}
+				}
+			}
+		}
+	}
+
+	func integerColorAtIndex(data: [UInt8], index: Int) -> UInt32
+	{
+		let r = UInt32(data[index+0])
+		let g = UInt32(data[index+1])
+		let b = UInt32(data[index+2])
+		let a = UInt32(data[index+3])
+		return (a<<24) | (r<<16) | (g<<8) | b
+	}
+	
+	func colorAtIndex(data: [UInt8], index: Int) -> UIColor
+	{
+		let r = CGFloat(Int(data[index+0])) / 255
+		let g = CGFloat(Int(data[index+1])) / 255
+		let b = CGFloat(Int(data[index+2])) / 255
+		let a = CGFloat(Int(data[index+3])) / 255
+		return UIColor(red: r, green: g, blue: b, alpha: a)
+	}
 
 	func renderScene()
 	{
@@ -97,7 +216,7 @@ class GameScene : SKScene
 		
 		UIGraphicsEndImageContext()
 	}
-	
+
 	func createNodeTransform(node: SKNode) -> CGAffineTransform
 	{
 		// Transform the path as specified by the sprite
