@@ -18,6 +18,7 @@
 		AE5468431988D80000C55823 /* CGVector+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE5468411988D80000C55823 /* CGVector+Extensions.swift */; };
 		AE5468441988D80000C55823 /* CGFloat+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE5468421988D80000C55823 /* CGFloat+Extensions.swift */; };
 		AE5468471988D85500C55823 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = AE5468461988D85500C55823 /* GameScene.sks */; };
+		AEE5E0641989D9CC00664227 /* level.png in Resources */ = {isa = PBXBuildFile; fileRef = AEE5E0621989D9CC00664227 /* level.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -48,6 +49,8 @@
 		AE5468411988D80000C55823 /* CGVector+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGVector+Extensions.swift"; sourceTree = "<group>"; };
 		AE5468421988D80000C55823 /* CGFloat+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGFloat+Extensions.swift"; sourceTree = "<group>"; };
 		AE5468461988D85500C55823 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
+		AEE5E0621989D9CC00664227 /* level.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = level.png; sourceTree = "<group>"; };
+		AEE5E0631989D9CC00664227 /* level.psd */ = {isa = PBXFileReference; lastKnownFileType = file; path = level.psd; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +93,7 @@
 		018BAE12198779330067C10C /* PencilAdventure */ = {
 			isa = PBXGroup;
 			children = (
+				AEE5E0611989D9CC00664227 /* Levels */,
 				AE5468451988D80D00C55823 /* Extensions */,
 				AE1D3CAC1989AC36000937FA /* Objective-C */,
 				018BAE15198779330067C10C /* AppDelegate.swift */,
@@ -146,6 +150,15 @@
 				AE5468421988D80000C55823 /* CGFloat+Extensions.swift */,
 			);
 			name = Extensions;
+			sourceTree = "<group>";
+		};
+		AEE5E0611989D9CC00664227 /* Levels */ = {
+			isa = PBXGroup;
+			children = (
+				AEE5E0621989D9CC00664227 /* level.png */,
+				AEE5E0631989D9CC00664227 /* level.psd */,
+			);
+			path = Levels;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -228,6 +241,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AEE5E0641989D9CC00664227 /* level.png in Resources */,
 				018BAE1B198779330067C10C /* Main.storyboard in Resources */,
 				AE5468471988D85500C55823 /* GameScene.sks in Resources */,
 				018BAE1D198779330067C10C /* Images.xcassets in Resources */,
