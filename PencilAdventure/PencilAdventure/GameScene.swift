@@ -8,7 +8,7 @@
 
 import SpriteKit
 
-class GameScene : SKScene
+class GameScene : SKScene, SKPhysicsContactDelegate
 {
 	// We draw our sketches directly into this full-screen sprite
 	var viewSprite: SKSpriteNode!
@@ -26,8 +26,37 @@ class GameScene : SKScene
 		var color: UIColor = UIColor.blackColor()
 	}
 	
+    // bg layer
+    var background:SKTexture!
+    // moving action
+    var moving:SKNode!
+    // charater
+    var pencil:SKSpriteNode!
+    
 	override func didMoveToView(view: SKView)
 	{
+        // setup physics
+        self.physicsWorld.gravity = CGVectorMake( 0.0, -9.8 )
+        self.physicsWorld.contactDelegate = self
+        // add moving
+        moving = SKNode()
+        self.addChild(moving)
+        //create bg layer
+        let background = SKTexture(imageNamed: "background")
+        background.filteringMode = SKTextureFilteringMode.Nearest
+        let bgSprite = SKSpriteNode(texture: background)
+        bgSprite.setScale(2.0)
+        bgSprite.position = CGPointMake(bgSprite.size.width/2.0, bgSprite.size.height/2.0)
+        bgSprite.zPosition = -1
+        moving.addChild(bgSprite)
+        //create pencil
+        pencil = SKSpriteNode(imageNamed: "pencil")
+        pencil.physicsBody = SKPhysicsBody(circleOfRadius: pencil.size.width / 2)
+        pencil.physicsBody.dynamic = true
+        pencil.position = CGPoint(x:frame.size.width/2, y:frame.size.height/2)
+        self.addChild(pencil)
+        
+        
 		// Create a full-screen viewport
 		viewSprite = SKSpriteNode(color: UIColor(red: 0, green: 0, blue: 255, alpha: 0.2), size: frame.size)
 		viewSprite.position = CGPoint(x:frame.size.width/2, y:frame.size.height/2)
@@ -40,6 +69,19 @@ class GameScene : SKScene
 		renderScene()
 	}
 	
+    //TODO: we can add more action later, to keep the demo simple, we use touch to jump for now
+    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+        // touch to jump
+        if moving.speed > 0  {
+            for touch: AnyObject in touches {
+                let location = touch.locationInNode(self)
+                pencil.physicsBody.velocity = CGVectorMake(0, 1)
+                pencil.physicsBody.applyImpulse(CGVectorMake(0, 10))
+                
+            }
+        }
+    }
+    
 	// -------------------------------------------------------------------------------------------------------------------
 
 	func renderScene()
