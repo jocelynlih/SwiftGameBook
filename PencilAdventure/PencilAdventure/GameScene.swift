@@ -8,7 +8,7 @@
 
 import SpriteKit
 
-class GameScene : SKScene
+class GameScene : SKScene, SKPhysicsContactDelegate
 {
 	// Constants
 	let BytesPerPixel = 4
@@ -29,8 +29,48 @@ class GameScene : SKScene
 		var color: UIColor = UIColor.blackColor()
 	}
 	
+    // bg layer
+    var background:SKTexture!
+    // moving action
+    var moving:SKNode!
+    // charater
+    var pencil:SKSpriteNode!
+    
 	override func didMoveToView(view: SKView)
 	{
+        // setup physics
+        self.physicsWorld.gravity = CGVectorMake( 0.0, -9.8 )
+        self.physicsWorld.contactDelegate = self
+        // add moving
+        moving = SKNode()
+        self.addChild(moving)
+        //create bg layer, use a bit of color feature for book demo purpose
+        let background = SKTexture(imageNamed: "background")
+        background.filteringMode = SKTextureFilteringMode.Nearest
+        //parallax background
+        let scrollBgSprite = SKAction.moveByX(-background.size().width * 2.0, y: 0, duration: NSTimeInterval(0.1 * background.size().width * 2.0))
+        let resetBgSprite = SKAction.moveByX(background.size().width * 2.0, y: 0, duration: 0.0)
+        let moveBgSpritesForever = SKAction.repeatActionForever(SKAction.sequence([scrollBgSprite,resetBgSprite]))
+        
+        for var i:CGFloat = 0; i < 2.0 + self.frame.size.width / ( background.size().width * 2.0 ); ++i {
+            let bgSprite = SKSpriteNode(texture: background)
+            bgSprite.setScale(2.0)
+            bgSprite.color = SKColor(red: 255.0, green: 255.0, blue: 0.0, alpha: 1.0)
+            bgSprite.colorBlendFactor = 0.7
+            bgSprite.position = CGPointMake(bgSprite.size.width/2.0, bgSprite.size.height/2.0)
+            bgSprite.zPosition = -1
+            bgSprite.runAction(moveBgSpritesForever)
+            moving.addChild(bgSprite)
+        }
+        
+        //create pencil
+        pencil = SKSpriteNode(imageNamed: "pencil")
+        pencil.physicsBody = SKPhysicsBody(circleOfRadius: pencil.size.width / 2)
+        pencil.physicsBody.dynamic = true
+        pencil.position = CGPoint(x:frame.size.width/2, y:frame.size.height/2)
+        self.addChild(pencil)
+        
+        
 		// Create a full-screen viewport
 		viewSprite = SKSpriteNode(color: UIColor(red: 0, green: 0, blue: 255, alpha: 0.2), size: frame.size)
 		viewSprite.position = CGPoint(x:frame.size.width/2, y:frame.size.height/2)
@@ -47,8 +87,22 @@ class GameScene : SKScene
 	{
 		// Draw the scene
 		renderScene()
+        moving.speed = 1
 	}
 	
+    //TODO: we can add more action later, to keep the demo simple, we use touch to jump for now
+    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+        // touch to jump
+        if moving.speed > 0  {
+            for touch: AnyObject in touches {
+                let location = touch.locationInNode(self)
+                pencil.physicsBody.velocity = CGVectorMake(0, 1)
+                pencil.physicsBody.applyImpulse(CGVectorMake(0, 10))
+                
+            }
+        }
+    }
+    
 	// -------------------------------------------------------------------------------------------------------------------
 
 	// TODO: This routine probably needs a lot of error checking, especially if we're ever going to allow user-generated
