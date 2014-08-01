@@ -70,6 +70,9 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 		// Attach our sketch nodes to all sprites
 		attachSketchNodes(self)
         
+        //add ground level
+        addGroundLevel()
+        
 		// Create a full-screen viewport
 		viewSprite = SKSpriteNode(color: UIColor(red: 0, green: 0, blue: 0, alpha: 0), size: frame.size)
 		viewSprite.position = CGPoint(x:frame.size.width/2, y:frame.size.height/2)
@@ -94,6 +97,15 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 				
             }
         }
+    }
+    
+    //Define physics world ground
+    func addGroundLevel() {
+        let ground = SKSpriteNode(color: UIColor(white: 1.0, alpha: 1.0), size:CGSizeMake(frame.size.width, 5))
+        ground.position = CGPointMake(frame.size.width/2, 0)
+        ground.physicsBody = SKPhysicsBody(rectangleOfSize: ground.size)
+        ground.physicsBody.dynamic = false
+        self.addChild(ground)
     }
     
 	// -------------------------------------------------------------------------------------------------------------------
