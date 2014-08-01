@@ -8,6 +8,34 @@
 
 import SpriteKit
 
+extension SKShapeNode
+	{
+	func log()
+	{
+		NSLog(" Name     : %@", name)
+		NSLog(" Position : %@, %@", position.x, position.y)
+		//NSLog(" Size     : %@, %@", size.width, size.height)
+		NSLog(" Frame    : %@, %@ - %@ x %@", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)
+		NSLog(" Scale    : %@, %@", xScale, yScale)
+		NSLog(" zRotation: %@", zRotation)
+		NSLog(" zPosition: %@", zPosition)
+	}
+}
+
+extension SKSpriteNode
+{
+	func log()
+	{
+		NSLog(" Name     : %@", name)
+		NSLog(" Position : %@, %@", position.x, position.y)
+		NSLog(" Size     : %@, %@", size.width, size.height)
+		NSLog(" Frame    : %@, %@ - %@ x %@", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)
+		NSLog(" Scale    : %@, %@", xScale, yScale)
+		NSLog(" zRotation: %@", zRotation)
+		NSLog(" zPosition: %@", zPosition)
+	}
+}
+
 class GameScene : SKScene, SKPhysicsContactDelegate
 {	
 	// We draw our sketches directly into this full-screen sprite
@@ -16,13 +44,13 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 	// Material properties for sketch rendering
 	struct SketchMaterial
 	{
-		var lineDensity: CGFloat = 3 // lower numbers are more dense
-		var minSegmentLength: CGFloat = 3
-		var maxSegmentLength: CGFloat = 77
-		var pixJitterDistance: CGFloat = 2
-		var lineInteriorOverlapJitterDistance: CGFloat = 33
-		var lineEndpointOverlapJitterDistance: CGFloat = 9
-		var lineOffsetJitterDistance: CGFloat = 5
+		var lineDensity: CGFloat = 10 // lower numbers are more dense
+		var minSegmentLength: CGFloat = 1
+		var maxSegmentLength: CGFloat = 4
+		var pixJitterDistance: CGFloat = 3
+		var lineInteriorOverlapJitterDistance: CGFloat = 10
+		var lineEndpointOverlapJitterDistance: CGFloat = 0
+		var lineOffsetJitterDistance: CGFloat = 1
 		var color: UIColor = UIColor.blackColor()
 	}
 	
@@ -58,50 +86,10 @@ class GameScene : SKScene, SKPhysicsContactDelegate
             bgSprite.runAction(moveBgSpritesForever)
             moving.addChild(bgSprite)
         }
+		
+		// Give our root scene a name
+		name = "SceneRroot"
 
-		// Add a cloud
-		var cloud = SKSpriteNode(imageNamed: "cloud1")
-		cloud.name = "cloud1"
-		cloud.position = CGPoint(x: 150, y: 600)
-		cloud.color = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
-		self.addChild(cloud)
-		
-		cloud = SKSpriteNode(imageNamed: "cloud2")
-		cloud.name = "cloud2"
-		cloud.position = CGPoint(x: 450, y: 580)
-		cloud.color = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
-		self.addChild(cloud)
-		
-		cloud = SKSpriteNode(imageNamed: "cloud3")
-		cloud.name = "cloud3"
-		cloud.position = CGPoint(x: 800, y: 620)
-		cloud.color = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
-		self.addChild(cloud)
-		
-		cloud = SKSpriteNode(imageNamed: "shrubbery1")
-		cloud.name = "shrubbery1"
-		cloud.position = CGPoint(x: 190, y: 140)
-		cloud.color = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
-		self.addChild(cloud)
-		
-		cloud = SKSpriteNode(imageNamed: "shrubbery1")
-		cloud.name = "shrubbery1"
-		cloud.position = CGPoint(x: 890, y: 125)
-		cloud.color = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
-		self.addChild(cloud)
-		
-		cloud = SKSpriteNode(imageNamed: "platform1")
-		cloud.name = "platform1"
-		cloud.position = CGPoint(x: 720, y: 280)
-		cloud.color = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
-		self.addChild(cloud)
-		
-		cloud = SKSpriteNode(imageNamed: "platform1")
-		cloud.name = "platform1"
-		cloud.position = CGPoint(x: 990, y: 420)
-		cloud.color = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
-		self.addChild(cloud)
-		
 		//create pencil
 		pencil = SKSpriteNode(imageNamed: "pencil")
 		//pencil.name = "pencil" // TODO: why does the outline for this guy not move with him when physics simulates him?
@@ -129,12 +117,6 @@ class GameScene : SKScene, SKPhysicsContactDelegate
         moving.speed = 1
 	}
 	
-	override func didSimulatePhysics()
-	{
-		// Draw the scene
-		renderScene()
-	}
-	
     //TODO: we can add more action later, to keep the demo simple, we use touch to jump for now
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         // touch to jump
@@ -148,6 +130,12 @@ class GameScene : SKScene, SKPhysicsContactDelegate
         }
     }
     
+	override func didSimulatePhysics()
+	{
+		// Draw the scene
+		renderScene()
+	}
+	
     //Define physics world ground
     func addGroundLevel() {
         let ground = SKSpriteNode(color: UIColor(white: 1.0, alpha: 0.0), size:CGSizeMake(frame.size.width, 5))
@@ -177,11 +165,20 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 					{
 						if let path = ImageTools.vectorizeImage(image)
 						{
+							// Shapes that are children of sprites need to be scaled to the size of their parent
+							//
+							// Since our shape's path is stored at full-size, we need to scale our shape's path
+							// by the ratio of its parent's size to its parent's texture size.
+							var scale = CGPoint(x: 1, y: 1)
+							scale.x = sprite.size.width / sprite.texture.size().width
+							scale.y = sprite.size.height / sprite.texture.size().height
+							
 							// Create a new shape from the path and attach it to this sprite node
 							var shape = SKShapeNode(path: path)
+							shape.name = sprite.name + " (sketch)"
 							shape.position = CGPoint(x:sprite.position.x, y: frame.size.height - sprite.position.y)
-							shape.xScale = sprite.xScale
-							shape.yScale = sprite.yScale
+							shape.xScale = scale.x
+							shape.yScale = scale.y
 							shape.zRotation = sprite.zRotation
 							shape.zPosition = sprite.zPosition
 							shape.strokeColor = sprite.color
@@ -195,6 +192,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 	
 	func renderScene()
 	{
+		NSLog("Render scene begin...")
 		UIGraphicsBeginImageContext(frame.size)
 		var ctx = UIGraphicsGetCurrentContext()
 
@@ -206,6 +204,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 		UIGraphicsEndImageContext()
 	}
 	
+	var indent = 0
 	func renderNode(context: CGContext, node: SKNode)
 	{
 		for child in node.children as [SKNode]
@@ -230,7 +229,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 					drawPathToContext(context, pathElements: elements, material: m)
 				}
 			}
-		
+			
 			// Recurse into the children
 			renderNode(context, node: child)
 		}
@@ -245,7 +244,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 		// point (if we've already moved it) or scale the object in the wrong direction (if we've rotated it.)
 		var xform = CGAffineTransformIdentity
 		xform = CGAffineTransformTranslate(xform, node.position.x, node.position.y)
-		xform = CGAffineTransformRotate(xform, node.zRotation)
+		xform = CGAffineTransformRotate(xform, -node.zRotation)
 		xform = CGAffineTransformScale(xform, node.xScale, node.yScale)
 		return xform
 	}
@@ -347,13 +346,20 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 	func addPencilLineToPath(path: UIBezierPath, startPoint: CGVector, endPoint: CGVector, material: SketchMaterial)
 	{
 		var lineVector = endPoint - startPoint
-		var lineDir = lineVector.normal
 		var lineLength = lineVector.length
+		var lineLengthSquared = lineVector.lengthSquared
+		var lineDir = lineVector.normal
+		
+		var density = material.lineDensity
+		if density > lineLength
+		{
+			density = lineLength
+		}
 		
 		var p0 = startPoint
 		while(true)
 		{
-			var p1 = p0 + lineDir * material.lineDensity
+			var p1 = p0 + lineDir * density
 			
 			path.moveToPoint(p0.randomOffset(material.pixJitterDistance).toCGPoint())
 			path.addLineToPoint(p1.randomOffset(material.pixJitterDistance).toCGPoint())
@@ -361,7 +367,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 			p0 = p1
 			
 			// Check our length
-			if (p1 - startPoint).length >= lineLength
+			if (p1 - startPoint).lengthSquared >= lineLengthSquared
 			{
 				break
 			}
