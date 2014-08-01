@@ -11,7 +11,7 @@ import SpriteKit
 class GameScene : SKScene, SKPhysicsContactDelegate
 {	
 	// We draw our sketches directly into this full-screen sprite
-	var viewSprite: SKSpriteNode!
+	var sketchSprite: SKSpriteNode!
 	
 	// Material properties for sketch rendering
 	struct SketchMaterial
@@ -51,21 +51,66 @@ class GameScene : SKScene, SKPhysicsContactDelegate
         
         for var i:CGFloat = 0; i < 2.0 + self.frame.size.width / ( background.size().width * 2.0 ); ++i {
             let bgSprite = SKSpriteNode(texture: background)
-            bgSprite.setScale(2.0)
-            bgSprite.color = SKColor(red: 255.0, green: 255.0, blue: 0.0, alpha: 1.0)
+            bgSprite.setScale(1.0)
             bgSprite.colorBlendFactor = 0.7
 			bgSprite.position = CGPoint(x: bgSprite.size.width/2.0, y: bgSprite.size.height/2.0)
-            bgSprite.zPosition = -1
+            bgSprite.zPosition = -10
             bgSprite.runAction(moveBgSpritesForever)
             moving.addChild(bgSprite)
         }
 
+		// Add a cloud
+		var cloud = SKSpriteNode(imageNamed: "cloud1")
+		cloud.name = "cloud1"
+		cloud.position = CGPoint(x: 150, y: 600)
+		cloud.color = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+		self.addChild(cloud)
+		
+		cloud = SKSpriteNode(imageNamed: "cloud2")
+		cloud.name = "cloud2"
+		cloud.position = CGPoint(x: 450, y: 580)
+		cloud.color = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+		self.addChild(cloud)
+		
+		cloud = SKSpriteNode(imageNamed: "cloud3")
+		cloud.name = "cloud3"
+		cloud.position = CGPoint(x: 800, y: 620)
+		cloud.color = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+		self.addChild(cloud)
+		
+		cloud = SKSpriteNode(imageNamed: "shrubbery1")
+		cloud.name = "shrubbery1"
+		cloud.position = CGPoint(x: 190, y: 140)
+		cloud.color = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+		self.addChild(cloud)
+		
+		cloud = SKSpriteNode(imageNamed: "shrubbery1")
+		cloud.name = "shrubbery1"
+		cloud.position = CGPoint(x: 890, y: 125)
+		cloud.color = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+		self.addChild(cloud)
+		
+		cloud = SKSpriteNode(imageNamed: "platform1")
+		cloud.name = "platform1"
+		cloud.position = CGPoint(x: 720, y: 280)
+		cloud.color = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+		self.addChild(cloud)
+		
+		cloud = SKSpriteNode(imageNamed: "platform1")
+		cloud.name = "platform1"
+		cloud.position = CGPoint(x: 990, y: 420)
+		cloud.color = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+		self.addChild(cloud)
+		
 		//create pencil
-        pencil = SKSpriteNode(imageNamed: "pencil")
-        pencil.physicsBody = SKPhysicsBody(circleOfRadius: pencil.size.width / 2)
-        pencil.physicsBody.dynamic = true
-        pencil.position = CGPoint(x:frame.size.width/2, y:frame.size.height/2)
-        self.addChild(pencil)
+		pencil = SKSpriteNode(imageNamed: "pencil")
+		//pencil.name = "pencil" // TODO: why does the outline for this guy not move with him when physics simulates him?
+		pencil.physicsBody = SKPhysicsBody(rectangleOfSize: pencil.size)
+		pencil.physicsBody.dynamic = true
+		pencil.color = UIColor(red: 1, green: 1, blue: 0, alpha: 1)
+		pencil.position = CGPoint(x:frame.size.width/4, y:frame.size.height/2)
+		pencil.zPosition = 1
+		self.addChild(pencil)
 		
 		// Attach our sketch nodes to all sprites
 		attachSketchNodes(self)
@@ -74,16 +119,20 @@ class GameScene : SKScene, SKPhysicsContactDelegate
         addGroundLevel()
         
 		// Create a full-screen viewport
-		viewSprite = SKSpriteNode(color: UIColor(red: 0, green: 0, blue: 0, alpha: 0), size: frame.size)
-		viewSprite.position = CGPoint(x:frame.size.width/2, y:frame.size.height/2)
-		self.addChild(viewSprite)
+		sketchSprite = SKSpriteNode(color: UIColor(red: 0, green: 0, blue: 0, alpha: 0), size: frame.size)
+		sketchSprite.position = CGPoint(x:frame.size.width/2, y:frame.size.height/2)
+		self.addChild(sketchSprite)
 	}
 	
 	override func update(currentTime: CFTimeInterval)
 	{
+        moving.speed = 1
+	}
+	
+	override func didSimulatePhysics()
+	{
 		// Draw the scene
 		renderScene()
-        moving.speed = 1
 	}
 	
     //TODO: we can add more action later, to keep the demo simple, we use touch to jump for now
@@ -92,8 +141,8 @@ class GameScene : SKScene, SKPhysicsContactDelegate
         if moving.speed > 0  {
             for touch: AnyObject in touches {
                 let location = touch.locationInNode(self)
-				pencil.physicsBody.velocity = CGVector(dx: 0, dy: 1)
-				pencil.physicsBody.applyImpulse(CGVector(dx: 0, dy: 10))
+				pencil.physicsBody.velocity = CGVector(dx: 0, dy: 500)
+				pencil.physicsBody.applyImpulse(CGVector(dx: 0, dy: 1000))
 				
             }
         }
@@ -101,8 +150,8 @@ class GameScene : SKScene, SKPhysicsContactDelegate
     
     //Define physics world ground
     func addGroundLevel() {
-        let ground = SKSpriteNode(color: UIColor(white: 1.0, alpha: 1.0), size:CGSizeMake(frame.size.width, 5))
-        ground.position = CGPointMake(frame.size.width/2, 0)
+        let ground = SKSpriteNode(color: UIColor(white: 1.0, alpha: 0.0), size:CGSizeMake(frame.size.width, 5))
+        ground.position = CGPointMake(frame.size.width/2,  0)
         ground.physicsBody = SKPhysicsBody(rectangleOfSize: ground.size)
         ground.physicsBody.dynamic = false
         self.addChild(ground)
@@ -120,20 +169,24 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 			// Attach shapes to sprites
 			if let sprite = child as? SKSpriteNode
 			{
-				let image = UIImage(named: sprite.name)
-				if image != nil
+				if let name = sprite.name
 				{
-					if let path = ImageTools.vectorizeImage(image)
+					NSLog("Loading sprite: %@", name)
+					let image = UIImage(named: name)
+					if image != nil
 					{
-						// Create a new shape from the path and attach it to this sprite node
-						var shape = SKShapeNode(path: path)
-						shape.position = CGPoint(x:sprite.position.x, y: frame.size.height - sprite.position.y)
-						shape.xScale = sprite.xScale * 0.77 // TODO - why 0.77??
-						shape.yScale = sprite.yScale * 0.77 // TODO - why 0.77??
-						shape.zRotation = sprite.zRotation
-						shape.zPosition = sprite.zPosition
-						shape.strokeColor = UIColor.greenColor() //sprite.color
-						sprite.addChild(shape)
+						if let path = ImageTools.vectorizeImage(image)
+						{
+							// Create a new shape from the path and attach it to this sprite node
+							var shape = SKShapeNode(path: path)
+							shape.position = CGPoint(x:sprite.position.x, y: frame.size.height - sprite.position.y)
+							shape.xScale = sprite.xScale
+							shape.yScale = sprite.yScale
+							shape.zRotation = sprite.zRotation
+							shape.zPosition = sprite.zPosition
+							shape.strokeColor = sprite.color
+							sprite.addChild(shape)
+						}
 					}
 				}
 			}
@@ -148,7 +201,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 		renderNode(ctx, node: self)
 		
 		var textureImage = UIGraphicsGetImageFromCurrentImageContext()
-		viewSprite.texture = SKTexture(image: textureImage)
+		sketchSprite.texture = SKTexture(image: textureImage)
 		
 		UIGraphicsEndImageContext()
 	}
