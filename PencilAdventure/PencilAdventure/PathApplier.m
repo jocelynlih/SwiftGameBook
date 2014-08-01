@@ -67,7 +67,3 @@ NSMutableArray *ConvertPath(CGPathRef path)
 	
 	return pathElements;
 }
-
-//
-//typedef void (*PathApplieFPtr)(void *info, const CGPathElement *element);
-//PathApplieFPtr GlobalPathApplier = PathApplier;

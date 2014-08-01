@@ -50,9 +50,9 @@ class GameViewController: UIViewController
 		//
 		// !TODO! - At some point, we should probably have a mechanism for choosing levels and
 		// loading the appropriate one.
-		scene = GameScene.sceneWithSize(self.view.frame.size)
-		scene.backgroundColor = UIColor.whiteColor()
-//		scene = GameScene.unarchiveFromFile("GameScene") as? GameScene
+//		scene = GameScene.sceneWithSize(self.view.frame.size)
+//		scene.backgroundColor = UIColor.whiteColor()
+		scene = GameScene.unarchiveFromFile("GameScene") as? GameScene
 		if scene
 		{
 			// Set the scale mode to scale to fit the window
