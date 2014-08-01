@@ -114,7 +114,7 @@ class ImageTools
 	class func getImageMap(image: [UInt8], width: Int, height: Int) -> [UInt8]
 	{
 		// We'll store our image map here
-		var imgMap = [UInt8](count: width * height, repeatedValue: UInt8(0))
+		var imgMap = [UInt8](count: width * height, repeatedValue: 0)
 		
 		// Scan the image and build our map
 		//

@@ -12,7 +12,15 @@ extension CGVector
 	{
 		get
 		{
-			return sqrt(dx * dx + dy * dy)
+			return sqrt(lengthSquared)
+		}
+	}
+	
+	var lengthSquared: CGFloat
+	{
+		get
+		{
+			return dx * dx + dy * dy
 		}
 	}
 	
