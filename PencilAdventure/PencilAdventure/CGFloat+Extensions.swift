@@ -3,7 +3,6 @@
 //  sketch
 //
 //  Created by Paul Nettle on 7/28/14.
-//  Copyright (c) 2014 Paul Nettle. All rights reserved.
 //
 
 import Foundation

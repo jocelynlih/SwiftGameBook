@@ -9,23 +9,20 @@
 import SpriteKit
 
 class GameScene : SKScene, SKPhysicsContactDelegate
-{
-	// Constants
-	let BytesPerPixel = 4
-	
+{	
 	// We draw our sketches directly into this full-screen sprite
-	var viewSprite: SKSpriteNode!
+	var sketchSprite: SKSpriteNode!
 	
 	// Material properties for sketch rendering
 	struct SketchMaterial
 	{
 		var lineDensity: CGFloat = 3 // lower numbers are more dense
 		var minSegmentLength: CGFloat = 3
-		var maxSegmentLength: CGFloat = 4
-		var pixJitterDistance: CGFloat = 1
-		var lineInteriorOverlapJitterDistance: CGFloat = 1
-		var lineEndpointOverlapJitterDistance: CGFloat = 1
-		var lineOffsetJitterDistance: CGFloat = 1
+		var maxSegmentLength: CGFloat = 77
+		var pixJitterDistance: CGFloat = 2
+		var lineInteriorOverlapJitterDistance: CGFloat = 33
+		var lineEndpointOverlapJitterDistance: CGFloat = 9
+		var lineOffsetJitterDistance: CGFloat = 5
 		var color: UIColor = UIColor.blackColor()
 	}
 	
@@ -39,7 +36,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 	override func didMoveToView(view: SKView)
 	{
         // setup physics
-        self.physicsWorld.gravity = CGVectorMake( 0.0, -9.8 )
+		self.physicsWorld.gravity = CGVector(dx: 0.0, dy: -9.8 )
         self.physicsWorld.contactDelegate = self
         // add moving
         moving = SKNode()
@@ -54,42 +51,88 @@ class GameScene : SKScene, SKPhysicsContactDelegate
         
         for var i:CGFloat = 0; i < 2.0 + self.frame.size.width / ( background.size().width * 2.0 ); ++i {
             let bgSprite = SKSpriteNode(texture: background)
-            bgSprite.setScale(2.0)
-            bgSprite.color = SKColor(red: 255.0, green: 255.0, blue: 0.0, alpha: 1.0)
+            bgSprite.setScale(1.0)
             bgSprite.colorBlendFactor = 0.7
-            bgSprite.position = CGPointMake(bgSprite.size.width/2.0, bgSprite.size.height/2.0)
-            bgSprite.zPosition = -1
+			bgSprite.position = CGPoint(x: bgSprite.size.width/2.0, y: bgSprite.size.height/2.0)
+            bgSprite.zPosition = -10
             bgSprite.runAction(moveBgSpritesForever)
             moving.addChild(bgSprite)
         }
-        
-        //create pencil
-        pencil = SKSpriteNode(imageNamed: "pencil")
-        pencil.physicsBody = SKPhysicsBody(circleOfRadius: pencil.size.width / 2)
-        pencil.physicsBody.dynamic = true
-        pencil.position = CGPoint(x:frame.size.width/2, y:frame.size.height/2)
-        self.addChild(pencil)
+
+		// Add a cloud
+		var cloud = SKSpriteNode(imageNamed: "cloud1")
+		cloud.name = "cloud1"
+		cloud.position = CGPoint(x: 150, y: 600)
+		cloud.color = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+		self.addChild(cloud)
+		
+		cloud = SKSpriteNode(imageNamed: "cloud2")
+		cloud.name = "cloud2"
+		cloud.position = CGPoint(x: 450, y: 580)
+		cloud.color = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+		self.addChild(cloud)
+		
+		cloud = SKSpriteNode(imageNamed: "cloud3")
+		cloud.name = "cloud3"
+		cloud.position = CGPoint(x: 800, y: 620)
+		cloud.color = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+		self.addChild(cloud)
+		
+		cloud = SKSpriteNode(imageNamed: "shrubbery1")
+		cloud.name = "shrubbery1"
+		cloud.position = CGPoint(x: 190, y: 140)
+		cloud.color = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+		self.addChild(cloud)
+		
+		cloud = SKSpriteNode(imageNamed: "shrubbery1")
+		cloud.name = "shrubbery1"
+		cloud.position = CGPoint(x: 890, y: 125)
+		cloud.color = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+		self.addChild(cloud)
+		
+		cloud = SKSpriteNode(imageNamed: "platform1")
+		cloud.name = "platform1"
+		cloud.position = CGPoint(x: 720, y: 280)
+		cloud.color = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+		self.addChild(cloud)
+		
+		cloud = SKSpriteNode(imageNamed: "platform1")
+		cloud.name = "platform1"
+		cloud.position = CGPoint(x: 990, y: 420)
+		cloud.color = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
+		self.addChild(cloud)
+		
+		//create pencil
+		pencil = SKSpriteNode(imageNamed: "pencil")
+		//pencil.name = "pencil" // TODO: why does the outline for this guy not move with him when physics simulates him?
+		pencil.physicsBody = SKPhysicsBody(rectangleOfSize: pencil.size)
+		pencil.physicsBody.dynamic = true
+		pencil.color = UIColor(red: 1, green: 1, blue: 0, alpha: 1)
+		pencil.position = CGPoint(x:frame.size.width/4, y:frame.size.height/2)
+		pencil.zPosition = 1
+		self.addChild(pencil)
+		
+		// Attach our sketch nodes to all sprites
+		attachSketchNodes(self)
         
         //add ground level
         addGroundLevel()
         
 		// Create a full-screen viewport
-		viewSprite = SKSpriteNode(color: UIColor(red: 0, green: 0, blue: 255, alpha: 0.2), size: frame.size)
-		viewSprite.position = CGPoint(x:frame.size.width/2, y:frame.size.height/2)
-		self.addChild(viewSprite)
-		
-		// Load the level
-		let levelImage = UIImage(named: "level.png")
-		
-		// Process the level image into nodes
-		processLevelImage(levelImage)
+		sketchSprite = SKSpriteNode(color: UIColor(red: 0, green: 0, blue: 0, alpha: 0), size: frame.size)
+		sketchSprite.position = CGPoint(x:frame.size.width/2, y:frame.size.height/2)
+		self.addChild(sketchSprite)
 	}
 	
 	override func update(currentTime: CFTimeInterval)
 	{
+        moving.speed = 1
+	}
+	
+	override func didSimulatePhysics()
+	{
 		// Draw the scene
 		renderScene()
-        moving.speed = 1
 	}
 	
     //TODO: we can add more action later, to keep the demo simple, we use touch to jump for now
@@ -98,144 +141,74 @@ class GameScene : SKScene, SKPhysicsContactDelegate
         if moving.speed > 0  {
             for touch: AnyObject in touches {
                 let location = touch.locationInNode(self)
-                pencil.physicsBody.velocity = CGVectorMake(0, 1)
-                pencil.physicsBody.applyImpulse(CGVectorMake(0, 10))
-                
+				pencil.physicsBody.velocity = CGVector(dx: 0, dy: 500)
+				pencil.physicsBody.applyImpulse(CGVector(dx: 0, dy: 1000))
+				
             }
         }
     }
     
     //Define physics world ground
     func addGroundLevel() {
-        let ground = SKSpriteNode(color: UIColor(white: 1.0, alpha: 1.0), size:CGSizeMake(frame.size.width, 5))
-        ground.position = CGPointMake(frame.size.width/2, 0)
+        let ground = SKSpriteNode(color: UIColor(white: 1.0, alpha: 0.0), size:CGSizeMake(frame.size.width, 5))
+        ground.position = CGPointMake(frame.size.width/2,  0)
         ground.physicsBody = SKPhysicsBody(rectangleOfSize: ground.size)
         ground.physicsBody.dynamic = false
         self.addChild(ground)
     }
     
 	// -------------------------------------------------------------------------------------------------------------------
-
-	// TODO: This routine probably needs a lot of error checking, especially if we're ever going to allow user-generated
-	// content. It should, at a minimum, ensure the image is wider than it is tall, meets a minimum height value and
-	// and has the proper bit depth/arrangement.
-	func processLevelImage(img: UIImage)
+	
+	func attachSketchNodes(node: SKNode)
 	{
-		let w = Int(img.size.width)
-		let h = Int(img.size.height)
-		
-		// Stride is the number of bytes in a single scanline.
-		//
-		// One of the purposes of stride is to account for padding to specific byte boundaries, but here, it's just the
-		// width multiplied by the number of bytes per pixel.
-		let stride = w * BytesPerPixel
-		
-		var data = [UInt8](count: h * stride, repeatedValue: UInt8(0))
-		let colorSpace = CGColorSpaceCreateDeviceRGB()
-		let bitmapInfo = CGBitmapInfo.fromRaw(CGImageAlphaInfo.PremultipliedLast.toRaw() | CGBitmapInfo.ByteOrderDefault.toRaw())
-		let contextRef = CGBitmapContextCreate(&data, UInt(w), UInt(h), 8, UInt(stride), colorSpace, bitmapInfo!);
-		let cgImage = img.CGImage;
-		let rect = CGRectMake(0, 0, CGFloat(w), CGFloat(h));
-		CGContextDrawImage(contextRef, rect, cgImage);
-
-		// The size of each block is based on the height ratio between the viewport and the image. The taller the image,
-		// the higher the resolution, which will extend horizontally as well.
-		//
-		// The effective value we're calculating here, is the number of points per block
-		let pointsPerBlock = frame.size.height / img.size.height
-		
-		// Start scannng that data
-		for y in 0 ..< h
+		for child in node.children as [SKNode]
 		{
-			let scanlineIndex = (h-y-1) * stride
-			for x in 0 ..< w
-			{
-				var pixIndex = scanlineIndex + x * BytesPerPixel
-				var alpha = data[pixIndex+3]
-				if alpha != 0
-				{
-					var cColor = integerColorAtIndex(data, index: pixIndex)
-					var lColor = x == 0 ? cColor : integerColorAtIndex(data, index: pixIndex - BytesPerPixel)
-					var rColor = x == w-1 ? cColor : integerColorAtIndex(data, index: pixIndex + BytesPerPixel)
-					var tColor = y == 0 ? cColor : integerColorAtIndex(data, index: pixIndex + stride)
-					var bColor = y == h-1 ? cColor : integerColorAtIndex(data, index: pixIndex - stride)
-					
-					let sx = CGFloat(x) * pointsPerBlock
-					let sy = CGFloat(y) * pointsPerBlock
-					let p0 = CGPoint(x: sx, y: sy)
-					let p1 = CGPoint(x: CGFloat(sx) + pointsPerBlock, y: CGFloat(sy))
-					let p2 = CGPoint(x: CGFloat(sx) + pointsPerBlock, y: CGFloat(sy) + pointsPerBlock)
-					let p3 = CGPoint(x: CGFloat(sx), y: CGFloat(sy) + pointsPerBlock)
-					
-					var path = UIBezierPath()
-					var found = false
-					if (tColor&0xff000000) == 0
-					{
-						path.moveToPoint(p0)
-						path.addLineToPoint(p1)
-						found = true
-					}
-					if (rColor&0xff000000) == 0
-					{
-						path.moveToPoint(p1)
-						path.addLineToPoint(p2)
-						found = true
-					}
-					
-					if cColor != bColor
-					{
-						path.moveToPoint(p2)
-						path.addLineToPoint(p3)
-						found = true
-					}
-					
-					if cColor != lColor
-					{
-						path.moveToPoint(p3)
-						path.addLineToPoint(p0)
-						found = true
-					}
+			// Let's do depth-first traversal so that we don't end up traversing the children we're about to add
+			attachSketchNodes(child)
 
-					if (found)
+			// Attach shapes to sprites
+			if let sprite = child as? SKSpriteNode
+			{
+				if let name = sprite.name
+				{
+					NSLog("Loading sprite: %@", name)
+					let image = UIImage(named: name)
+					if image != nil
 					{
-						var node = SKShapeNode(path: path.CGPath)
-						node.strokeColor = colorAtIndex(data, index: pixIndex)
-						node.hidden = true
-						addChild(node)
+						if let path = ImageTools.vectorizeImage(image)
+						{
+							// Create a new shape from the path and attach it to this sprite node
+							var shape = SKShapeNode(path: path)
+							shape.position = CGPoint(x:sprite.position.x, y: frame.size.height - sprite.position.y)
+							shape.xScale = sprite.xScale
+							shape.yScale = sprite.yScale
+							shape.zRotation = sprite.zRotation
+							shape.zPosition = sprite.zPosition
+							shape.strokeColor = sprite.color
+							sprite.addChild(shape)
+						}
 					}
 				}
 			}
 		}
 	}
-
-	func integerColorAtIndex(data: [UInt8], index: Int) -> UInt32
-	{
-		let r = UInt32(data[index+0])
-		let g = UInt32(data[index+1])
-		let b = UInt32(data[index+2])
-		let a = UInt32(data[index+3])
-		return (a<<24) | (r<<16) | (g<<8) | b
-	}
 	
-	func colorAtIndex(data: [UInt8], index: Int) -> UIColor
-	{
-		let r = CGFloat(Int(data[index+0])) / 255
-		let g = CGFloat(Int(data[index+1])) / 255
-		let b = CGFloat(Int(data[index+2])) / 255
-		let a = CGFloat(Int(data[index+3])) / 255
-		return UIColor(red: r, green: g, blue: b, alpha: a)
-	}
-
 	func renderScene()
 	{
 		UIGraphicsBeginImageContext(frame.size)
 		var ctx = UIGraphicsGetCurrentContext()
+
+		renderNode(ctx, node: self)
 		
-		// For convenience, flip the context's coordinate space
-		CGContextScaleCTM(ctx, 1, -1)
-		CGContextTranslateCTM(ctx, 0, -frame.size.height)
+		var textureImage = UIGraphicsGetImageFromCurrentImageContext()
+		sketchSprite.texture = SKTexture(image: textureImage)
 		
-		for child in children
+		UIGraphicsEndImageContext()
+	}
+	
+	func renderNode(context: CGContext, node: SKNode)
+	{
+		for child in node.children as [SKNode]
 		{
 			// Create a material
 			var m = SketchMaterial()
@@ -248,38 +221,19 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 				
 				// Transform our path
 				var xform = createNodeTransform(shape)
-				drawPath = CGPathCreateCopyByTransformingPath(shape.path, &xform)
+				if let path = CGPathCreateCopyByTransformingPath(shape.path, &xform)
+				{
+					// Get the path elements
+					var elements = ConvertPath(path)
+					
+					// Draw it!
+					drawPathToContext(context, pathElements: elements, material: m)
+				}
 			}
-			if let sprite = child as? SKSpriteNode
-			{
-				// Set the color
-				m.color = sprite.color
-				var r:CGFloat = 0
-				var g:CGFloat = 0
-				var b:CGFloat = 0
-				var a:CGFloat = 0
-				m.color.getRed(&r, green: &g, blue: &b, alpha: &a)
-				m.color = UIColor(red: r, green: g, blue: b, alpha: 1)
-				
-				var xform = createNodeTransform(sprite)
-				var rect = CGRectMake(-sprite.size.width / sprite.xScale / 2, -sprite.size.height / sprite.yScale / 2, sprite.size.width / sprite.xScale, sprite.size.height / sprite.yScale)
-				drawPath = CGPathCreateWithRect(rect, &xform)
-			}
-			
-			if let path = drawPath
-			{
-				// Get the path elements
-				var elements = ConvertPath(path)
-			
-				// Draw it!
-				drawPathToContext(ctx, pathElements: elements, material: m)
-			}
+		
+			// Recurse into the children
+			renderNode(context, node: child)
 		}
-		
-		var textureImage = UIGraphicsGetImageFromCurrentImageContext()
-		viewSprite.texture = SKTexture(image: textureImage)
-		
-		UIGraphicsEndImageContext()
 	}
 
 	func createNodeTransform(node: SKNode) -> CGAffineTransform
@@ -361,7 +315,15 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 				// Add some overlap
 				if lengthSoFar != 0
 				{
-					segP0 -= lineDir * CGFloat.randomValue(material.lineInteriorOverlapJitterDistance)
+					var overlap = CGFloat.randomValue(material.lineInteriorOverlapJitterDistance)
+					
+					// Our interior overlap might extend outside of our line, so we can check here to ensure
+					// that doesn't happen
+					if overlap > lengthSoFar
+					{
+						overlap = lengthSoFar
+					}
+					segP0 -= lineDir * overlap
 				}
 				
 				// Offset them a little, perpendicular to the direction of the line
