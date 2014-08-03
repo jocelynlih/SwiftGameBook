@@ -8,13 +8,29 @@
 
 import SpriteKit
 
-extension SKShapeNode
+extension SKNode
+{
+	func getTransform() -> CGAffineTransform
 	{
+		// Transform the path as specified by the sprite
+		//
+		// Note the order of operations we want to happen are specified in reverse. We want to scale first,
+		// then rotate, then translate. If we do these out of order, then we might rotate around a different
+		// point (if we've already moved it) or scale the object in the wrong direction (if we've rotated it.)
+		var xform = CGAffineTransformIdentity
+		xform = CGAffineTransformTranslate(xform, position.x, position.y)
+		xform = CGAffineTransformRotate(xform, -zRotation)
+		xform = CGAffineTransformScale(xform, xScale, yScale)
+		return xform
+	}
+}
+
+extension SKShapeNode
+{
 	func log()
 	{
 		NSLog(" Name     : %@", name)
 		NSLog(" Position : %@, %@", position.x, position.y)
-		//NSLog(" Size     : %@, %@", size.width, size.height)
 		NSLog(" Frame    : %@, %@ - %@ x %@", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)
 		NSLog(" Scale    : %@, %@", xScale, yScale)
 		NSLog(" zRotation: %@", zRotation)
@@ -40,21 +56,22 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 {	
 	// We draw our sketches directly into this full-screen sprite
 	var sketchSprite: SKSpriteNode!
-	
+	let sketchTexture = UIImage(named: "sketchTexture")
+	let useTexture = true
+
 	// Material properties for sketch rendering
 	struct SketchMaterial
 	{
-		var lineDensity: CGFloat = 10 // lower numbers are more dense
-		var minSegmentLength: CGFloat = 1
-		var maxSegmentLength: CGFloat = 4
-		var pixJitterDistance: CGFloat = 3
-		var lineInteriorOverlapJitterDistance: CGFloat = 10
-		var lineEndpointOverlapJitterDistance: CGFloat = 0
-		var lineOffsetJitterDistance: CGFloat = 1
+		var lineThickness: CGFloat = 3.0
+		var minSegmentLength: CGFloat = 4
+		var maxSegmentLength: CGFloat = 25
+		var lineInteriorOverlapJitterDistance: CGFloat = 20
+		var lineEndpointOverlapJitterDistance: CGFloat = 5
+		var lineOffsetJitterDistance: CGFloat = 3
 		var color: UIColor = UIColor.blackColor()
 	}
-	
-    // bg layer
+
+	// bg layer
     var background:SKTexture!
     // moving action
     var moving:SKNode!
@@ -133,7 +150,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 	override func didSimulatePhysics()
 	{
 		// Draw the scene
-		renderScene()
+		sketchScene()
 	}
 	
     //Define physics world ground
@@ -149,6 +166,11 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 	
 	func attachSketchNodes(node: SKNode)
 	{
+		if !node.children
+		{
+			return
+		}
+		
 		for child in node.children as [SKNode]
 		{
 			// Let's do depth-first traversal so that we don't end up traversing the children we're about to add
@@ -159,11 +181,10 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 			{
 				if let name = sprite.name
 				{
-					NSLog("Loading sprite: %@", name)
 					let image = UIImage(named: name)
 					if image != nil
 					{
-						if let path = ImageTools.vectorizeImage(image)
+						if let pathArray = ImageTools.vectorizeImage(image, name: name)
 						{
 							// Shapes that are children of sprites need to be scaled to the size of their parent
 							//
@@ -172,10 +193,10 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 							var scale = CGPoint(x: 1, y: 1)
 							scale.x = sprite.size.width / sprite.texture.size().width
 							scale.y = sprite.size.height / sprite.texture.size().height
-							
+
 							// Create a new shape from the path and attach it to this sprite node
-							var shape = SKShapeNode(path: path)
-							shape.name = sprite.name + " (sketch)"
+							var shape = SKShapeNode()
+							shape.name = sprite.name
 							shape.position = CGPoint(x:sprite.position.x, y: frame.size.height - sprite.position.y)
 							shape.xScale = scale.x
 							shape.yScale = scale.y
@@ -190,187 +211,163 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 		}
 	}
 	
-	func renderScene()
+	func sketchScene()
 	{
-		NSLog("Render scene begin...")
 		UIGraphicsBeginImageContext(frame.size)
 		var ctx = UIGraphicsGetCurrentContext()
 
-		renderNode(ctx, node: self)
+		// Sketch the scene starting at the root node
+		var m = SketchMaterial()
+		sketchNode(ctx, node: self, material: m)
+
+		if (useTexture)
+		{
+			// Texturize the sketches
+			CGContextSetBlendMode(ctx, kCGBlendModeSourceIn)
+			
+			// Randomize the portion of the texture that we use each frame so that we don't get a static pattern
+			var quarterWidth = sketchTexture.size.width / 4
+			var quarterHeight = sketchTexture.size.height / 4
+			var xOffset = CGFloat.randomValue(quarterWidth)
+			var yOffset = CGFloat.randomValue(quarterHeight)
+			var srcRect = CGRect(x: xOffset, y: yOffset, width: quarterWidth, height: quarterHeight)
+			CGContextDrawTiledImage(ctx, srcRect, sketchTexture.CGImage)
+		}
 		
-		var textureImage = UIGraphicsGetImageFromCurrentImageContext()
-		sketchSprite.texture = SKTexture(image: textureImage)
+		// Set our sketch as the sketchSprite's texture
+		var sketchOverlay = UIGraphicsGetImageFromCurrentImageContext()
+		sketchSprite.texture = SKTexture(image: sketchOverlay)
 		
 		UIGraphicsEndImageContext()
 	}
 	
-	var indent = 0
-	func renderNode(context: CGContext, node: SKNode)
+	func sketchNode(context: CGContext, node: SKNode, var material: SketchMaterial)
 	{
 		for child in node.children as [SKNode]
 		{
-			// Create a material
-			var m = SketchMaterial()
-			var drawPath: CGPath? = nil
-			
 			if let shape = child as? SKShapeNode
 			{
-				// Set the color
-				m.color = shape.strokeColor
-				
-				// Transform our path
-				var xform = createNodeTransform(shape)
-				if let path = CGPathCreateCopyByTransformingPath(shape.path, &xform)
+				if let pathArray = vectorizedShapes[shape.name]
 				{
-					// Get the path elements
-					var elements = ConvertPath(path)
-					
-					// Draw it!
-					drawPathToContext(context, pathElements: elements, material: m)
+					// Set the color
+					material.color = shape.strokeColor
+					sketchPathToContext(context, pathArray: pathArray, xform: shape.getTransform(), material: material)
 				}
 			}
-			
+
 			// Recurse into the children
-			renderNode(context, node: child)
+			sketchNode(context, node: child, material: material)
 		}
 	}
-
-	func createNodeTransform(node: SKNode) -> CGAffineTransform
-	{
-		// Transform the path as specified by the sprite
-		//
-		// Note the order of operations we want to happen are specified in reverse. We want to scale first,
-		// then rotate, then translate. If we do these out of order, then we might rotate around a different
-		// point (if we've already moved it) or scale the object in the wrong direction (if we've rotated it.)
-		var xform = CGAffineTransformIdentity
-		xform = CGAffineTransformTranslate(xform, node.position.x, node.position.y)
-		xform = CGAffineTransformRotate(xform, -node.zRotation)
-		xform = CGAffineTransformScale(xform, node.xScale, node.yScale)
-		return xform
-	}
 	
-	func drawPathToContext(context: CGContext, pathElements: NSArray!, material: SketchMaterial)
+	func sketchPathToContext(context: CGContext, pathArray: [[CGPoint]], var xform: CGAffineTransform, material: SketchMaterial)
 	{
-		var path = UIBezierPath()
-		path.lineWidth = 1
+		var drawPath = UIBezierPath()
 		
-		var startPoint: CGVector? = nil
-		var endPoint: CGVector? = nil
-		for element in pathElements
+		for path in pathArray
 		{
-			// Starting a new batch of lines?
-			if element.elementType == 0
+			var startPoint: CGVector? = nil
+			var endPoint: CGVector? = nil
+
+			for point in path
 			{
-				startPoint = nil;
-				endPoint = element.point.toCGVector()
-				continue
-			}
-			else if element.elementType == 1 || element.elementType == 4
-			{
-				startPoint = endPoint
-				endPoint = element.point.toCGVector()
-			}
-			
-			// Make sure we have something to work with
-			if startPoint == nil || endPoint == nil
-			{
-				continue
-			}
-			
-			// The vector that defines our line
-			var lineVector = endPoint! - startPoint!
-			var lineDir = lineVector.normal
-			var lineDirPerp = lineDir.perpendicular()
-			
-			// Line extension
-			var lineP0 = startPoint! - lineDir * CGFloat.randomValue(material.lineEndpointOverlapJitterDistance)
-			var lineP1 = endPoint! + lineDir * CGFloat.randomValue(material.lineEndpointOverlapJitterDistance)
-			
-			// Recalculate our line vector since it has changed
-			lineVector = lineP1 - lineP0
-			
-			// Line length
-			var lineLength = lineVector.length
-			
-			// Break the line up into segments
-			var lengthSoFar: CGFloat = 0
-			var done = false
-			while lengthSoFar < lineLength && !done
-			{
-				// How far to draw for this segment?
-				var segmentLength = material.minSegmentLength + CGFloat.randomValue(material.maxSegmentLength - material.minSegmentLength)
-				
-				// Don't go past the end of our line
-				if segmentLength + lengthSoFar > lineLength
+				// Starting a new batch of lines?
+				if !endPoint
 				{
-					segmentLength = lineLength - lengthSoFar
-					done = true
+					endPoint = point.toCGVector()
+					continue
+				}
+				else
+				{
+					startPoint = endPoint
+					endPoint = point.toCGVector()
 				}
 				
-				// Endpoints for this segment
-				var segP0 = lineP0 + lineDir * lengthSoFar
-				var segP1 = segP0 + lineDir * segmentLength
-				
-				// Add some overlap
-				if lengthSoFar != 0
+				// Make sure we have something to work with
+				if startPoint == nil || endPoint == nil
 				{
-					var overlap = CGFloat.randomValue(material.lineInteriorOverlapJitterDistance)
+					continue
+				}
+				
+				// The vector that defines our line
+				var lineVector = endPoint! - startPoint!
+				var lineDir = lineVector.normal
+				var lineDirPerp = lineDir.perpendicular()
+				
+				// Line extension
+				var lineP0 = startPoint! - lineDir * CGFloat.randomValue(material.lineEndpointOverlapJitterDistance)
+				var lineP1 = endPoint! + lineDir * CGFloat.randomValue(material.lineEndpointOverlapJitterDistance)
+				
+				// Recalculate our line vector since it has changed
+				lineVector = lineP1 - lineP0
+				
+				// Line length
+				var lineLength = lineVector.length
+				
+				// Break the line up into segments
+				var lengthSoFar: CGFloat = 0
+				var done = false
+				var firstPoint = true
+				while lengthSoFar < lineLength && !done
+				{
+					// How far to draw for this segment?
+					var segmentLength = material.minSegmentLength + CGFloat.randomValue(material.maxSegmentLength - material.minSegmentLength)
 					
-					// Our interior overlap might extend outside of our line, so we can check here to ensure
-					// that doesn't happen
-					if overlap > lengthSoFar
+					// Don't go past the end of our line
+					if segmentLength + lengthSoFar > lineLength
 					{
-						overlap = lengthSoFar
+						segmentLength = lineLength - lengthSoFar
+						done = true
 					}
-					segP0 -= lineDir * overlap
+					
+					// Endpoints for this segment
+					var segP0 = lineP0 + lineDir * lengthSoFar
+					var segP1 = segP0 + lineDir * segmentLength
+					
+					// Add the segment
+					if firstPoint
+					{
+						// Add some overlap
+						if lengthSoFar != 0
+						{
+							var overlap = CGFloat.randomValue(material.lineInteriorOverlapJitterDistance)
+							
+							// Our interior overlap might extend outside of our line, so we can check here to ensure
+							// that doesn't happen
+							if overlap > lengthSoFar
+							{
+								overlap = lengthSoFar
+							}
+							segP0 -= lineDir * overlap
+						}
+						
+						// Offset a little, perpendicular to the direction of the line
+						segP0 += lineDirPerp * CGFloat.randomValueSigned(material.lineOffsetJitterDistance)
+						
+						drawPath.moveToPoint(segP0.toCGPoint())
+						firstPoint = false
+					}
+					
+					// Offset a little, perpendicular to the direction of the line
+					segP1 += lineDirPerp * CGFloat.randomValueSigned(material.lineOffsetJitterDistance)
+
+					drawPath.addLineToPoint(segP1.toCGPoint())
+					
+					// Track how much we've drawn so far
+					lengthSoFar += segmentLength
 				}
 				
-				// Offset them a little, perpendicular to the direction of the line
-				segP0 += lineDirPerp * CGFloat.randomValueSigned(material.lineOffsetJitterDistance)
-				segP1 += lineDirPerp * CGFloat.randomValueSigned(material.lineOffsetJitterDistance)
-				
-				// Draw the segment
-				addPencilLineToPath(path, startPoint: segP0, endPoint: segP1, material: material)
-				
-				// Track how much we've drawn so far
-				lengthSoFar += segmentLength
+				startPoint = endPoint
 			}
-			
-			startPoint = endPoint
 		}
 		
 		CGContextSetStrokeColorWithColor(context, material.color.CGColor)
-		path.stroke()
-	}
-	
-	func addPencilLineToPath(path: UIBezierPath, startPoint: CGVector, endPoint: CGVector, material: SketchMaterial)
-	{
-		var lineVector = endPoint - startPoint
-		var lineLength = lineVector.length
-		var lineLengthSquared = lineVector.lengthSquared
-		var lineDir = lineVector.normal
 		
-		var density = material.lineDensity
-		if density > lineLength
+		if let path = CGPathCreateCopyByTransformingPath(drawPath.CGPath, &xform)
 		{
-			density = lineLength
-		}
-		
-		var p0 = startPoint
-		while(true)
-		{
-			var p1 = p0 + lineDir * density
-			
-			path.moveToPoint(p0.randomOffset(material.pixJitterDistance).toCGPoint())
-			path.addLineToPoint(p1.randomOffset(material.pixJitterDistance).toCGPoint())
-			
-			p0 = p1
-			
-			// Check our length
-			if (p1 - startPoint).lengthSquared >= lineLengthSquared
-			{
-				break
-			}
+			drawPath = UIBezierPath(CGPath: path)
+			drawPath.lineWidth = material.lineThickness
+			drawPath.stroke()
 		}
 	}
 }
