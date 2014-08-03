@@ -14,6 +14,7 @@
 		018BAE29198779330067C10C /* PencilAdventureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018BAE28198779330067C10C /* PencilAdventureTests.swift */; };
 		018BAE3719877EDE0067C10C /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018BAE3619877EDE0067C10C /* GameScene.swift */; };
 		018BAE3919877F090067C10C /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 018BAE3819877F090067C10C /* SpriteKit.framework */; };
+		9234A3EF198F029C0022246B /* SKNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9234A3EE198F029C0022246B /* SKNode+Extensions.swift */; };
 		92E2E745198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E2E744198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift */; };
 		92E2E747198DB72300BABDB5 /* SKSpriteNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E2E746198DB72300BABDB5 /* SKSpriteNode+Extensions.swift */; };
 		AE01006F19897BD600AFA442 /* PathApplier.m in Sources */ = {isa = PBXBuildFile; fileRef = AE01006E19897BD600AFA442 /* PathApplier.m */; };
@@ -47,6 +48,7 @@
 		018BAE28198779330067C10C /* PencilAdventureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PencilAdventureTests.swift; sourceTree = "<group>"; };
 		018BAE3619877EDE0067C10C /* GameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		018BAE3819877F090067C10C /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
+		9234A3EE198F029C0022246B /* SKNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKNode+Extensions.swift"; sourceTree = "<group>"; };
 		92E2E744198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKShapeNode+Extensions.swift"; sourceTree = "<group>"; };
 		92E2E746198DB72300BABDB5 /* SKSpriteNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKSpriteNode+Extensions.swift"; sourceTree = "<group>"; };
 		AE01006D19897BD500AFA442 /* PencilAdventure-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PencilAdventure-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -149,6 +151,7 @@
 				AE5468411988D80000C55823 /* CGVector+Extensions.swift */,
 				92E2E744198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift */,
 				92E2E746198DB72300BABDB5 /* SKSpriteNode+Extensions.swift */,
+				9234A3EE198F029C0022246B /* SKNode+Extensions.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -276,6 +279,7 @@
 				AE5468431988D80000C55823 /* CGVector+Extensions.swift in Sources */,
 				92E2E745198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift in Sources */,
 				92E2E747198DB72300BABDB5 /* SKSpriteNode+Extensions.swift in Sources */,
+				9234A3EF198F029C0022246B /* SKNode+Extensions.swift in Sources */,
 				AE2056D7198B66D300E7E302 /* ImageTools.swift in Sources */,
 				AE5468441988D80000C55823 /* CGFloat+Extensions.swift in Sources */,
 				018BAE3719877EDE0067C10C /* GameScene.swift in Sources */,
@@ -399,6 +403,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = PencilAdventure/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "PencilAdventure/PencilAdventure-Bridging-Header.h";
@@ -413,6 +418,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = PencilAdventure/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "PencilAdventure/PencilAdventure-Bridging-Header.h";
