@@ -14,6 +14,8 @@
 		018BAE29198779330067C10C /* PencilAdventureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018BAE28198779330067C10C /* PencilAdventureTests.swift */; };
 		018BAE3719877EDE0067C10C /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018BAE3619877EDE0067C10C /* GameScene.swift */; };
 		018BAE3919877F090067C10C /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 018BAE3819877F090067C10C /* SpriteKit.framework */; };
+		92E2E745198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E2E744198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift */; };
+		92E2E747198DB72300BABDB5 /* SKSpriteNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E2E746198DB72300BABDB5 /* SKSpriteNode+Extensions.swift */; };
 		AE01006F19897BD600AFA442 /* PathApplier.m in Sources */ = {isa = PBXBuildFile; fileRef = AE01006E19897BD600AFA442 /* PathApplier.m */; };
 		AE2056D3198B58CF00E7E302 /* CGPoint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2056D2198B58CF00E7E302 /* CGPoint+Extensions.swift */; };
 		AE2056D5198B62B500E7E302 /* Point2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2056D4198B62B500E7E302 /* Point2D.swift */; };
@@ -45,6 +47,8 @@
 		018BAE28198779330067C10C /* PencilAdventureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PencilAdventureTests.swift; sourceTree = "<group>"; };
 		018BAE3619877EDE0067C10C /* GameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		018BAE3819877F090067C10C /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
+		92E2E744198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKShapeNode+Extensions.swift"; sourceTree = "<group>"; };
+		92E2E746198DB72300BABDB5 /* SKSpriteNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKSpriteNode+Extensions.swift"; sourceTree = "<group>"; };
 		AE01006D19897BD500AFA442 /* PencilAdventure-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "PencilAdventure-Bridging-Header.h"; sourceTree = "<group>"; };
 		AE01006E19897BD600AFA442 /* PathApplier.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PathApplier.m; sourceTree = "<group>"; };
 		AE1D3CAB19899172000937FA /* PathApplier.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PathApplier.h; sourceTree = "<group>"; };
@@ -96,6 +100,7 @@
 		018BAE12198779330067C10C /* PencilAdventure */ = {
 			isa = PBXGroup;
 			children = (
+				92E2E743198DB68D00BABDB5 /* Extensions */,
 				AE5468451988D80D00C55823 /* Vector */,
 				AE1D3CAC1989AC36000937FA /* Objective-C */,
 				018BAE15198779330067C10C /* AppDelegate.swift */,
@@ -136,6 +141,18 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		92E2E743198DB68D00BABDB5 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				AE5468421988D80000C55823 /* CGFloat+Extensions.swift */,
+				AE2056D2198B58CF00E7E302 /* CGPoint+Extensions.swift */,
+				AE5468411988D80000C55823 /* CGVector+Extensions.swift */,
+				92E2E744198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift */,
+				92E2E746198DB72300BABDB5 /* SKSpriteNode+Extensions.swift */,
+			);
+			name = Extensions;
+			sourceTree = "<group>";
+		};
 		AE1D3CAC1989AC36000937FA /* Objective-C */ = {
 			isa = PBXGroup;
 			children = (
@@ -150,9 +167,6 @@
 			isa = PBXGroup;
 			children = (
 				AE2056D4198B62B500E7E302 /* Point2D.swift */,
-				AE2056D2198B58CF00E7E302 /* CGPoint+Extensions.swift */,
-				AE5468411988D80000C55823 /* CGVector+Extensions.swift */,
-				AE5468421988D80000C55823 /* CGFloat+Extensions.swift */,
 			);
 			name = Vector;
 			sourceTree = "<group>";
@@ -260,6 +274,8 @@
 				AE2056D5198B62B500E7E302 /* Point2D.swift in Sources */,
 				AE2056D3198B58CF00E7E302 /* CGPoint+Extensions.swift in Sources */,
 				AE5468431988D80000C55823 /* CGVector+Extensions.swift in Sources */,
+				92E2E745198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift in Sources */,
+				92E2E747198DB72300BABDB5 /* SKSpriteNode+Extensions.swift in Sources */,
 				AE2056D7198B66D300E7E302 /* ImageTools.swift in Sources */,
 				AE5468441988D80000C55823 /* CGFloat+Extensions.swift in Sources */,
 				018BAE3719877EDE0067C10C /* GameScene.swift in Sources */,

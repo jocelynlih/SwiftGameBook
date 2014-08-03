@@ -8,41 +8,13 @@
 
 import SpriteKit
 
-extension SKShapeNode
-	{
-	func log()
-	{
-		NSLog(" Name     : %@", name)
-		NSLog(" Position : %@, %@", position.x, position.y)
-		//NSLog(" Size     : %@, %@", size.width, size.height)
-		NSLog(" Frame    : %@, %@ - %@ x %@", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)
-		NSLog(" Scale    : %@, %@", xScale, yScale)
-		NSLog(" zRotation: %@", zRotation)
-		NSLog(" zPosition: %@", zPosition)
-	}
-}
-
-extension SKSpriteNode
-{
-	func log()
-	{
-		NSLog(" Name     : %@", name)
-		NSLog(" Position : %@, %@", position.x, position.y)
-		NSLog(" Size     : %@, %@", size.width, size.height)
-		NSLog(" Frame    : %@, %@ - %@ x %@", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)
-		NSLog(" Scale    : %@, %@", xScale, yScale)
-		NSLog(" zRotation: %@", zRotation)
-		NSLog(" zPosition: %@", zPosition)
-	}
-}
-
 class GameScene : SKScene, SKPhysicsContactDelegate
 {	
 	// We draw our sketches directly into this full-screen sprite
-	var sketchSprite: SKSpriteNode!
+	private var sketchSprite: SKSpriteNode!
 	
 	// Material properties for sketch rendering
-	struct SketchMaterial
+	private struct SketchMaterial
 	{
 		var lineDensity: CGFloat = 10 // lower numbers are more dense
 		var minSegmentLength: CGFloat = 1
@@ -137,7 +109,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 	}
 	
     //Define physics world ground
-    func addGroundLevel() {
+    private func addGroundLevel() {
         let ground = SKSpriteNode(color: UIColor(white: 1.0, alpha: 0.0), size:CGSizeMake(frame.size.width, 5))
         ground.position = CGPointMake(frame.size.width/2,  0)
         ground.physicsBody = SKPhysicsBody(rectangleOfSize: ground.size)
@@ -147,7 +119,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
     
 	// -------------------------------------------------------------------------------------------------------------------
 	
-	func attachSketchNodes(node: SKNode)
+	private func attachSketchNodes(node: SKNode)
 	{
 		for child in node.children as [SKNode]
 		{
@@ -190,7 +162,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 		}
 	}
 	
-	func renderScene()
+	private func renderScene()
 	{
 		NSLog("Render scene begin...")
 		UIGraphicsBeginImageContext(frame.size)
@@ -204,8 +176,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 		UIGraphicsEndImageContext()
 	}
 	
-	var indent = 0
-	func renderNode(context: CGContext, node: SKNode)
+	private func renderNode(context: CGContext, node: SKNode)
 	{
 		for child in node.children as [SKNode]
 		{
@@ -235,7 +206,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 		}
 	}
 
-	func createNodeTransform(node: SKNode) -> CGAffineTransform
+	private func createNodeTransform(node: SKNode) -> CGAffineTransform
 	{
 		// Transform the path as specified by the sprite
 		//
@@ -249,7 +220,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 		return xform
 	}
 	
-	func drawPathToContext(context: CGContext, pathElements: NSArray!, material: SketchMaterial)
+	private func drawPathToContext(context: CGContext, pathElements: NSArray!, material: SketchMaterial)
 	{
 		var path = UIBezierPath()
 		path.lineWidth = 1
@@ -343,7 +314,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 		path.stroke()
 	}
 	
-	func addPencilLineToPath(path: UIBezierPath, startPoint: CGVector, endPoint: CGVector, material: SketchMaterial)
+	private func addPencilLineToPath(path: UIBezierPath, startPoint: CGVector, endPoint: CGVector, material: SketchMaterial)
 	{
 		var lineVector = endPoint - startPoint
 		var lineLength = lineVector.length
