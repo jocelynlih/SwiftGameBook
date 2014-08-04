@@ -60,6 +60,10 @@ class GameScene : SKScene, SKPhysicsContactDelegate
     var moving:SKNode!
     // charater
     var pencil:SKSpriteNode!
+    //category mask
+    let pencilCategory: UInt32 = 1 << 0
+    let platformCategory: UInt32 = 1 << 1
+    let sharpenerCategory: UInt32 = 1 << 2
     
 	override func didMoveToView(view: SKView)
 	{
@@ -84,7 +88,8 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 			bgSprite.position = CGPoint(x: bgSprite.size.width/2.0, y: bgSprite.size.height/2.0)
             bgSprite.zPosition = -10
             bgSprite.runAction(moveBgSpritesForever)
-            moving.addChild(bgSprite)
+            //no need to move the bg now
+            //moving.addChild(bgSprite)
         }
 		
 		// Give our root scene a name
@@ -95,6 +100,10 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 		//pencil.name = "pencil" // TODO: why does the outline for this guy not move with him when physics simulates him?
 		pencil.physicsBody = SKPhysicsBody(rectangleOfSize: pencil.size)
 		pencil.physicsBody.dynamic = true
+        pencil.physicsBody.allowsRotation = false
+        pencil.physicsBody.categoryBitMask = pencilCategory
+        pencil.physicsBody.collisionBitMask = platformCategory | sharpenerCategory
+        pencil.physicsBody.contactTestBitMask = sharpenerCategory
 		pencil.color = UIColor(red: 1, green: 1, blue: 0, alpha: 1)
 		pencil.position = CGPoint(x:frame.size.width/4, y:frame.size.height/2)
 		pencil.zPosition = 1
@@ -106,12 +115,32 @@ class GameScene : SKScene, SKPhysicsContactDelegate
         //add ground level
         addGroundLevel()
         
-		// Create a full-screen viewport
+        // Create a full-screen viewport
 		sketchSprite = SKSpriteNode(color: UIColor(red: 0, green: 0, blue: 0, alpha: 0), size: frame.size)
 		sketchSprite.position = CGPoint(x:frame.size.width/2, y:frame.size.height/2)
 		self.addChild(sketchSprite)
 	}
 	
+    func movingBgFromLevel(sprite: SKSpriteNode) {
+        let scrollBgSprite = SKAction.moveByX(-sprite.texture.size().width * 2.0, y: 0, duration: NSTimeInterval(0.1 * sprite.texture.size().width * 2.0))
+        let resetBgSprite = SKAction.moveByX(sprite.texture.size().width * 2.0, y: 0, duration: 0.0)
+        let moveBgSpritesForever = SKAction.repeatActionForever(SKAction.sequence([scrollBgSprite,resetBgSprite]))
+        
+        for var i:CGFloat = 0; i < 2.0 + self.frame.size.width / ( sprite.texture.size().width * 2.0 ); ++i {
+            sprite.runAction(moveBgSpritesForever)
+        }
+    }
+    
+    func movingPlatformFromLevel(sprite: SKSpriteNode) {
+        //move the objects horizontally
+        let platform = sprite
+        let distanceToMove = CGFloat(self.frame.size.width + sprite.texture.size().width)
+        let movePlatform = SKAction.moveByX(-distanceToMove, y:0.0, duration:NSTimeInterval(0.01 * distanceToMove))
+        let removePlatform = SKAction.removeFromParent()
+        let movePlatformAndRemove = SKAction.sequence([movePlatform, removePlatform])
+        platform.runAction(movePlatformAndRemove)
+    }
+    
 	override func update(currentTime: CFTimeInterval)
 	{
         moving.speed = 1
@@ -145,6 +174,15 @@ class GameScene : SKScene, SKPhysicsContactDelegate
         self.addChild(ground)
     }
     
+    func didBeginContact(contact: SKPhysicsContact) {
+        if moving.speed > 0 {
+            if ( contact.bodyA.categoryBitMask & sharpenerCategory ) == sharpenerCategory || ( contact.bodyB.categoryBitMask & sharpenerCategory ) == sharpenerCategory {
+                //TODO: HUD display show character gets extra life
+                NSLog("get extra life")
+            }
+        }
+    }
+    
 	// -------------------------------------------------------------------------------------------------------------------
 	
 	func attachSketchNodes(node: SKNode)
@@ -160,6 +198,12 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 				if let name = sprite.name
 				{
 					NSLog("Loading sprite: %@", name)
+                    //moving platform and background
+                    if name == "platform1" || name.hasPrefix("block") {
+                        movingPlatformFromLevel(sprite)
+                    } else if name.hasPrefix("cloud") || name.hasPrefix("shrubbery") {
+                        movingBgFromLevel(sprite)
+                    }
 					let image = UIImage(named: name)
 					if image != nil
 					{
