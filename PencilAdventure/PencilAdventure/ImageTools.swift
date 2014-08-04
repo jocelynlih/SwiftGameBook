@@ -9,7 +9,7 @@ import SpriteKit
 // Force re-vectorization of these sprite names (ignoring any existing cache files)
 //
 // Example: [ "cloud1", "platform1" ]
-let forceRevectorization: [String] = [ "block2" ]
+let forceRevectorization: [String] = [ ]
 let disableCache = false
 
 // Constants

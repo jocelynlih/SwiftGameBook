@@ -8,65 +8,21 @@
 
 import SpriteKit
 
-extension SKNode
-{
-	func getTransform() -> CGAffineTransform
-	{
-		// Transform the path as specified by the sprite
-		//
-		// Note the order of operations we want to happen are specified in reverse. We want to scale first,
-		// then rotate, then translate. If we do these out of order, then we might rotate around a different
-		// point (if we've already moved it) or scale the object in the wrong direction (if we've rotated it.)
-		var xform = CGAffineTransformIdentity
-		xform = CGAffineTransformTranslate(xform, position.x, position.y)
-		xform = CGAffineTransformRotate(xform, -zRotation)
-		xform = CGAffineTransformScale(xform, xScale, yScale)
-		return xform
-	}
-}
-
-extension SKShapeNode
-{
-	func log()
-	{
-		NSLog(" Name     : %@", name)
-		NSLog(" Position : %@, %@", position.x, position.y)
-		NSLog(" Frame    : %@, %@ - %@ x %@", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)
-		NSLog(" Scale    : %@, %@", xScale, yScale)
-		NSLog(" zRotation: %@", zRotation)
-		NSLog(" zPosition: %@", zPosition)
-	}
-}
-
-extension SKSpriteNode
-{
-	func log()
-	{
-		NSLog(" Name     : %@", name)
-		NSLog(" Position : %@, %@", position.x, position.y)
-		NSLog(" Size     : %@, %@", size.width, size.height)
-		NSLog(" Frame    : %@, %@ - %@ x %@", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)
-		NSLog(" Scale    : %@, %@", xScale, yScale)
-		NSLog(" zRotation: %@", zRotation)
-		NSLog(" zPosition: %@", zPosition)
-	}
-}
-
 class GameScene : SKScene, SKPhysicsContactDelegate
 {
 	// We draw our sketches directly into this full-screen sprite
-	var sketchSprite: SKSpriteNode!
-	let sketchTexture = UIImage(named: "sketchTexture")
-	let sketchName = "- SketchSprite -"
+	private var sketchSprite: SKSpriteNode!
+	private let sketchTexture = UIImage(named: "sketchTexture")
+	private let sketchName = "- SketchSprite -"
 
 	// The scene has sketch sprites added, which are in front of each sprite. We then need to ensure that our
 	// enemies and hero are in front of them (and their sketches). We'll play with these numbers as development
 	// progresses to ensure that they are indeed in front. Here are some good defaults:
-	let enemyZPosition: CGFloat = 30
-	let playerZPosition: CGFloat = 90
+	private let enemyZPosition: CGFloat = 30
+	private let playerZPosition: CGFloat = 90
 
 	// Material properties for sketch rendering
-	struct SketchMaterial
+	private struct SketchMaterial
 	{
 		var lineDensity: CGFloat = 4 // lower numbers are more dense
 		var minSegmentLength: CGFloat = 1
@@ -157,7 +113,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
     }
     
     //Define physics world ground
-    func addGroundLevel() {
+    private func addGroundLevel() {
         let ground = SKSpriteNode(color: UIColor(white: 1.0, alpha: 0.0), size:CGSizeMake(frame.size.width, 5))
         ground.position = CGPointMake(frame.size.width/2,  0)
         ground.physicsBody = SKPhysicsBody(rectangleOfSize: ground.size)
@@ -167,7 +123,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
     
 	// -------------------------------------------------------------------------------------------------------------------
 	
-	func attachSketchNodes(node: SKNode)
+	private func attachSketchNodes(node: SKNode)
 	{
 		if !node.children
 		{
@@ -215,7 +171,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 			}
 		}
 	}
-
+	
 	func renderSketchSprite(pathArray: [[CGPoint]], parent: SKSpriteNode ) -> SKSpriteNode?
 	{
 		// Setup our material
@@ -344,7 +300,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 		return newSprite
 	}
 	
-	func addPencilLineToPath(path: UIBezierPath, startPoint: CGVector, endPoint: CGVector, material: SketchMaterial)
+	private func addPencilLineToPath(path: UIBezierPath, startPoint: CGVector, endPoint: CGVector, material: SketchMaterial)
 	{
 		var lineVector = endPoint - startPoint
 		var lineDir = lineVector.normal
