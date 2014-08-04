@@ -9,22 +9,12 @@
 import SpriteKit
 
 class GameScene : SKScene, SKPhysicsContactDelegate
-{	
-	// We draw our sketches directly into this full-screen sprite
-	private var sketchSprite: SKSpriteNode!
-	private let sketchTexture = UIImage(named: "sketchTexture")
-	private let useTexture = true
-	// Material properties for sketch rendering
-	private struct SketchMaterial
-	{
-		var lineThickness: CGFloat = 3.0
-		var minSegmentLength: CGFloat = 4
-		var maxSegmentLength: CGFloat = 25
-		var lineInteriorOverlapJitterDistance: CGFloat = 20
-		var lineEndpointOverlapJitterDistance: CGFloat = 5
-		var lineOffsetJitterDistance: CGFloat = 3
-		var color: UIColor = UIColor.blackColor()
-	}
+{
+	// The scene has sketch sprites added, which are in front of each sprite. We then need to ensure that our
+	// enemies and hero are in front of them (and their sketches). We'll play with these numbers as development
+	// progresses to ensure that they are indeed in front. Here are some good defaults:
+	private let EnemyZPosition: CGFloat = 30
+	private let PlayerZPosition: CGFloat = 90
 
 	// bg layer
     var background:SKTexture!
@@ -32,6 +22,9 @@ class GameScene : SKScene, SKPhysicsContactDelegate
     var moving:SKNode!
     // charater
     var pencil:SKSpriteNode!
+	
+	private var sketchAnimationTimer: NSTimer?
+	private let SketchAnimationFPS = 8.0
     
 	override func didMoveToView(view: SKView)
 	{
@@ -64,24 +57,24 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 
 		//create pencil
 		pencil = SKSpriteNode(imageNamed: "pencil")
-		//pencil.name = "pencil" // TODO: why does the outline for this guy not move with him when physics simulates him?
+		pencil.name = "pencil"
+		pencil.xScale = 0.5
+		pencil.yScale = 0.5
 		pencil.physicsBody = SKPhysicsBody(rectangleOfSize: pencil.size)
 		pencil.physicsBody.dynamic = true
 		pencil.color = UIColor(red: 1, green: 1, blue: 0, alpha: 1)
 		pencil.position = CGPoint(x:frame.size.width/4, y:frame.size.height/2)
-		pencil.zPosition = 1
+		pencil.zPosition = PlayerZPosition
 		self.addChild(pencil)
 		
 		// Attach our sketch nodes to all sprites
-		attachSketchNodes(self)
+		SketchRender.attachSketchNodes(self)
         
         //add ground level
         addGroundLevel()
-        
-		// Create a full-screen viewport
-		sketchSprite = SKSpriteNode(color: UIColor(red: 0, green: 0, blue: 0, alpha: 0), size: frame.size)
-		sketchSprite.position = CGPoint(x:frame.size.width/2, y:frame.size.height/2)
-		self.addChild(sketchSprite)
+		
+		// Setup a timer for the update
+		sketchAnimationTimer = NSTimer.scheduledTimerWithTimeInterval(1.0 / SketchAnimationFPS, target: self, selector: Selector("sketchAnimationTimer:"), userInfo: nil, repeats: true)
 	}
 	
 	override func update(currentTime: CFTimeInterval)
@@ -95,19 +88,13 @@ class GameScene : SKScene, SKPhysicsContactDelegate
         if moving.speed > 0  {
             for touch: AnyObject in touches {
                 let location = touch.locationInNode(self)
-				pencil.physicsBody.velocity = CGVector(dx: 0, dy: 500)
-				pencil.physicsBody.applyImpulse(CGVector(dx: 0, dy: 1000))
+				pencil.physicsBody.velocity = CGVector(dx: 0, dy: 50)
+				pencil.physicsBody.applyImpulse(CGVector(dx: 0, dy: 400))
 				
             }
         }
     }
     
-	override func didSimulatePhysics()
-	{
-		// Draw the scene
-		sketchScene()
-	}
-	
     //Define physics world ground
     private func addGroundLevel() {
         let ground = SKSpriteNode(color: UIColor(white: 1.0, alpha: 0.0), size:CGSizeMake(frame.size.width, 5))
@@ -116,214 +103,57 @@ class GameScene : SKScene, SKPhysicsContactDelegate
         ground.physicsBody.dynamic = false
         self.addChild(ground)
     }
-    
-	// -------------------------------------------------------------------------------------------------------------------
 	
-	private func attachSketchNodes(node: SKNode)
+	func sketchAnimationTimer(timer: NSTimer)
 	{
-		if !node.children
-		{
-			return
-		}
+		animateSketchSprites(self)
+	}
+	
+	private func animateSketchSprites(node: SKNode)
+	{
+		var sketchSprites: [SKSpriteNode] = []
 		
+		// Find our sketch sprites
 		for child in node.children as [SKNode]
 		{
-			// Let's do depth-first traversal so that we don't end up traversing the children we're about to add
-			attachSketchNodes(child)
+			// Depth-first traversal
+			//
+			// Note that we don't bother to traverse into our sketch sprites
+			if child.name != SketchName
+			{
+				animateSketchSprites(child)
+			}
 
-			// Attach shapes to sprites
 			if let sprite = child as? SKSpriteNode
 			{
-				if let name = sprite.name
-				{
-					let image = UIImage(named: name)
-					if image != nil
-					{
-						if let pathArray = ImageTools.vectorizeImage(image, name: name)
-						{
-							// Shapes that are children of sprites need to be scaled to the size of their parent
-							//
-							// Since our shape's path is stored at full-size, we need to scale our shape's path
-							// by the ratio of its parent's size to its parent's texture size.
-							var scale = CGPoint(x: 1, y: 1)
-							scale.x = sprite.size.width / sprite.texture.size().width
-							scale.y = sprite.size.height / sprite.texture.size().height
-
-							// Create a new shape from the path and attach it to this sprite node
-							var shape = SKShapeNode()
-							shape.name = sprite.name
-							shape.position = CGPoint(x:sprite.position.x, y: frame.size.height - sprite.position.y)
-							shape.xScale = scale.x
-							shape.yScale = scale.y
-							shape.zRotation = sprite.zRotation
-							shape.zPosition = sprite.zPosition
-							shape.strokeColor = sprite.color
-							sprite.addChild(shape)
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	private func sketchScene()
-	{
-		UIGraphicsBeginImageContext(frame.size)
-		var ctx = UIGraphicsGetCurrentContext()
-
-		// Sketch the scene starting at the root node
-		var m = SketchMaterial()
-		sketchNode(ctx, node: self, material: m)
-
-		if (useTexture)
-		{
-			// Texturize the sketches
-			CGContextSetBlendMode(ctx, kCGBlendModeSourceIn)
-			
-			// Randomize the portion of the texture that we use each frame so that we don't get a static pattern
-			var quarterWidth = sketchTexture.size.width / 4
-			var quarterHeight = sketchTexture.size.height / 4
-			var xOffset = CGFloat.randomValue(quarterWidth)
-			var yOffset = CGFloat.randomValue(quarterHeight)
-			var srcRect = CGRect(x: xOffset, y: yOffset, width: quarterWidth, height: quarterHeight)
-			CGContextDrawTiledImage(ctx, srcRect, sketchTexture.CGImage)
-		}
-		
-		// Set our sketch as the sketchSprite's texture
-		var sketchOverlay = UIGraphicsGetImageFromCurrentImageContext()
-		sketchSprite.texture = SKTexture(image: sketchOverlay)
-		
-		UIGraphicsEndImageContext()
-	}
-	
-	private func sketchNode(context: CGContext, node: SKNode, var material: SketchMaterial)
-	{
-		for child in node.children as [SKNode]
-		{
-			if let shape = child as? SKShapeNode
-			{
-				if let pathArray = vectorizedShapes[shape.name]
-				{
-					// Set the color
-					material.color = shape.strokeColor
-					sketchPathToContext(context, pathArray: pathArray, xform: shape.getTransform(), material: material)
-				}
-			}
-
-			// Recurse into the children
-			sketchNode(context, node: child, material: material)
-		}
-	}
-
-	
-	private func sketchPathToContext(context: CGContext, pathArray: [[CGPoint]], var xform: CGAffineTransform, material: SketchMaterial)
-	{
-		var drawPath = UIBezierPath()
-		
-		for path in pathArray
-		{
-			var startPoint: CGVector? = nil
-			var endPoint: CGVector? = nil
-
-			for point in path
-			{
-				// Starting a new batch of lines?
-				if !endPoint
-				{
-					endPoint = point.toCGVector()
-					continue
-				}
-				else
-				{
-					startPoint = endPoint
-					endPoint = point.toCGVector()
-				}
-				
-				// Make sure we have something to work with
-				if startPoint == nil || endPoint == nil
+				// We need a name
+				if sprite.name == nil
 				{
 					continue
 				}
 				
-				// The vector that defines our line
-				var lineVector = endPoint! - startPoint!
-				var lineDir = lineVector.normal
-				var lineDirPerp = lineDir.perpendicular()
-				
-				// Line extension
-				var lineP0 = startPoint! - lineDir * CGFloat.randomValue(material.lineEndpointOverlapJitterDistance)
-				var lineP1 = endPoint! + lineDir * CGFloat.randomValue(material.lineEndpointOverlapJitterDistance)
-				
-				// Recalculate our line vector since it has changed
-				lineVector = lineP1 - lineP0
-				
-				// Line length
-				var lineLength = lineVector.length
-				
-				// Break the line up into segments
-				var lengthSoFar: CGFloat = 0
-				var done = false
-				var firstPoint = true
-				while lengthSoFar < lineLength && !done
+				if sprite.name == SketchName
 				{
-					// How far to draw for this segment?
-					var segmentLength = material.minSegmentLength + CGFloat.randomValue(material.maxSegmentLength - material.minSegmentLength)
-					
-					// Don't go past the end of our line
-					if segmentLength + lengthSoFar > lineLength
+					// If it's hidden, let's add it to our list of possible sprites to un-hide
+					if sprite.hidden
 					{
-						segmentLength = lineLength - lengthSoFar
-						done = true
+						sketchSprites += sprite
 					}
-					
-					// Endpoints for this segment
-					var segP0 = lineP0 + lineDir * lengthSoFar
-					var segP1 = segP0 + lineDir * segmentLength
-					
-					// Add the segment
-					if firstPoint
+					else
 					{
-						// Add some overlap
-						if lengthSoFar != 0
-						{
-							var overlap = CGFloat.randomValue(material.lineInteriorOverlapJitterDistance)
-							
-							// Our interior overlap might extend outside of our line, so we can check here to ensure
-							// that doesn't happen
-							if overlap > lengthSoFar
-							{
-								overlap = lengthSoFar
-							}
-							segP0 -= lineDir * overlap
-						}
-						
-						// Offset a little, perpendicular to the direction of the line
-						segP0 += lineDirPerp * CGFloat.randomValueSigned(material.lineOffsetJitterDistance)
-						
-						drawPath.moveToPoint(segP0.toCGPoint())
-						firstPoint = false
+						// This is the one that's already been visible, so let's make sure we get a different one
+						// by not adding it to the list. We do, however, want to hide it.
+						sprite.hidden = true
 					}
-					
-					// Offset a little, perpendicular to the direction of the line
-					segP1 += lineDirPerp * CGFloat.randomValueSigned(material.lineOffsetJitterDistance)
-
-					drawPath.addLineToPoint(segP1.toCGPoint())
-					
-					// Track how much we've drawn so far
-					lengthSoFar += segmentLength
 				}
-				
-				startPoint = endPoint
 			}
 		}
 		
-		CGContextSetStrokeColorWithColor(context, material.color.CGColor)
-		
-		if let path = CGPathCreateCopyByTransformingPath(drawPath.CGPath, &xform)
+		// If we found a set of sketch sprites, then unhide just one of them
+		if sketchSprites.count != 0
 		{
-			drawPath = UIBezierPath(CGPath: path)
-			drawPath.lineWidth = material.lineThickness
-			drawPath.stroke()
+			let rnd = arc4random_uniform(UInt32(sketchSprites.count))
+			sketchSprites[Int(rnd)].hidden = false
 		}
 	}
 }
