@@ -402,6 +402,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "PencilAdventure/PencilAdventure-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Ofast";
 			};
 			name = Release;
 		};

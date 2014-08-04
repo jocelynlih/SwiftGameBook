@@ -53,21 +53,28 @@ extension SKSpriteNode
 }
 
 class GameScene : SKScene, SKPhysicsContactDelegate
-{	
+{
 	// We draw our sketches directly into this full-screen sprite
 	var sketchSprite: SKSpriteNode!
 	let sketchTexture = UIImage(named: "sketchTexture")
-	let useTexture = true
+	let sketchName = "- SketchSprite -"
+
+	// The scene has sketch sprites added, which are in front of each sprite. We then need to ensure that our
+	// enemies and hero are in front of them (and their sketches). We'll play with these numbers as development
+	// progresses to ensure that they are indeed in front. Here are some good defaults:
+	let enemyZPosition: CGFloat = 30
+	let playerZPosition: CGFloat = 90
 
 	// Material properties for sketch rendering
 	struct SketchMaterial
 	{
-		var lineThickness: CGFloat = 3.0
-		var minSegmentLength: CGFloat = 4
-		var maxSegmentLength: CGFloat = 25
-		var lineInteriorOverlapJitterDistance: CGFloat = 20
+		var lineDensity: CGFloat = 4 // lower numbers are more dense
+		var minSegmentLength: CGFloat = 1
+		var maxSegmentLength: CGFloat = 5
+		var pixJitterDistance: CGFloat = 4
+		var lineInteriorOverlapJitterDistance: CGFloat = 5
 		var lineEndpointOverlapJitterDistance: CGFloat = 5
-		var lineOffsetJitterDistance: CGFloat = 3
+		var lineOffsetJitterDistance: CGFloat = 4
 		var color: UIColor = UIColor.blackColor()
 	}
 
@@ -109,12 +116,14 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 
 		//create pencil
 		pencil = SKSpriteNode(imageNamed: "pencil")
-		//pencil.name = "pencil" // TODO: why does the outline for this guy not move with him when physics simulates him?
+		pencil.name = "pencil"
+		pencil.xScale = 0.5
+		pencil.yScale = 0.5
 		pencil.physicsBody = SKPhysicsBody(rectangleOfSize: pencil.size)
 		pencil.physicsBody.dynamic = true
 		pencil.color = UIColor(red: 1, green: 1, blue: 0, alpha: 1)
 		pencil.position = CGPoint(x:frame.size.width/4, y:frame.size.height/2)
-		pencil.zPosition = 1
+		pencil.zPosition = playerZPosition
 		self.addChild(pencil)
 		
 		// Attach our sketch nodes to all sprites
@@ -140,19 +149,13 @@ class GameScene : SKScene, SKPhysicsContactDelegate
         if moving.speed > 0  {
             for touch: AnyObject in touches {
                 let location = touch.locationInNode(self)
-				pencil.physicsBody.velocity = CGVector(dx: 0, dy: 500)
-				pencil.physicsBody.applyImpulse(CGVector(dx: 0, dy: 1000))
+				pencil.physicsBody.velocity = CGVector(dx: 0, dy: 50)
+				pencil.physicsBody.applyImpulse(CGVector(dx: 0, dy: 400))
 				
             }
         }
     }
     
-	override func didSimulatePhysics()
-	{
-		// Draw the scene
-		sketchScene()
-	}
-	
     //Define physics world ground
     func addGroundLevel() {
         let ground = SKSpriteNode(color: UIColor(white: 1.0, alpha: 0.0), size:CGSizeMake(frame.size.width, 5))
@@ -176,92 +179,49 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 			// Let's do depth-first traversal so that we don't end up traversing the children we're about to add
 			attachSketchNodes(child)
 
-			// Attach shapes to sprites
+			// We are only concerned with SKSpriteNodes
 			if let sprite = child as? SKSpriteNode
 			{
 				if let name = sprite.name
 				{
-					let image = UIImage(named: name)
-					if image != nil
+					// Don't sketch our sketches
+					//
+					// Since we're doing a depth-first traversal, this shouldn't be necessary, but it doesn't hurt
+					// to be safe!
+					if name == sketchName
 					{
-						if let pathArray = ImageTools.vectorizeImage(image, name: name)
+						continue
+					}
+					
+					// Get the vectorized path for our bitmap
+					if let pathArray = ImageTools.vectorizeImage(name: name)
+					{
+						// Create a new shape from the path and attach it to this sprite node
+						if let sketchSprite = renderSketchSprite(pathArray, parent: sprite)
 						{
-							// Shapes that are children of sprites need to be scaled to the size of their parent
-							//
-							// Since our shape's path is stored at full-size, we need to scale our shape's path
-							// by the ratio of its parent's size to its parent's texture size.
-							var scale = CGPoint(x: 1, y: 1)
-							scale.x = sprite.size.width / sprite.texture.size().width
-							scale.y = sprite.size.height / sprite.texture.size().height
+							// Copy various properties from our parent
+							sketchSprite.zPosition = sprite.zPosition + 1
+							sketchSprite.color = sprite.color
+							
+							// TODO - need to understand why this works
+							sketchSprite.xScale = sprite.size.width / sprite.texture.size().width / sprite.xScale
+							sketchSprite.yScale = sprite.size.height / sprite.texture.size().height / sprite.yScale
 
-							// Create a new shape from the path and attach it to this sprite node
-							var shape = SKShapeNode()
-							shape.name = sprite.name
-							shape.position = CGPoint(x:sprite.position.x, y: frame.size.height - sprite.position.y)
-							shape.xScale = scale.x
-							shape.yScale = scale.y
-							shape.zRotation = sprite.zRotation
-							shape.zPosition = sprite.zPosition
-							shape.strokeColor = sprite.color
-							sprite.addChild(shape)
+							// Finally, make our sketch sprite a child of our parent sprite
+							sprite.addChild(sketchSprite)
 						}
 					}
 				}
 			}
 		}
 	}
-	
-	func sketchScene()
+
+	func renderSketchSprite(pathArray: [[CGPoint]], parent: SKSpriteNode ) -> SKSpriteNode?
 	{
-		UIGraphicsBeginImageContext(frame.size)
-		var ctx = UIGraphicsGetCurrentContext()
-
-		// Sketch the scene starting at the root node
-		var m = SketchMaterial()
-		sketchNode(ctx, node: self, material: m)
-
-		if (useTexture)
-		{
-			// Texturize the sketches
-			CGContextSetBlendMode(ctx, kCGBlendModeSourceIn)
-			
-			// Randomize the portion of the texture that we use each frame so that we don't get a static pattern
-			var quarterWidth = sketchTexture.size.width / 4
-			var quarterHeight = sketchTexture.size.height / 4
-			var xOffset = CGFloat.randomValue(quarterWidth)
-			var yOffset = CGFloat.randomValue(quarterHeight)
-			var srcRect = CGRect(x: xOffset, y: yOffset, width: quarterWidth, height: quarterHeight)
-			CGContextDrawTiledImage(ctx, srcRect, sketchTexture.CGImage)
-		}
+		// Setup our material
+		var material = SketchMaterial()
+		material.color = parent.color
 		
-		// Set our sketch as the sketchSprite's texture
-		var sketchOverlay = UIGraphicsGetImageFromCurrentImageContext()
-		sketchSprite.texture = SKTexture(image: sketchOverlay)
-		
-		UIGraphicsEndImageContext()
-	}
-	
-	func sketchNode(context: CGContext, node: SKNode, var material: SketchMaterial)
-	{
-		for child in node.children as [SKNode]
-		{
-			if let shape = child as? SKShapeNode
-			{
-				if let pathArray = vectorizedShapes[shape.name]
-				{
-					// Set the color
-					material.color = shape.strokeColor
-					sketchPathToContext(context, pathArray: pathArray, xform: shape.getTransform(), material: material)
-				}
-			}
-
-			// Recurse into the children
-			sketchNode(context, node: child, material: material)
-		}
-	}
-	
-	func sketchPathToContext(context: CGContext, pathArray: [[CGPoint]], var xform: CGAffineTransform, material: SketchMaterial)
-	{
 		var drawPath = UIBezierPath()
 		
 		for path in pathArray
@@ -351,7 +311,8 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 					// Offset a little, perpendicular to the direction of the line
 					segP1 += lineDirPerp * CGFloat.randomValueSigned(material.lineOffsetJitterDistance)
 
-					drawPath.addLineToPoint(segP1.toCGPoint())
+					// Draw the segment
+					addPencilLineToPath(drawPath, startPoint: segP0, endPoint: segP1, material: material)
 					
 					// Track how much we've drawn so far
 					lengthSoFar += segmentLength
@@ -361,13 +322,49 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 			}
 		}
 		
-		CGContextSetStrokeColorWithColor(context, material.color.CGColor)
+		// We'll need a context to render our sketch into
+		UIGraphicsBeginImageContext(parent.texture.size())
+		var context = UIGraphicsGetCurrentContext()
 		
-		if let path = CGPathCreateCopyByTransformingPath(drawPath.CGPath, &xform)
+		// Draw the sketch into our context
+		CGContextSetStrokeColorWithColor(context, material.color.CGColor)
+		drawPath.stroke()
+		
+		// Create a texture from our sketch context
+		var texture = SKTexture(image: UIGraphicsGetImageFromCurrentImageContext())
+		UIGraphicsEndImageContext()
+		
+		// Create a new sprite with this texture
+		var newSprite = SKSpriteNode(texture: texture)
+		
+		// Set the name to something distinct so that we can recognize them in the chain
+		newSprite.name = sketchName
+		
+		// Voila! Our new sketch sprite
+		return newSprite
+	}
+	
+	func addPencilLineToPath(path: UIBezierPath, startPoint: CGVector, endPoint: CGVector, material: SketchMaterial)
+	{
+		var lineVector = endPoint - startPoint
+		var lineDir = lineVector.normal
+		var lineLength = lineVector.length
+		
+		var p0 = startPoint
+		while(true)
 		{
-			drawPath = UIBezierPath(CGPath: path)
-			drawPath.lineWidth = material.lineThickness
-			drawPath.stroke()
+			var p1 = p0 + lineDir * material.lineDensity
+			
+			path.moveToPoint(p0.randomOffset(material.pixJitterDistance).toCGPoint())
+			path.addLineToPoint(p1.randomOffset(material.pixJitterDistance).toCGPoint())
+			
+			p0 = p1
+			
+			// Check our length
+			if (p1 - startPoint).length >= lineLength
+			{
+				break
+			}
 		}
 	}
 }

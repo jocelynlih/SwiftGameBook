@@ -6,6 +6,12 @@
 
 import SpriteKit
 
+// Force re-vectorization of these sprite names (ignoring any existing cache files)
+//
+// Example: [ "cloud1", "platform1" ]
+let forceRevectorization: [String] = [ "block2" ]
+let disableCache = false
+
 // Constants
 let LeftNeighborMask = 0x01
 let RightNeighborMask = 0x02
@@ -162,7 +168,7 @@ class ImageTools
 	// "Edge pixel"      = Any pixel that has an empty "Edge neighbor"
 	// "Vertex neighbor" = Neighbor that shares a vertex. These are any of the eight neighbors (including corner
 	//                     neighbors)
-	class func vectorizeImage(image: UIImage, name: String? = nil) -> ([[CGPoint]])?
+	class func vectorizeImage(name: String? = nil) -> ([[CGPoint]])?
 	{
 		if (name)
 		{
@@ -186,6 +192,13 @@ class ImageTools
 			}
 		}
 
+		// Load our image
+		let image = UIImage(named: name)
+		if image == nil
+		{
+			return nil
+		}
+		
 		let w = Int(image.size.width)
 		let h = Int(image.size.height)
 		var imgData = getBitmapBitsForImage(image)
@@ -232,11 +245,10 @@ class ImageTools
 			var vectorDir: CGVector? = nil
 			var totalError: CGFloat = 0
 			
-			// We offset to the center
-			var centerOffset = CGPoint(x: CGFloat(-w/2), y: CGFloat(-h/2))
-			
 			// Let's build a path around the perimeter of our image
-			var path: [CGPoint] = [pixCur.toCGPoint() + centerOffset]
+			//
+			// We start with our first pixel point
+			var path: [CGPoint] = [pixCur.toCGPoint()]
 			
 			while true
 			{
@@ -252,7 +264,7 @@ class ImageTools
 					if (path.count > 1)
 					{
 						// Finish out the edge
-						path += pixPrev.toCGPoint() + centerOffset
+						path += pixPrev.toCGPoint()
 						totalPoints += 1
 					}
 					break
@@ -279,7 +291,7 @@ class ImageTools
 				
 				// Finish the current segment and start a new one
 				totalPoints += 1
-				path += pixPrev.toCGPoint() + centerOffset
+				path += pixPrev.toCGPoint()
 				
 				vectorStart = pixCur.toCGVector()
 				vectorDir = nil
@@ -336,6 +348,20 @@ class ImageTools
 	
 	class func readPathArray(name: String) -> ([[CGPoint]])?
 	{
+		// Disable the cache?
+		if disableCache
+		{
+			return nil
+		}
+		
+		for forceEntry in forceRevectorization
+		{
+			if forceEntry == name
+			{
+				return nil
+			}
+		}
+		
 		let filename = name + ".vcache.plist"
 		var paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
 		var documentsDirectoryPath = paths[0] as String
