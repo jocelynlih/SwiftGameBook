@@ -8,59 +8,14 @@
 
 import SpriteKit
 
-extension SKNode
-{
-	func getTransform() -> CGAffineTransform
-	{
-		// Transform the path as specified by the sprite
-		//
-		// Note the order of operations we want to happen are specified in reverse. We want to scale first,
-		// then rotate, then translate. If we do these out of order, then we might rotate around a different
-		// point (if we've already moved it) or scale the object in the wrong direction (if we've rotated it.)
-		var xform = CGAffineTransformIdentity
-		xform = CGAffineTransformTranslate(xform, position.x, position.y)
-		xform = CGAffineTransformRotate(xform, -zRotation)
-		xform = CGAffineTransformScale(xform, xScale, yScale)
-		return xform
-	}
-}
-
-extension SKShapeNode
-{
-	func log()
-	{
-		NSLog(" Name     : %@", name)
-		NSLog(" Position : %@, %@", position.x, position.y)
-		NSLog(" Frame    : %@, %@ - %@ x %@", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)
-		NSLog(" Scale    : %@, %@", xScale, yScale)
-		NSLog(" zRotation: %@", zRotation)
-		NSLog(" zPosition: %@", zPosition)
-	}
-}
-
-extension SKSpriteNode
-{
-	func log()
-	{
-		NSLog(" Name     : %@", name)
-		NSLog(" Position : %@, %@", position.x, position.y)
-		NSLog(" Size     : %@, %@", size.width, size.height)
-		NSLog(" Frame    : %@, %@ - %@ x %@", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)
-		NSLog(" Scale    : %@, %@", xScale, yScale)
-		NSLog(" zRotation: %@", zRotation)
-		NSLog(" zPosition: %@", zPosition)
-	}
-}
-
 class GameScene : SKScene, SKPhysicsContactDelegate
 {	
 	// We draw our sketches directly into this full-screen sprite
-	var sketchSprite: SKSpriteNode!
-	let sketchTexture = UIImage(named: "sketchTexture")
-	let useTexture = true
-
+	private var sketchSprite: SKSpriteNode!
+	private let sketchTexture = UIImage(named: "sketchTexture")
+	private let useTexture = true
 	// Material properties for sketch rendering
-	struct SketchMaterial
+	private struct SketchMaterial
 	{
 		var lineThickness: CGFloat = 3.0
 		var minSegmentLength: CGFloat = 4
@@ -154,7 +109,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 	}
 	
     //Define physics world ground
-    func addGroundLevel() {
+    private func addGroundLevel() {
         let ground = SKSpriteNode(color: UIColor(white: 1.0, alpha: 0.0), size:CGSizeMake(frame.size.width, 5))
         ground.position = CGPointMake(frame.size.width/2,  0)
         ground.physicsBody = SKPhysicsBody(rectangleOfSize: ground.size)
@@ -164,7 +119,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
     
 	// -------------------------------------------------------------------------------------------------------------------
 	
-	func attachSketchNodes(node: SKNode)
+	private func attachSketchNodes(node: SKNode)
 	{
 		if !node.children
 		{
@@ -211,7 +166,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 		}
 	}
 	
-	func sketchScene()
+	private func sketchScene()
 	{
 		UIGraphicsBeginImageContext(frame.size)
 		var ctx = UIGraphicsGetCurrentContext()
@@ -241,7 +196,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 		UIGraphicsEndImageContext()
 	}
 	
-	func sketchNode(context: CGContext, node: SKNode, var material: SketchMaterial)
+	private func sketchNode(context: CGContext, node: SKNode, var material: SketchMaterial)
 	{
 		for child in node.children as [SKNode]
 		{
@@ -259,8 +214,9 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 			sketchNode(context, node: child, material: material)
 		}
 	}
+
 	
-	func sketchPathToContext(context: CGContext, pathArray: [[CGPoint]], var xform: CGAffineTransform, material: SketchMaterial)
+	private func sketchPathToContext(context: CGContext, pathArray: [[CGPoint]], var xform: CGAffineTransform, material: SketchMaterial)
 	{
 		var drawPath = UIBezierPath()
 		
