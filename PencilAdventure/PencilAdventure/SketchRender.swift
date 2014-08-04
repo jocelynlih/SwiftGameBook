@@ -9,6 +9,7 @@
 import SpriteKit
 
 let SketchName = "- SketchSprite -"
+let MaxAnimationSprites = 4
 
 class SketchRender
 {
@@ -54,19 +55,23 @@ class SketchRender
 					// Get the vectorized path for our bitmap
 					if let pathArray = ImageTools.vectorizeImage(name: name)
 					{
-						// Create a new shape from the path and attach it to this sprite node
-						if let sketchSprite = renderSketchSprite(pathArray, parent: sprite)
+						for i in 0 ..< MaxAnimationSprites
 						{
-							// Copy various properties from our parent
-							sketchSprite.zPosition = sprite.zPosition + 1
-							sketchSprite.color = sprite.color
-							
-							// TODO - need to understand why this works
-							sketchSprite.xScale = sprite.size.width / sprite.texture.size().width / sprite.xScale
-							sketchSprite.yScale = sprite.size.height / sprite.texture.size().height / sprite.yScale
-							
-							// Finally, make our sketch sprite a child of our parent sprite
-							sprite.addChild(sketchSprite)
+							// Create a new shape from the path and attach it to this sprite node
+							if let sketchSprite = renderSketchSprite(pathArray, parent: sprite)
+							{
+								// Copy various properties from our parent
+								sketchSprite.zPosition = sprite.zPosition + 1
+								sketchSprite.color = sprite.color
+								
+								// TODO - need to understand why this works
+								sketchSprite.xScale = sprite.size.width / sprite.texture.size().width / sprite.xScale
+								sketchSprite.yScale = sprite.size.height / sprite.texture.size().height / sprite.yScale
+								sketchSprite.hidden = true
+								
+								// Finally, make our sketch sprite a child of our parent sprite
+								sprite.addChild(sketchSprite)
+							}
 						}
 					}
 				}

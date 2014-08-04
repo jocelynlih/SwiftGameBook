@@ -22,6 +22,9 @@ class GameScene : SKScene, SKPhysicsContactDelegate
     var moving:SKNode!
     // charater
     var pencil:SKSpriteNode!
+	
+	private var sketchAnimationTimer: NSTimer?
+	private let SketchAnimationFPS = 8.0
     
 	override func didMoveToView(view: SKView)
 	{
@@ -69,6 +72,9 @@ class GameScene : SKScene, SKPhysicsContactDelegate
         
         //add ground level
         addGroundLevel()
+		
+		// Setup a timer for the update
+		sketchAnimationTimer = NSTimer.scheduledTimerWithTimeInterval(1.0 / SketchAnimationFPS, target: self, selector: Selector("sketchAnimationTimer:"), userInfo: nil, repeats: true)
 	}
 	
 	override func update(currentTime: CFTimeInterval)
@@ -97,4 +103,57 @@ class GameScene : SKScene, SKPhysicsContactDelegate
         ground.physicsBody.dynamic = false
         self.addChild(ground)
     }
+	
+	func sketchAnimationTimer(timer: NSTimer)
+	{
+		animateSketchSprites(self)
+	}
+	
+	private func animateSketchSprites(node: SKNode)
+	{
+		var sketchSprites: [SKSpriteNode] = []
+		
+		// Find our sketch sprites
+		for child in node.children as [SKNode]
+		{
+			// Depth-first traversal
+			//
+			// Note that we don't bother to traverse into our sketch sprites
+			if child.name != SketchName
+			{
+				animateSketchSprites(child)
+			}
+
+			if let sprite = child as? SKSpriteNode
+			{
+				// We need a name
+				if sprite.name == nil
+				{
+					continue
+				}
+				
+				if sprite.name == SketchName
+				{
+					// If it's hidden, let's add it to our list of possible sprites to un-hide
+					if sprite.hidden
+					{
+						sketchSprites += sprite
+					}
+					else
+					{
+						// This is the one that's already been visible, so let's make sure we get a different one
+						// by not adding it to the list. We do, however, want to hide it.
+						sprite.hidden = true
+					}
+				}
+			}
+		}
+		
+		// If we found a set of sketch sprites, then unhide just one of them
+		if sketchSprites.count != 0
+		{
+			let rnd = arc4random_uniform(UInt32(sketchSprites.count))
+			sketchSprites[Int(rnd)].hidden = false
+		}
+	}
 }
