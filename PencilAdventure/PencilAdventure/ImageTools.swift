@@ -6,6 +6,12 @@
 
 import SpriteKit
 
+// Force re-vectorization of these sprite names (ignoring any existing cache files)
+//
+// Example: [ "cloud1", "platform1" ]
+let forceRevectorization: [String] = [ ]
+let disableCache = false
+
 // Constants
 let LeftNeighborMask = 0x01
 let RightNeighborMask = 0x02
@@ -24,6 +30,20 @@ let BytesPerPixel = 4
 // Larger number means more error allowed, so there will be fewer segments making up the path
 let EdgeAngleTolerance: CGFloat = 1.5
 let AlphaThreshold: UInt8 = 128
+
+var vectorizedShapes: [ String : [[CGPoint]] ] = [:]
+
+class WritableCoordinate
+{
+	var x: CGFloat = 0
+	var y: CGFloat = 0
+	
+	init(x: CGFloat, y: CGFloat)
+	{
+		self.x = x
+		self.y = y
+	}
+}
 
 class ImageTools
 {
@@ -148,15 +168,43 @@ class ImageTools
 	// "Edge pixel"      = Any pixel that has an empty "Edge neighbor"
 	// "Vertex neighbor" = Neighbor that shares a vertex. These are any of the eight neighbors (including corner
 	//                     neighbors)
-	class func vectorizeImage(image: UIImage) -> CGPath?
+	class func vectorizeImage(name: String? = nil) -> ([[CGPoint]])?
 	{
+		if (name)
+		{
+			// Get it from the cache
+			var pathArray = vectorizedShapes[name!]
+			
+			// If we have it, return it
+			if pathArray
+			{
+				return pathArray
+			}
+			
+			// Not in the cache? Load it from a file
+			pathArray = readPathArray(name!)
+
+			// If it loaded, cache it and return it to our caller
+			if pathArray
+			{
+				vectorizedShapes[name!] = pathArray
+				return pathArray
+			}
+		}
+
+		// Load our image
+		let image = UIImage(named: name)
+		if image == nil
+		{
+			return nil
+		}
+		
 		let w = Int(image.size.width)
 		let h = Int(image.size.height)
 		var imgData = getBitmapBitsForImage(image)
 		var imgMap = getImageMap(imgData, width: w, height: h)
-		
-		var path = UIBezierPath()
 		var totalPoints = 1
+		var pathArray: [[CGPoint]] = []
 		
 		while true
 		{
@@ -193,16 +241,14 @@ class ImageTools
 			
 			// We'll use this vector as we trace around the edge to keep track of how much we bend around corners
 			// so we'll know when it's time to create a new segment
-			var vectorStart = CGVector(dx: CGFloat(pixCur.x), dy: CGFloat(pixCur.y))
+			var vectorStart = pixCur.toCGVector()
 			var vectorDir: CGVector? = nil
-			
 			var totalError: CGFloat = 0
 			
-			// We offset to the center
-			var centerOffset = CGVector(dx: CGFloat(-w/2), dy: CGFloat(-h/2))
-			
 			// Let's build a path around the perimeter of our image
-			path.moveToPoint((pixCur.toCGVector() + centerOffset).toCGPoint())
+			//
+			// We start with our first pixel point
+			var path: [CGPoint] = [pixCur.toCGPoint()]
 			
 			while true
 			{
@@ -213,9 +259,14 @@ class ImageTools
 				// Did we reach the end of our edge?
 				if !pixCur
 				{
-					// Finish out the edge
-					path.addLineToPoint((pixPrev.toCGVector() + centerOffset).toCGPoint())
-					totalPoints += 1
+					// We should have more than one point in the path, otherwise, we're just going to add another
+					// copy of our first point to this path (this would be a degenerate path)
+					if (path.count > 1)
+					{
+						// Finish out the edge
+						path += pixPrev.toCGPoint()
+						totalPoints += 1
+					}
 					break
 				}
 				
@@ -240,23 +291,101 @@ class ImageTools
 				
 				// Finish the current segment and start a new one
 				totalPoints += 1
-				path.addLineToPoint((pixPrev.toCGVector() + centerOffset).toCGPoint())
+				path += pixPrev.toCGPoint()
+				
 				vectorStart = pixCur.toCGVector()
 				vectorDir = nil
 				totalError = 0
+			}
+
+			// Add our path to the array
+			if path.count > 1
+			{
+				pathArray += path
 			}
 		}
 		
 		if (totalPoints == 0)
 		{
-			NSLog("vectorizeImage found no paths")
+			NSLog("vectorizedImage found no paths for [" + (name ? name!:"unnamed") + "]")
 			return nil
 		}
-		else
+		
+		NSLog("vectorized %d points for [" + (name ? name!:"unnamed") + "]", totalPoints)
+		
+		if (name)
 		{
-			NSLog("Vectorize image produced %d points", totalPoints)
+			vectorizedShapes[name!] = pathArray
+			writePathArray(pathArray, name: name!)
 		}
 		
-		return path.CGPath
+		return pathArray
+	}
+	
+	class func writePathArray(pathArray: [[CGPoint]], name: String)
+	{
+		var pathArrayArr: [ [ [NSNumber] ] ] = []
+		for path in pathArray
+		{
+			var pathArr: [ [NSNumber] ] = []
+			for point in path
+			{
+				pathArr += [ NSNumber(float: Float(point.x)), NSNumber(float: Float(point.y)) ]
+			}
+			
+			pathArrayArr += pathArr
+		}
+
+		let filename = name + ".vcache.plist"
+		var paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
+		var documentsDirectoryPath = paths[0] as String
+		var filePath = documentsDirectoryPath.stringByAppendingPathComponent(filename)
+		if !pathArrayArr.bridgeToObjectiveC().writeToFile(filePath, atomically: true)
+		{
+			NSLog("Error writing plist file: " + filePath)
+		}
+	}
+	
+	class func readPathArray(name: String) -> ([[CGPoint]])?
+	{
+		// Disable the cache?
+		if disableCache
+		{
+			return nil
+		}
+		
+		for forceEntry in forceRevectorization
+		{
+			if forceEntry == name
+			{
+				return nil
+			}
+		}
+		
+		let filename = name + ".vcache.plist"
+		var paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
+		var documentsDirectoryPath = paths[0] as String
+		var filePath = documentsDirectoryPath.stringByAppendingPathComponent(filename)
+		let pathArrayArr = NSArray(contentsOfFile: filePath)
+		if pathArrayArr == nil
+		{
+			return nil
+		}
+
+		var pathArray: [[CGPoint]] = []
+		for arr in pathArrayArr as [ [ [NSNumber] ] ]
+		{
+			var path: [CGPoint] = []
+			for value in arr as [ [NSNumber] ]
+			{
+				var x = CGFloat(value[0].floatValue)
+				var y = CGFloat(value[1].floatValue)
+				path += CGPoint(x: x, y: y)
+			}
+			
+			pathArray += path
+		}
+		
+		return pathArray
 	}
 }
