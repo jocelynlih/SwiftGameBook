@@ -137,7 +137,7 @@ class SketchRender
 			for point in path
 			{
 				// Starting a new batch of lines?
-				if endPoint == nil
+				if endPoint == .None
 				{
 					endPoint = point.toCGVector()
 					continue
@@ -149,7 +149,7 @@ class SketchRender
 				}
 				
 				// Make sure we have something to work with
-				if startPoint == nil || endPoint == nil
+				if startPoint == .None || endPoint == .None
 				{
 					continue
 				}

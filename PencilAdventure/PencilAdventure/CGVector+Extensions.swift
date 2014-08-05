@@ -60,62 +60,62 @@ extension CGVector
 	}
 }
 
-@infix func * (left: CGVector, right: CGFloat) -> CGVector
+func * (left: CGVector, right: CGFloat) -> CGVector
 {
 	return CGVector(dx: left.dx * right, dy: left.dy * right)
 }
 
-@infix func * (left: CGVector, right: CGVector) -> CGVector
+func * (left: CGVector, right: CGVector) -> CGVector
 {
 	return CGVector(dx: left.dx * right.dx, dy: left.dy * right.dy)
 }
 
-@infix func / (left: CGVector, right: CGFloat) -> CGVector
+func / (left: CGVector, right: CGFloat) -> CGVector
 {
 	return CGVector(dx: left.dx / right, dy: left.dy / right)
 }
 
-@infix func / (left: CGVector, right: CGVector) -> CGVector
+func / (left: CGVector, right: CGVector) -> CGVector
 {
 	return CGVector(dx: left.dx / right.dx, dy: left.dy / right.dy)
 }
 
-@infix func + (left: CGVector, right: CGFloat) -> CGVector
+func + (left: CGVector, right: CGFloat) -> CGVector
 {
 	return CGVector(dx: left.dx + right, dy: left.dy + right)
 }
 
-@infix func + (left: CGVector, right: CGVector) -> CGVector
+func + (left: CGVector, right: CGVector) -> CGVector
 {
 	return CGVector(dx: left.dx + right.dx, dy: left.dy + right.dy)
 }
 
-@infix func - (left: CGVector, right: CGFloat) -> CGVector
+func - (left: CGVector, right: CGFloat) -> CGVector
 {
 	return CGVector(dx: left.dx - right, dy: left.dy - right)
 }
 
-@infix func - (left: CGVector, right: CGVector) -> CGVector
+func - (left: CGVector, right: CGVector) -> CGVector
 {
 	return CGVector(dx: left.dx - right.dx, dy: left.dy - right.dy)
 }
 
-@assignment func += (inout left: CGVector, right: CGVector)
+func += (inout left: CGVector, right: CGVector)
 {
 	left = left + right
 }
 
-@assignment func -= (inout left: CGVector, right: CGVector)
+func -= (inout left: CGVector, right: CGVector)
 {
 	left = left - right
 }
 
-@assignment func *= (inout left: CGVector, right: CGVector)
+func *= (inout left: CGVector, right: CGVector)
 {
 	left = left * right
 }
 
-@assignment func /= (inout left: CGVector, right: CGVector)
+func /= (inout left: CGVector, right: CGVector)
 {
 	left = left / right
 }

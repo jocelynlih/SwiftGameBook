@@ -46,7 +46,8 @@ class LevelSelectScene : SKScene {
     func loadLevel(level: String) {
         NSLog("loading level")
         //TODO: create loading level animation
-        if let newScene = GameScene.unarchiveFromFile(level) as? GameScene {
+
+		if let newScene = GameScene.unarchiveFromFile(level) as? GameScene {
             self.scene.view.presentScene(newScene)
         }
     }

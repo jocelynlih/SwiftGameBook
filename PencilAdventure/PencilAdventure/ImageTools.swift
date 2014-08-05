@@ -172,7 +172,7 @@ class ImageTools
 	//                     neighbors)
 	class func vectorizeImage(name: String? = nil, var image: UIImage? = nil) -> ([[CGPoint]])?
 	{
-		if name
+		if name != .None
 		{
 			// Get it from the local cache in memory
 			if let pathArray = vectorizedShapes[name!]
@@ -188,21 +188,21 @@ class ImageTools
 			}
 			
 			// We'll need to generate one from the named image, so load the image if it wasn't provided
-			if image == nil
+			if image == .None
 			{
 				image = UIImage(named: name)
 			}
 		}
 
 		// If we don't have an image at this point, we can't continue
-		if image == nil
+		if image == .None
 		{
 			return nil
 		}
 		
 		let widthPix = Int(CGImageGetWidth(image!.CGImage))
 		let heightPix = Int(CGImageGetHeight(image!.CGImage))
-		NSLog("Vectorizing image: %@ (%dx%d)", name == nil ? "unknown" : name!, widthPix, heightPix)
+		NSLog("Vectorizing image: %@ (%dx%d)", name ?? "unknown", widthPix, heightPix)
 		var imgData = getBitmapBitsForImage(image!)
 		var imgMap = getImageMap(imgData, widthPix: widthPix, heightPix: heightPix)
 		var totalPoints = 1
@@ -263,10 +263,10 @@ class ImageTools
 				{
 					// We should have more than one point in the path, otherwise, we're just going to add another
 					// copy of our first point to this path (this would be a degenerate path)
-					if (path.count > 1)
+					if path.count > 1
 					{
 						// Finish out the edge
-						path += pixPrev.toCGPoint()
+						path.append(pixPrev.toCGPoint())
 						totalPoints += 1
 					}
 					break
@@ -276,7 +276,7 @@ class ImageTools
 				imgMap[pixCur.y * widthPix + pixCur.x] |= UInt8(VisitedMask)
 				
 				// If this is our first neighbor along a new segment, start a new direction vector
-				if !vectorDir
+				if vectorDir == .None
 				{
 					vectorDir = (pixCur.toCGVector() - vectorStart).normal
 					continue
@@ -293,7 +293,7 @@ class ImageTools
 				
 				// Finish the current segment and start a new one
 				totalPoints += 1
-				path += pixPrev.toCGPoint()
+				path.append(pixPrev.toCGPoint())
 				
 				vectorStart = pixCur.toCGVector()
 				vectorDir = nil
@@ -303,19 +303,19 @@ class ImageTools
 			// Add our path to the array
 			if path.count > 1
 			{
-				pathArray += path
+				pathArray.append(path)
 			}
 		}
 		
-		if (totalPoints == 0)
+		if totalPoints == 0
 		{
-			NSLog("vectorizedImage found no paths for [" + (name ? name!:"unnamed") + "]")
+			NSLog("vectorizedImage found no paths for [" + (name ?? "unnamed") + "]")
 			return nil
 		}
 		
-		NSLog("vectorized %d points for [" + (name ? name!:"unnamed") + "]", totalPoints)
+		NSLog("vectorized %d points for [" + (name ?? "unnamed") + "]", totalPoints)
 		
-		if (name)
+		if name != .None
 		{
 			vectorizedShapes[name!] = pathArray
 			writePathArray(pathArray, name: name!)
@@ -332,17 +332,18 @@ class ImageTools
 			var pathArr: [ [NSNumber] ] = []
 			for point in path
 			{
-				pathArr += [ NSNumber(float: Float(point.x)), NSNumber(float: Float(point.y)) ]
+				pathArr.append([ NSNumber(float: Float(point.x)), NSNumber(float: Float(point.y)) ])
 			}
 			
-			pathArrayArr += pathArr
+			pathArrayArr.append(pathArr)
 		}
 
 		let filename = name + ".vcache.plist"
 		var paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
 		var documentsDirectoryPath = paths[0] as String
 		var filePath = documentsDirectoryPath.stringByAppendingPathComponent(filename)
-		if !pathArrayArr.bridgeToObjectiveC().writeToFile(filePath, atomically: true)
+
+		if !pathArrayArr._bridgeToObjectiveC().writeToFile(filePath, atomically: true)
 		{
 			NSLog("Error writing plist file: " + filePath)
 		}
@@ -369,7 +370,7 @@ class ImageTools
 		var documentsDirectoryPath = paths[0] as String
 		var filePath = documentsDirectoryPath.stringByAppendingPathComponent(filename)
 		let pathArrayArr = NSArray(contentsOfFile: filePath)
-		if pathArrayArr == nil
+		if pathArrayArr == .None
 		{
 			return nil
 		}
@@ -382,10 +383,10 @@ class ImageTools
 			{
 				var x = CGFloat(value[0].floatValue)
 				var y = CGFloat(value[1].floatValue)
-				path += CGPoint(x: x, y: y)
+				path.append(CGPoint(x: x, y: y))
 			}
 			
-			pathArray += path
+			pathArray.append(path)
 		}
 		
 		return pathArray

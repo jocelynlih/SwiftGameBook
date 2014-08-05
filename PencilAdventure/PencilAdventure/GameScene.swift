@@ -181,7 +181,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 				{
 					// TODO - this doesn't belong here - this is about animating the texture, not moving sprites
 					// also, I don't think this works always because sprites sometimes don't have textures? [Investigate]
-					if sprite.texture != nil {
+					if sprite.texture != .None {
 						//moving platform and background
 						if name == "platform1" || name.hasPrefix("block") {
 							movingPlatformFromLevel(sprite)
@@ -195,7 +195,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 						// If it's hidden, let's add it to our list of possible sprites to un-hide
 						if sprite.hidden
 						{
-							sketchSprites += sprite
+							sketchSprites.append(sprite)
 						}
 						else
 						{
