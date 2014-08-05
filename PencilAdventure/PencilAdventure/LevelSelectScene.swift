@@ -34,8 +34,9 @@ class LevelSelectScene : SKScene {
         NSLog("loading level")
         //TODO: create loading level animation
         let scene = GameScene.unarchiveFromFile(level) as? GameScene
-        if scene {
+        if scene != .None {
             self.scene.view.presentScene(scene)
+            SKAction.repeatActionForever(SKAction.playSoundFileNamed("background.mp3", waitForCompletion: true))
         }
     }
     
