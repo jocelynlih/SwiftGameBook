@@ -9,24 +9,42 @@
 import SpriteKit
 
 let SketchName = "- SketchSprite -"
+
+// We create this many variants of a sketch sprite, which we will animate through (randomly). If we choose 1,
+// we will get static animations. If we choose 2, we'll see a clear swapping animation. 3 will be better, but
+// will produce a noticeable repeating pattern. Four seems like a good starting point.
 let MaxAnimationSprites = 4
 
 class SketchRender
 {
 	// Material properties for sketch rendering
-	public struct SketchMaterial
+	internal struct SketchMaterial
 	{
-		var lineDensity: CGFloat = 4 // lower numbers are more dense
+		var lineDensity: CGFloat = 2 // lower numbers are more dense
 		var minSegmentLength: CGFloat = 1
-		var maxSegmentLength: CGFloat = 5
-		var pixJitterDistance: CGFloat = 4
+		var maxSegmentLength: CGFloat = 15
+		var pixJitterDistance: CGFloat = 2
 		var lineInteriorOverlapJitterDistance: CGFloat = 5
 		var lineEndpointOverlapJitterDistance: CGFloat = 5
-		var lineOffsetJitterDistance: CGFloat = 4
+		var lineOffsetJitterDistance: CGFloat = 0
 		var color: UIColor = UIColor.blackColor()
+		
+		init(scaled: Bool = true)
+		{
+			// Some properties need to take into account the backing scale (i.e. *2 for retina displays)
+			// TODO: I'm not sure this is entirely correct. The iPhone looks pretty different from the retina ipad
+			let scale = UIScreen.mainScreen().scale
+			
+			minSegmentLength *= scale
+			maxSegmentLength *= scale
+			pixJitterDistance *= scale
+			lineInteriorOverlapJitterDistance *= scale
+			lineEndpointOverlapJitterDistance *= scale
+			lineOffsetJitterDistance *= scale
+		}
 	}
 	
-	public class func attachSketchNodes(node: SKNode)
+	internal class func attachSketchNodes(node: SKNode)
 	{
 		if !node.children
 		{
@@ -52,26 +70,40 @@ class SketchRender
 						continue
 					}
 					
+					// !HACK! - At the present time, XCode's level designer forces us to select a specific resolution/density
+					// for sprites, rather than specifying a generic name which is used to dynamically select the proper resolution/
+					// density at run time. So we'll do that here...
+					var img = UIImage(named: name)
+					sprite.texture = SKTexture(image: img)
+					
 					// TODO: We should cache sketches of similar sprites rather than create fresh copies for each.
 					//       Example: three instances of "cloud1" will each create 4 brand new sketch sprites for a
 					//       total of 12 new sprites. Ideally, each instance of "cloud1" should use the same four
 					//       sketch sprites.
 					//
 					// Get the vectorized path for our bitmap
-					if let pathArray = ImageTools.vectorizeImage(name: name)
+					if let pathArray = ImageTools.vectorizeImage(name: name, image: img)
 					{
 						for i in 0 ..< MaxAnimationSprites
 						{
+							// We'll need our image size (in pixels)
+							let imageWidthPix = CGFloat(CGImageGetWidth(img.CGImage))
+							let imageHeightPix = CGFloat(CGImageGetHeight(img.CGImage))
+							var imageSize = CGSize(width: imageWidthPix, height: imageHeightPix)
+							
 							// Create a new shape from the path and attach it to this sprite node
-							if let sketchSprite = renderSketchSprite(pathArray, parent: sprite)
+							if let sketchSprite = renderSketchSprite(pathArray, size: imageSize, parent: sprite)
 							{
-								// Copy various properties from our parent
-								sketchSprite.zPosition = sprite.zPosition + 1
-								sketchSprite.color = sprite.color
+								// Ensure we draw in front of our parent
+								sketchSprite.zPosition = 1
 								
-								// TODO - need to understand why this works
-								sketchSprite.xScale = sprite.size.width / sprite.texture.size().width / sprite.xScale
-								sketchSprite.yScale = sprite.size.height / sprite.texture.size().height / sprite.yScale
+								// We get our sketch color from our parent's color
+								sketchSprite.color = sprite.color
+
+								// Set our size to that of our parent, taking it's scale into account
+								sketchSprite.size = CGSize(width: sprite.size.width / sprite.xScale, height: sprite.size.height / sprite.yScale)
+								
+								// All sketch sprites are hidden until we unhide them at random for animation
 								sketchSprite.hidden = true
 								
 								// Finally, make our sketch sprite a child of our parent sprite
@@ -84,8 +116,13 @@ class SketchRender
 		}
 	}
 	
-	private class func renderSketchSprite(pathArray: [[CGPoint]], parent: SKSpriteNode ) -> SKSpriteNode?
+	private class func renderSketchSprite(pathArray: [[CGPoint]], size: CGSize, parent: SKSpriteNode ) -> SKSpriteNode?
 	{
+		if !parent.texture
+		{
+			return nil
+		}
+		
 		// Setup our material
 		var material = SketchMaterial()
 		material.color = parent.color
@@ -100,7 +137,7 @@ class SketchRender
 			for point in path
 			{
 				// Starting a new batch of lines?
-				if !endPoint
+				if endPoint == .None
 				{
 					endPoint = point.toCGVector()
 					continue
@@ -112,7 +149,7 @@ class SketchRender
 				}
 				
 				// Make sure we have something to work with
-				if startPoint == nil || endPoint == nil
+				if startPoint == .None || endPoint == .None
 				{
 					continue
 				}
@@ -191,7 +228,7 @@ class SketchRender
 		}
 		
 		// We'll need a context to render our sketch into
-		UIGraphicsBeginImageContext(parent.texture.size())
+		UIGraphicsBeginImageContext(size)
 		var context = UIGraphicsGetCurrentContext()
 		
 		// Draw the sketch into our context

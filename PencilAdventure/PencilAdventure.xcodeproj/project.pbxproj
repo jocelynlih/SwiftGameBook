@@ -23,6 +23,8 @@
 		AE2056D3198B58CF00E7E302 /* CGPoint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2056D2198B58CF00E7E302 /* CGPoint+Extensions.swift */; };
 		AE2056D5198B62B500E7E302 /* Point2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2056D4198B62B500E7E302 /* Point2D.swift */; };
 		AE2056D7198B66D300E7E302 /* ImageTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2056D6198B66D300E7E302 /* ImageTools.swift */; };
+		AE23C73F199187420036E447 /* Sprites.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AE23C73E199187420036E447 /* Sprites.xcassets */; };
+		AE2D47A9199180ED00C95756 /* Sprites.atlas in Resources */ = {isa = PBXBuildFile; fileRef = AE2D47A8199180ED00C95756 /* Sprites.atlas */; };
 		AE36099B198F1CCA00441B49 /* SketchRender.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE36099A198F1CCA00441B49 /* SketchRender.swift */; };
 		AE5468431988D80000C55823 /* CGVector+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE5468411988D80000C55823 /* CGVector+Extensions.swift */; };
 		AE5468441988D80000C55823 /* CGFloat+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE5468421988D80000C55823 /* CGFloat+Extensions.swift */; };
@@ -60,6 +62,8 @@
 		AE2056D2198B58CF00E7E302 /* CGPoint+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extensions.swift"; sourceTree = "<group>"; };
 		AE2056D4198B62B500E7E302 /* Point2D.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Point2D.swift; sourceTree = "<group>"; };
 		AE2056D6198B66D300E7E302 /* ImageTools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageTools.swift; sourceTree = "<group>"; };
+		AE23C73E199187420036E447 /* Sprites.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Sprites.xcassets; sourceTree = "<group>"; };
+		AE2D47A8199180ED00C95756 /* Sprites.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Sprites.atlas; sourceTree = "<group>"; };
 		AE36099A198F1CCA00441B49 /* SketchRender.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SketchRender.swift; sourceTree = "<group>"; };
 		AE5468411988D80000C55823 /* CGVector+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGVector+Extensions.swift"; sourceTree = "<group>"; };
 		AE5468421988D80000C55823 /* CGFloat+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGFloat+Extensions.swift"; sourceTree = "<group>"; };
@@ -111,8 +115,6 @@
 				018BAE15198779330067C10C /* AppDelegate.swift */,
 				AE5468461988D85500C55823 /* GameScene.sks */,
 				018A322B198F6696009CDA21 /* 1.sks */,
-				018BAE17198779330067C10C /* GameViewController.swift */,
-				018BAE3619877EDE0067C10C /* GameScene.swift */,
 				0155FA22198F39630098CE69 /* Platform.swift */,
 				0155FA20198EBDC80098CE69 /* LevelSelectScene.swift */,
 				018BAE3619877EDE0067C10C /* GameScene.swift */,
@@ -121,6 +123,8 @@
 				018BAE19198779330067C10C /* Main.storyboard */,
 				AE36099A198F1CCA00441B49 /* SketchRender.swift */,
 				018BAE1C198779330067C10C /* Images.xcassets */,
+				AE23C73E199187420036E447 /* Sprites.xcassets */,
+				AE2D47A8199180ED00C95756 /* Sprites.atlas */,
 				018BAE13198779330067C10C /* Supporting Files */,
 			);
 			path = PencilAdventure;
@@ -253,6 +257,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AE23C73F199187420036E447 /* Sprites.xcassets in Resources */,
+				AE2D47A9199180ED00C95756 /* Sprites.atlas in Resources */,
 				018BAE1B198779330067C10C /* Main.storyboard in Resources */,
 				AE5468471988D85500C55823 /* GameScene.sks in Resources */,
 				018A322C198F6696009CDA21 /* 1.sks in Resources */,
@@ -411,6 +417,7 @@
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -427,6 +434,7 @@
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Ofast";
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};

@@ -10,32 +10,45 @@ import SpriteKit
 
 class LevelSelectScene : SKScene {
    
+	let MaxLevels = 8
+	
     override func didMoveToView(view: SKView) {
         self.backgroundColor = SKColor.whiteColor()
-        let levelLabel = SKLabelNode(text: "Please choose a level")
-        levelLabel.fontColor = SKColor.blueColor()
-        levelLabel.position = CGPointMake(250.0, 250.0)
-        self.addChild(levelLabel)
         addLevelSelectNode()
     }
     
     func addLevelSelectNode() {
-        var startPosX:CGFloat = 60.0
-        var startPosY:CGFloat = 200.0
-        for i in 1...7 {
-            let level = SKSpriteNode(imageNamed: "bluetile")
+		var atlas = SKTextureAtlas(named: "Sprites")
+		var blueTile = atlas.textureNamed("bluetile")
+		
+		var tileWidth = blueTile.size().width
+		var tileHeight = blueTile.size().height
+		var gap = tileWidth * 2
+		
+		var selectorWidth = tileWidth * CGFloat(MaxLevels) + gap * CGFloat(MaxLevels - 1)
+        var x = (view.frame.width - selectorWidth) / 2.0
+        var y = view.frame.height / 2
+        for i in 1...MaxLevels {
+            let level = SKSpriteNode(texture: blueTile)
             level.name = "\(i)"
-            level.position = CGPointMake(startPosX + (i*50), startPosY)
+			level.position =  CGPoint(x: x, y: y)
             self.addChild(level)
+			
+			x += tileWidth + gap
         }
+		
+		let levelLabel = SKLabelNode(text: "Please choose a level")
+		levelLabel.fontColor = SKColor.blueColor()
+		levelLabel.position = CGPointMake(view.frame.width / 2, y + tileHeight * 3)
+		self.addChild(levelLabel)
     }
-    
+	
     func loadLevel(level: String) {
         NSLog("loading level")
         //TODO: create loading level animation
-        let scene = GameScene.unarchiveFromFile(level) as? GameScene
-        if scene {
-            self.scene.view.presentScene(scene)
+
+		if let newScene = GameScene.unarchiveFromFile(level) as? GameScene {
+            self.scene.view.presentScene(newScene)
         }
     }
     
@@ -43,13 +56,19 @@ class LevelSelectScene : SKScene {
         for touch: AnyObject in touches {
             let location = touch.locationInNode(self)
             let node = self.nodeAtPoint(location)
-            let buttonName = node.name
-            if buttonName == "1" {
-            //TODO: add more levels
-                loadLevel("1")
-            } else {
-                loadLevel("GameScene")
-            }    
+			var loaded = false
+            if let buttonName = node.name
+			{
+				if buttonName == "1" {
+					//TODO: add more levels
+					loadLevel("1")
+					loaded = true
+				}
+			}
+			
+			if !loaded {
+				loadLevel("GameScene")
+			}
         }
     }
 }
