@@ -170,13 +170,13 @@ class ImageTools
 	//                     neighbors)
 	class func vectorizeImage(name: String? = nil) -> ([[CGPoint]])?
 	{
-		if (name)
+		if (name != nil)
 		{
 			// Get it from the cache
 			var pathArray = vectorizedShapes[name!]
 			
 			// If we have it, return it
-			if pathArray
+			if pathArray != nil
 			{
 				return pathArray
 			}
@@ -185,7 +185,7 @@ class ImageTools
 			pathArray = readPathArray(name!)
 
 			// If it loaded, cache it and return it to our caller
-			if pathArray
+			if pathArray != nil
 			{
 				vectorizedShapes[name!] = pathArray
 				return pathArray
@@ -264,7 +264,7 @@ class ImageTools
 					if (path.count > 1)
 					{
 						// Finish out the edge
-						path += pixPrev.toCGPoint()
+						path.append(pixPrev.toCGPoint())
 						totalPoints += 1
 					}
 					break
@@ -274,7 +274,7 @@ class ImageTools
 				imgMap[pixCur.y * w + pixCur.x] |= UInt8(VisitedMask)
 				
 				// If this is our first neighbor along a new segment, start a new direction vector
-				if !vectorDir
+				if vectorDir == nil
 				{
 					vectorDir = (pixCur.toCGVector() - vectorStart).normal
 					continue
@@ -291,7 +291,7 @@ class ImageTools
 				
 				// Finish the current segment and start a new one
 				totalPoints += 1
-				path += pixPrev.toCGPoint()
+				path.append(pixPrev.toCGPoint())
 				
 				vectorStart = pixCur.toCGVector()
 				vectorDir = nil
@@ -301,19 +301,19 @@ class ImageTools
 			// Add our path to the array
 			if path.count > 1
 			{
-				pathArray += path
+				pathArray.append(path)
 			}
 		}
 		
 		if (totalPoints == 0)
 		{
-			NSLog("vectorizedImage found no paths for [" + (name ? name!:"unnamed") + "]")
+			NSLog("vectorizedImage found no paths for [" + (name != nil ? name!:"unnamed") + "]")
 			return nil
 		}
 		
-		NSLog("vectorized %d points for [" + (name ? name!:"unnamed") + "]", totalPoints)
+		NSLog("vectorized %d points for [" + (name != nil ? name!:"unnamed") + "]", totalPoints)
 		
-		if (name)
+		if (name != nil)
 		{
 			vectorizedShapes[name!] = pathArray
 			writePathArray(pathArray, name: name!)
@@ -330,17 +330,18 @@ class ImageTools
 			var pathArr: [ [NSNumber] ] = []
 			for point in path
 			{
-				pathArr += [ NSNumber(float: Float(point.x)), NSNumber(float: Float(point.y)) ]
+				pathArr.append([ NSNumber(float: Float(point.x)), NSNumber(float: Float(point.y)) ])
 			}
 			
-			pathArrayArr += pathArr
+			pathArrayArr.append(pathArr)
 		}
 
 		let filename = name + ".vcache.plist"
 		var paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
 		var documentsDirectoryPath = paths[0] as String
 		var filePath = documentsDirectoryPath.stringByAppendingPathComponent(filename)
-		if !pathArrayArr.bridgeToObjectiveC().writeToFile(filePath, atomically: true)
+
+		if !pathArrayArr._bridgeToObjectiveC().writeToFile(filePath, atomically: true)
 		{
 			NSLog("Error writing plist file: " + filePath)
 		}
@@ -380,10 +381,10 @@ class ImageTools
 			{
 				var x = CGFloat(value[0].floatValue)
 				var y = CGFloat(value[1].floatValue)
-				path += CGPoint(x: x, y: y)
+				path.append(CGPoint(x: x, y: y))
 			}
 			
-			pathArray += path
+			pathArray.append(path)
 		}
 		
 		return pathArray

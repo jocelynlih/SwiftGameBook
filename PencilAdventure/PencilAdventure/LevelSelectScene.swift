@@ -20,12 +20,12 @@ class LevelSelectScene : SKScene {
     }
     
     func addLevelSelectNode() {
-        var startPosX:CGFloat = 60.0
-        var startPosY:CGFloat = 200.0
+        var startPosX = 60
+        var startPosY = 200
         for i in 1...7 {
             let level = SKSpriteNode(imageNamed: "bluetile")
             level.name = "\(i)"
-            level.position = CGPointMake(startPosX + (i*50), startPosY)
+            level.position = CGPoint(x: startPosX + (i * 50), y: startPosY)
             self.addChild(level)
         }
     }
@@ -34,7 +34,7 @@ class LevelSelectScene : SKScene {
         NSLog("loading level")
         //TODO: create loading level animation
         let scene = GameScene.unarchiveFromFile(level) as? GameScene
-        if scene {
+        if scene != nil {
             self.scene.view.presentScene(scene)
         }
     }

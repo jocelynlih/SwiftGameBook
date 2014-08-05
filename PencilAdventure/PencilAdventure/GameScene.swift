@@ -186,7 +186,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 					// If it's hidden, let's add it to our list of possible sprites to un-hide
 					if sprite.hidden
 					{
-						sketchSprites += sprite
+						sketchSprites.append(sprite)
 					}
 					else
 					{

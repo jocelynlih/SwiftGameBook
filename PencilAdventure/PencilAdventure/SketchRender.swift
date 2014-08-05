@@ -14,7 +14,7 @@ let MaxAnimationSprites = 4
 class SketchRender
 {
 	// Material properties for sketch rendering
-	public struct SketchMaterial
+  struct SketchMaterial
 	{
 		var lineDensity: CGFloat = 4 // lower numbers are more dense
 		var minSegmentLength: CGFloat = 1
@@ -26,7 +26,7 @@ class SketchRender
 		var color: UIColor = UIColor.blackColor()
 	}
 	
-	public class func attachSketchNodes(node: SKNode)
+	class func attachSketchNodes(node: SKNode)
 	{
 		if !node.children
 		{
@@ -100,7 +100,7 @@ class SketchRender
 			for point in path
 			{
 				// Starting a new batch of lines?
-				if !endPoint
+				if endPoint == nil
 				{
 					endPoint = point.toCGVector()
 					continue

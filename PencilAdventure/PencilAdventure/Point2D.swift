@@ -22,62 +22,61 @@ struct Point2D
 	}
 }
 
-@infix func * (left: Point2D, right: Int) -> Point2D
+func * (left: Point2D, right: Int) -> Point2D
 {
 	return Point2D(x: left.x * right, y: left.y * right)
 }
 
-@infix func * (left: Point2D, right: Point2D) -> Point2D
+func * (left: Point2D, right: Point2D) -> Point2D
 {
 	return Point2D(x: left.x * right.x, y: left.y * right.y)
 }
 
-@infix func / (left: Point2D, right: Int) -> Point2D
+func / (left: Point2D, right: Int) -> Point2D
 {
 	return Point2D(x: left.x / right, y: left.y / right)
 }
-
-@infix func / (left: Point2D, right: Point2D) -> Point2D
+func / (left: Point2D, right: Point2D) -> Point2D
 {
 	return Point2D(x: left.x / right.x, y: left.y / right.y)
 }
 
-@infix func + (left: Point2D, right: Int) -> Point2D
+func + (left: Point2D, right: Int) -> Point2D
 {
 	return Point2D(x: left.x + right, y: left.y + right)
 }
 
-@infix func + (left: Point2D, right: Point2D) -> Point2D
+func + (left: Point2D, right: Point2D) -> Point2D
 {
 	return Point2D(x: left.x + right.x, y: left.y + right.y)
 }
 
-@infix func - (left: Point2D, right: Int) -> Point2D
+func - (left: Point2D, right: Int) -> Point2D
 {
 	return Point2D(x: left.x - right, y: left.y - right)
 }
 
-@infix func - (left: Point2D, right: Point2D) -> Point2D
+func - (left: Point2D, right: Point2D) -> Point2D
 {
 	return Point2D(x: left.x - right.x, y: left.y - right.y)
 }
 
-@assignment func += (inout left: Point2D, right: Point2D)
+func += (inout left: Point2D, right: Point2D)
 {
 	left = left + right
 }
 
-@assignment func -= (inout left: Point2D, right: Point2D)
+func -= (inout left: Point2D, right: Point2D)
 {
 	left = left - right
 }
 
-@assignment func *= (inout left: Point2D, right: Point2D)
+func *= (inout left: Point2D, right: Point2D)
 {
 	left = left * right
 }
 
-@assignment func /= (inout left: Point2D, right: Point2D)
+func /= (inout left: Point2D, right: Point2D)
 {
 	left = left / right
 }
