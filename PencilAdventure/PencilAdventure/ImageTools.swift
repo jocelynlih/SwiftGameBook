@@ -110,40 +110,42 @@ class ImageTools
 	// Each component is 8 bits (0-255)
 	class func getBitmapBitsForImage(image: UIImage) -> [UInt8]
 	{
+		// Our image width/height. We use CGImageGet* to get the actual pixel dimensions)
+		let widthPix = Int(CGImageGetWidth(image.CGImage))
+		let heightPix = Int(CGImageGetHeight(image.CGImage))
+		
 		// Stride is the number of bytes in a single scanline.
 		//
 		// One of the purposes of stride is to account for padding to specific byte boundaries, but here, it's just the
 		// width multiplied by the number of bytes per pixel.
-		let width = Int(image.size.width)
-		let height = Int(image.size.height)
-		let stride = width * BytesPerPixel
+		let stride = widthPix * BytesPerPixel
 		
 		// Here is our bitmap array
-		var data = [UInt8](count: height * stride, repeatedValue: UInt8(0))
+		var data = [UInt8](count: heightPix * stride, repeatedValue: UInt8(0))
 		let colorSpace = CGColorSpaceCreateDeviceRGB()
 		let bitmapInfo = CGBitmapInfo.fromRaw(CGImageAlphaInfo.PremultipliedLast.toRaw() | CGBitmapInfo.ByteOrderDefault.toRaw())
-		let contextRef = CGBitmapContextCreate(&data, UInt(width), UInt(height), 8, UInt(stride), colorSpace, bitmapInfo!);
+		let contextRef = CGBitmapContextCreate(&data, UInt(widthPix), UInt(heightPix), 8, UInt(stride), colorSpace, bitmapInfo!);
 		let cgImage = image.CGImage;
-		let rect = CGRect(x: 0, y: 0, width: image.size.width, height: image.size.height);
+		let rect = CGRect(x: 0, y: 0, width: CGFloat(widthPix), height: CGFloat(heightPix));
 		CGContextDrawImage(contextRef, rect, cgImage);
-		
+
 		return data
 	}
 
 	// Build a neighbor map
-	class func getImageMap(image: [UInt8], width: Int, height: Int) -> [UInt8]
+	class func getImageMap(image: [UInt8], widthPix: Int, heightPix: Int) -> [UInt8]
 	{
 		// We'll store our image map here
-		var imgMap = [UInt8](count: width * height, repeatedValue: 0)
+		var imgMap = [UInt8](count: widthPix * heightPix, repeatedValue: 0)
 		
 		// Scan the image and build our map
 		//
 		// Note that this process requires comparing pixels against their neighbors, edge pixels don't have neighbors, we
 		// limit our range to [1 ..< n-1] for X and Y.
-		for y in 1 ..< height-1
+		for y in 1 ..< heightPix-1
 		{
-			var lineIndex = y * width
-			for x in 1 ..< width-1
+			var lineIndex = y * widthPix
+			for x in 1 ..< widthPix-1
 			{
 				var pixIndex = lineIndex + x
 				
@@ -152,8 +154,8 @@ class ImageTools
 					imgMap[pixIndex] |= UInt8(SelfAlphaMask)
 					imgMap[pixIndex - 1] |= UInt8(RightNeighborMask)
 					imgMap[pixIndex + 1] |= UInt8(LeftNeighborMask)
-					imgMap[pixIndex - width] |= UInt8(BottomNeighborMask)
-					imgMap[pixIndex + width] |= UInt8(TopNeighborMask)
+					imgMap[pixIndex - widthPix] |= UInt8(BottomNeighborMask)
+					imgMap[pixIndex + widthPix] |= UInt8(TopNeighborMask)
 				}
 			}
 		}
@@ -168,41 +170,41 @@ class ImageTools
 	// "Edge pixel"      = Any pixel that has an empty "Edge neighbor"
 	// "Vertex neighbor" = Neighbor that shares a vertex. These are any of the eight neighbors (including corner
 	//                     neighbors)
-	class func vectorizeImage(name: String? = nil) -> ([[CGPoint]])?
+	class func vectorizeImage(name: String? = nil, var image: UIImage? = nil) -> ([[CGPoint]])?
 	{
-		if (name)
+		if name
 		{
-			// Get it from the cache
-			var pathArray = vectorizedShapes[name!]
-			
-			// If we have it, return it
-			if pathArray
+			// Get it from the local cache in memory
+			if let pathArray = vectorizedShapes[name!]
 			{
 				return pathArray
 			}
 			
 			// Not in the cache? Load it from a file
-			pathArray = readPathArray(name!)
-
-			// If it loaded, cache it and return it to our caller
-			if pathArray
+			if let pathArray = readPathArray(name!)
 			{
 				vectorizedShapes[name!] = pathArray
 				return pathArray
 			}
+			
+			// We'll need to generate one from the named image, so load the image if it wasn't provided
+			if image == nil
+			{
+				image = UIImage(named: name)
+			}
 		}
 
-		// Load our image
-		let image = UIImage(named: name)
+		// If we don't have an image at this point, we can't continue
 		if image == nil
 		{
 			return nil
 		}
 		
-		let w = Int(image.size.width)
-		let h = Int(image.size.height)
-		var imgData = getBitmapBitsForImage(image)
-		var imgMap = getImageMap(imgData, width: w, height: h)
+		let widthPix = Int(CGImageGetWidth(image!.CGImage))
+		let heightPix = Int(CGImageGetHeight(image!.CGImage))
+		NSLog("Vectorizing image: %@ (%dx%d)", name == nil ? "unknown" : name!, widthPix, heightPix)
+		var imgData = getBitmapBitsForImage(image!)
+		var imgMap = getImageMap(imgData, widthPix: widthPix, heightPix: heightPix)
 		var totalPoints = 1
 		var pathArray: [[CGPoint]] = []
 		
@@ -211,10 +213,10 @@ class ImageTools
 			var pixCur: Point2D!
 			
 			pixSearchLoop:
-			for y in 0 ..< h
+			for y in 0 ..< heightPix
 			{
-				var lineIndex = y * w
-				for x in 0 ..< w
+				var lineIndex = y * widthPix
+				for x in 0 ..< widthPix
 				{
 					var pix = Int(imgMap[lineIndex + x])
 					
@@ -237,7 +239,7 @@ class ImageTools
 			}
 			
 			// Set this pixel as visited
-			imgMap[pixCur.y * w + pixCur.x] |= UInt8(VisitedMask)
+			imgMap[pixCur.y * widthPix + pixCur.x] |= UInt8(VisitedMask)
 			
 			// We'll use this vector as we trace around the edge to keep track of how much we bend around corners
 			// so we'll know when it's time to create a new segment
@@ -254,7 +256,7 @@ class ImageTools
 			{
 				// Find the next pixel on the perimeter
 				var pixPrev = pixCur
-				pixCur = neighboringEdgePixel(imgMap, stride: w, x: pixCur.x, y: pixCur.y)
+				pixCur = neighboringEdgePixel(imgMap, stride: widthPix, x: pixCur.x, y: pixCur.y)
 				
 				// Did we reach the end of our edge?
 				if !pixCur
@@ -271,7 +273,7 @@ class ImageTools
 				}
 				
 				// Set this pixel as visited
-				imgMap[pixCur.y * w + pixCur.x] |= UInt8(VisitedMask)
+				imgMap[pixCur.y * widthPix + pixCur.x] |= UInt8(VisitedMask)
 				
 				// If this is our first neighbor along a new segment, start a new direction vector
 				if !vectorDir

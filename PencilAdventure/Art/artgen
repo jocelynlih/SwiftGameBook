@@ -1,0 +1,326 @@
+#!/bin/bash
+
+#################################################################################################################################
+#
+# Constants
+#
+#################################################################################################################################
+
+exitSuccess="0"
+exitError="1"
+
+scriptVersion="1.0"
+scriptDescription="Art generation tool"
+
+# Here are the resample specs we'll use. They follow the Contents.json format of information.
+resampleSpecs="iphone|0|0|0 iphone|1x|0|0 iphone|2x|41.666|@2x ipad|0|0|0 ipad|1x|50|~ipad ipad|2x|100|@2x~ipad"
+
+#################################################################################################################################
+#
+# Functions
+#
+#################################################################################################################################
+
+function info { echo "$@"; }
+function error { echo "ERROR: ""$@" 1>&2; }
+function removeTrailingSlashOf { echo "${1%/}"; }
+function pathOf { echo `dirname "$1"`; }
+function baseOf { echo "$(basename "$1")"; }
+function extOf { local tmp="$(baseOf "$1")"; echo "${tmp##*.}"; }
+function prefixOf { local tmp="$(baseOf "$1")"; echo "${tmp%.*}"; }
+
+function verifyDependency
+{
+	local present=`command -v "$1" >/dev/null 2>&1 || echo "no"`
+	if [ "$present" == "no" ]; then
+		error "Dependency program '$1' ($2) not present on this system."
+		exit $exitError
+	fi
+}
+
+function makeDir
+{
+	local dir="$1"
+	if [ ! -d "$dir" ]; then
+		info "Creating dir: $dir"
+		mkdir -p "$dir"
+		if [ ! -d "$dir" ]; then
+			error "Unable to create folder: $dir"
+			exit $exitError
+		fi
+	fi
+}
+
+# Call with resample <source file> <dest file> <percentage size reduction>
+#
+# Note that this routine detects the existence of 9-patches and redirects to the routine
+# for resampling 9-pathces.
+function resample
+{
+	local srcfile="$1"
+	local dstfile="$2"
+	local percent="$3"
+
+	info "  Resampling: $(baseOf "$srcfile") to $(baseOf "$dstfile") ($percent%)"
+
+	# Reduce the image
+	convert "$srcfile" -background none -resize "$percent"% "$dstfile"
+}
+
+# Call with outputDir srcBase resampleSpecs
+function writeContentsJSON
+{
+	local dst="$1"
+	local srcBase="$2"
+	local specs="$3"
+
+	local outFile="$outputDir/Contents.json"
+	echo '{' > "$outFile"
+	echo '  "images" : [' >> "$outFile"
+
+	local addTail=0
+	for spec in $specs ; do
+		local idiom=`echo "$spec" | cut -d '|' -f 1`
+		local scale=`echo "$spec" | cut -d '|' -f 2`
+		local percent=`echo "$spec" | cut -d '|' -f 3`
+		local suffix=`echo "$spec" | cut -d '|' -f 4`
+
+		if [ "$addTail" -eq "1" ]; then
+			echo '    },' >> "$outFile"
+		fi
+
+		if [ "$scale" == "0" ]; then
+			echo '    {' >> "$outFile"
+			echo "      \"idiom\" : \"$idiom\"" >> "$outFile"
+			addTail=1
+			continue
+		fi
+
+		# Our destination filename (foo/bar/baz-suffix.png)
+		local filename="$(prefixOf "$srcBase")$suffix.$(extOf "$srcFile")"
+
+		echo '    {' >> "$outFile"
+		echo "      \"idiom\" : \"$idiom\"," >> "$outFile"
+		if [ "$percent" != "0" ]; then
+			echo "      \"scale\" : \"$scale\"," >> "$outFile"
+			echo "      \"filename\" : \"$filename\"" >> "$outFile"
+		else
+			echo "      \"scale\" : \"$scale\"" >> "$outFile"
+		fi
+		addTail=1
+	done
+
+	echo '    }' >> "$outFile"
+	echo '  ],' >> "$outFile"
+	echo '  "info" : {' >> "$outFile"
+	echo '    "version" : 1,' >> "$outFile"
+	echo '    "author" : "artgen"' >> "$outFile"
+	echo '  }' >> "$outFile"
+	echo '}' >> "$outFile"
+}
+
+# Call with $src $dst $overwriteFlag $resampleSpecs
+function convertFiles
+{
+	local src="$1"
+	local dst="$2"
+	local overwrite="$3"
+	local specs="$4"
+
+	# Ensure we have a source directory
+	if [ ! -e "$src" ]; then
+		error "The specified src does not exist: $src"
+		printUsage
+		exit $exitError
+	fi
+
+	# Ensure that dst exists and that it is a directory
+	if [ ! -d "$dst" ] && [ -e "$dst" ]; then
+		error "dst is not a directory: $dst"
+		printUsage
+		exit $errorExit
+	fi
+
+	# Inform the user
+	info "Processing directory '$src'..."
+
+	# List of our source files
+	local srcFiles=`find "$src" -type f`
+
+	# Make sure our outputDir is a directory if it already exists
+	local outputDir=""
+
+	# If we're using a texture atlas, setup that directory here
+	if [ "$assetCatalog" == "0" ]; then
+		outputDir="$dst/$atlasOrAssetCatalogName.atlas"
+		if [ ! -d "$outputDir" ] && [ -e "$outputDir" ]; then
+			error "'$outputDir' exists, but is not a directory!"
+			continue
+		fi
+
+		# If we're overwriting and the dir exists, delete it so we can recreate it
+		if [ "$overwrite" == "1" ] && [ -e "$outputDir" ]; then
+			rm -rf "$outputDir"
+		fi
+
+		# If it doesn't exist, create it
+		if [ ! -e "$outputDir" ]; then
+			makeDir "$outputDir"
+		fi
+	fi
+
+	# Scan input files
+	local oIFS=$IFS
+	IFS=$'\n'
+	for srcFile in $srcFiles; do
+		# Base filename for the source file (i.e. foo/bar/baz.png returns baz.png)
+		local srcBase=$(baseOf "$srcFile")
+
+		# If we're using an asset catalog, that that up here, on a per-file basis
+		if [ "$assetCatalog" == "1" ]; then
+			outputDir="$dst/$atlasOrAssetCatalogName.xcassets/$(prefixOf "$srcBase").imageset"
+			if [ ! -d "$outputDir" ] && [ -e "$outputDir" ]; then
+				error "'$outputDir' exists, but is not a directory!"
+				continue
+			fi
+
+			# If we're overwriting and the dir exists, delete it so we can recreate it
+			if [ "$overwrite" == "1" ] && [ -e "$outputDir" ]; then
+				rm -rf "$outputDir"
+			fi
+
+			# If it doesn't exist, create it
+			if [ ! -e "$outputDir" ]; then
+				makeDir "$outputDir"
+			fi
+		fi
+
+		# For each specification that we're resampling to...
+		local loIFS=$IFS
+		IFS=$oIFS
+		for spec in $specs ; do
+			local percent=`echo "$spec" | cut -d '|' -f 3`
+			local suffix=`echo "$spec" | cut -d '|' -f 4`
+
+			# Some entries are just for the JSON file creation
+			if [ "$percent" == "0" ]; then
+				continue
+			fi
+			
+			# Our destination filename (foo/bar/bazrSuffix.png)
+			local dstFile="$outputDir/$(prefixOf "$srcBase")$suffix.$(extOf "$srcFile")"
+
+			# Check for overwrite
+			if [ -e "$dstFile" ] && [ "$overwrite" == "0" ]; then
+				continue
+			fi
+
+			# Finally, do the real work
+			resample "$srcFile" "$dstFile" "$percent"
+		done
+
+		if [ "$assetCatalog" == "1" ]; then
+			writeContentsJSON "$outputDir" "$srcBase" "$specs"
+		fi
+
+		IFS=$loIFS
+
+	done
+	IFS=$oIFS
+}
+
+function printUsage
+{
+	info "Usage:"
+	info "  $scriptFile [options] src-directory xcassets-dir"
+	info "      Options:"
+	info "          -a      - Use Asset Catalog (the default is to generate a Texture Atlas)"
+	info "          -o      - Enable overwriting files"
+	info "                    For Texture Atlases, the entire *.atlas directory is recreated."
+	info "                    For Asset Catalogs, each *.imageset subdirecotry is recreated."
+	info "          -n name - Use this name prefix for the Texture Atlas or Asset Catalog"
+	info "                    Specifying \"foo\" will place files in an Asset Catalog named"
+	info "                    \"foo.xcassets\". Similarly, a Texture Atlas would be created"
+	info "                    with the name \"foo.atlas\". The default is \"Images\"."
+	info ""
+	info "  $scriptFile -h"
+}
+
+#################################################################################################################################
+#
+# MAIN CODE
+#
+#################################################################################################################################
+
+# Get our script filename
+scriptFile=$(baseOf "$0")
+
+info "$scriptFile v$scriptVersion - $scriptDescription"
+
+# Ensure our external processes are present
+verifyDependency "basename" "common tool for extracting the filename portion of a pathname"
+verifyDependency "dirname" "common tool for extracting the directory portion of a pathname"
+verifyDependency "convert" "part of the ImageMagick package, required for resizing images. You can get it through MacPorts, Brew or directly from http://www.imagemagick.org/"
+
+# Default parameters
+overwriteFlag=0
+assetCatalog=0
+src=""
+dst=""
+atlasOrAssetCatalogName="Images"
+
+# Parse command-line parameters
+while getopts ":aohn:" opt; do
+	case $opt in
+		a)
+			assetCatalog=1
+			;;
+		o)
+			overwriteFlag=1
+			;;
+		h)
+			printUsage
+			exit $exitSuccess
+			;;
+		n)
+			atlasOrAssetCatalogName="${OPTARG%/}"
+			;;
+		\?)
+			error "Invalid option: -$OPTARG"
+			printUsage
+			exit $exitError
+			;;
+	esac
+done
+
+# Get source directory
+shift $(($OPTIND - 1))
+src=$(removeTrailingSlashOf "$1")
+shift
+if [ "$src" == "" ]; then
+	error "src not specified ($1)"
+	printUsage
+	exit $exitError
+fi
+
+# Get destination directory
+dst=$(removeTrailingSlashOf "$1")
+shift
+if [ "$dst" == "" ]; then
+	error "Destination not specified ($1)"
+	printUsage
+	exit $exitError
+fi
+
+# Warn user of extra stuff on the command line
+if [ "$#" -ne "0" ]; then
+	error "Unknown parameters: $@"
+	printUsage
+	exit $exitError
+fi
+
+# Do the work
+convertFiles "$src" "$dst" "$overwriteFlag" "$resampleSpecs"
+echo ""
+exit $exitSuccess
+
