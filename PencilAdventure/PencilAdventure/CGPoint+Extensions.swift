@@ -2,6 +2,7 @@
 //  CGPoint+Extensions.swift
 //
 //  Created by Paul Nettle on 7/28/14.
+//  Copyright (c) 2014 backstopmedia. All rights reserved.
 //
 
 import SpriteKit

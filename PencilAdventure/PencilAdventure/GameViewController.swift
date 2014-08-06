@@ -6,7 +6,6 @@
 //  Copyright (c) 2014 backstopmedia. All rights reserved.
 //
 
-import UIKit
 import SpriteKit
 
 
@@ -23,6 +22,8 @@ class GameViewController: UIViewController
 		skView.showsFPS = true
 		skView.showsNodeCount = true
 		skView.ignoresSiblingOrder = true
+        
+        SoundManager.playBackgroundMusic()
     }
 	
     @IBAction func startGame(sender : AnyObject) {

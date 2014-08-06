@@ -2,6 +2,7 @@
 //  ImageTools.swift
 //
 //  Created by Paul Nettle on 8/1/14.
+//  Copyright (c) 2014 backstopmedia. All rights reserved.
 //
 
 import SpriteKit
@@ -202,7 +203,6 @@ class ImageTools
 		
 		let widthPix = Int(CGImageGetWidth(image!.CGImage))
 		let heightPix = Int(CGImageGetHeight(image!.CGImage))
-		NSLog("Vectorizing image: %@ (%dx%d)", name ?? "unknown", widthPix, heightPix)
 		var imgData = getBitmapBitsForImage(image!)
 		var imgMap = getImageMap(imgData, widthPix: widthPix, heightPix: heightPix)
 		var totalPoints = 1
@@ -244,7 +244,7 @@ class ImageTools
 			// We'll use this vector as we trace around the edge to keep track of how much we bend around corners
 			// so we'll know when it's time to create a new segment
 			var vectorStart = pixCur.toCGVector()
-			var vectorDir: CGVector? = nil
+			var vectorDir: CGVector?
 			var totalError: CGFloat = 0
 			
 			// Let's build a path around the perimeter of our image
@@ -296,7 +296,7 @@ class ImageTools
 				path.append(pixPrev.toCGPoint())
 				
 				vectorStart = pixCur.toCGVector()
-				vectorDir = nil
+				vectorDir = .None
 				totalError = 0
 			}
 
@@ -310,10 +310,10 @@ class ImageTools
 		if totalPoints == 0
 		{
 			NSLog("vectorizedImage found no paths for [" + (name ?? "unnamed") + "]")
-			return nil
+			return .None
 		}
 		
-		NSLog("vectorized %d points for [" + (name ?? "unnamed") + "]", totalPoints)
+		//NSLog("vectorized %d points for [" + (name ?? "unnamed") + "]", totalPoints)
 		
 		if name != .None
 		{
@@ -354,14 +354,14 @@ class ImageTools
 		// Disable the cache?
 		if disableCache
 		{
-			return nil
+			return .None
 		}
 		
 		for forceEntry in forceRevectorization
 		{
 			if forceEntry == name
 			{
-				return nil
+				return .None
 			}
 		}
 		
@@ -372,7 +372,7 @@ class ImageTools
 		let pathArrayArr = NSArray(contentsOfFile: filePath)
 		if pathArrayArr == .None
 		{
-			return nil
+			return .None
 		}
 
 		var pathArray: [[CGPoint]] = []

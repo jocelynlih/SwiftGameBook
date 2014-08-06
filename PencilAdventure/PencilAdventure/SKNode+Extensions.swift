@@ -9,9 +9,9 @@
 import SpriteKit
 
 extension SKNode
-    {
+{
 
-    class func unarchiveFromFile(file : NSString) -> SKNode?
+    class func unarchiveFromFile(file : String) -> SKNode?
     {
         let path = NSBundle.mainBundle().pathForResource(file, ofType: "sks")
         
@@ -21,6 +21,17 @@ extension SKNode
         archiver.setClass(self.classForKeyedUnarchiver(), forClassName: "SKScene")
         let scene = archiver.decodeObjectForKey(NSKeyedArchiveRootObjectKey) as GameScene
         archiver.finishDecoding()
+
+		// Set the scene's scale mode to maintain aspect, but fill inside the screen (AspectFill)
+		//
+		// Since we're a landscape-only game the screen will always be wider than it is tall. AspectFill
+		// will always end up filling the screen horizontally and cipping some graphics off the top/bottom
+		// of the screen. We'll need to be careful not to put important stuff in those regions.
+		scene.scaleMode = .AspectFill
+		
+		// Give it a modest background
+		scene.backgroundColor = UIColor(red:0.2353, green:0.2353, blue:0.2353, alpha:1)
+
         return scene
     }
 
