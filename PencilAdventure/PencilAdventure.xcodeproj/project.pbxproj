@@ -16,7 +16,6 @@
 		018BAE1D198779330067C10C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 018BAE1C198779330067C10C /* Images.xcassets */; };
 		018BAE29198779330067C10C /* PencilAdventureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018BAE28198779330067C10C /* PencilAdventureTests.swift */; };
 		018BAE3719877EDE0067C10C /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018BAE3619877EDE0067C10C /* GameScene.swift */; };
-		018BAE3919877F090067C10C /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 018BAE3819877F090067C10C /* SpriteKit.framework */; };
 		9234A3EF198F029C0022246B /* SKNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9234A3EE198F029C0022246B /* SKNode+Extensions.swift */; };
 		9284FC2A1991A4D300B348CF /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9284FC291991A4D300B348CF /* SoundManager.swift */; };
 		9284FC2C1991A81F00B348CF /* background.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9284FC2B1991A81F00B348CF /* background.mp3 */; };
@@ -28,9 +27,12 @@
 		AE23C73F199187420036E447 /* Sprites.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AE23C73E199187420036E447 /* Sprites.xcassets */; };
 		AE2D47A9199180ED00C95756 /* Sprites.atlas in Resources */ = {isa = PBXBuildFile; fileRef = AE2D47A8199180ED00C95756 /* Sprites.atlas */; };
 		AE36099B198F1CCA00441B49 /* SketchRender.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE36099A198F1CCA00441B49 /* SketchRender.swift */; };
+		AE52D5331992112C00FCC6E3 /* Steve.atlas in Resources */ = {isa = PBXBuildFile; fileRef = AE52D5321992112C00FCC6E3 /* Steve.atlas */; };
 		AE5468431988D80000C55823 /* CGVector+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE5468411988D80000C55823 /* CGVector+Extensions.swift */; };
 		AE5468441988D80000C55823 /* CGFloat+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE5468421988D80000C55823 /* CGFloat+Extensions.swift */; };
 		AE5468471988D85500C55823 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = AE5468461988D85500C55823 /* GameScene.sks */; };
+		AE7B1909199284580043071B /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 018BAE3819877F090067C10C /* SpriteKit.framework */; };
+		AE7B19151992DBE80043071B /* SKScene+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE7B19141992DBE80043071B /* SKScene+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,9 +71,11 @@
 		AE23C73E199187420036E447 /* Sprites.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Sprites.xcassets; sourceTree = "<group>"; };
 		AE2D47A8199180ED00C95756 /* Sprites.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Sprites.atlas; sourceTree = "<group>"; };
 		AE36099A198F1CCA00441B49 /* SketchRender.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SketchRender.swift; sourceTree = "<group>"; };
+		AE52D5321992112C00FCC6E3 /* Steve.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Steve.atlas; sourceTree = "<group>"; };
 		AE5468411988D80000C55823 /* CGVector+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGVector+Extensions.swift"; sourceTree = "<group>"; };
 		AE5468421988D80000C55823 /* CGFloat+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGFloat+Extensions.swift"; sourceTree = "<group>"; };
 		AE5468461988D85500C55823 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
+		AE7B19141992DBE80043071B /* SKScene+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKScene+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -79,7 +83,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				018BAE3919877F090067C10C /* SpriteKit.framework in Frameworks */,
+				AE7B1909199284580043071B /* SpriteKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -129,6 +133,7 @@
 				AE36099A198F1CCA00441B49 /* SketchRender.swift */,
 				018BAE1C198779330067C10C /* Images.xcassets */,
 				AE23C73E199187420036E447 /* Sprites.xcassets */,
+				AE52D5321992112C00FCC6E3 /* Steve.atlas */,
 				AE2D47A8199180ED00C95756 /* Sprites.atlas */,
 				018BAE13198779330067C10C /* Supporting Files */,
 			);
@@ -171,6 +176,7 @@
 				92E2E744198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift */,
 				92E2E746198DB72300BABDB5 /* SKSpriteNode+Extensions.swift */,
 				9234A3EE198F029C0022246B /* SKNode+Extensions.swift */,
+				AE7B19141992DBE80043071B /* SKScene+Extensions.swift */,
 			);
 			name = Extensions;
 			sourceTree = "<group>";
@@ -270,6 +276,7 @@
 				018A322C198F6696009CDA21 /* 1.sks in Resources */,
 				9284FC2C1991A81F00B348CF /* background.mp3 in Resources */,
 				018BAE1D198779330067C10C /* Images.xcassets in Resources */,
+				AE52D5331992112C00FCC6E3 /* Steve.atlas in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -298,6 +305,7 @@
 				AE5468441988D80000C55823 /* CGFloat+Extensions.swift in Sources */,
 				018BAE3719877EDE0067C10C /* GameScene.swift in Sources */,
 				0155FA23198F39630098CE69 /* Platform.swift in Sources */,
+				AE7B19151992DBE80043071B /* SKScene+Extensions.swift in Sources */,
 				018BAE18198779330067C10C /* GameViewController.swift in Sources */,
 				018BAE16198779330067C10C /* AppDelegate.swift in Sources */,
 				0155FA21198EBDC80098CE69 /* LevelSelectScene.swift in Sources */,
@@ -373,6 +381,7 @@
 				METAL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -408,6 +417,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				METAL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -419,7 +429,7 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = PencilAdventure/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
@@ -436,12 +446,12 @@
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = PencilAdventure/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
-				SWIFT_OPTIMIZATION_LEVEL = "-Ofast";
+				SWIFT_OPTIMIZATION_LEVEL = "-Ounchecked";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

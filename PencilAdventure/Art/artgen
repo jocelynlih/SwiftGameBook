@@ -13,7 +13,7 @@ scriptVersion="1.0"
 scriptDescription="Art generation tool"
 
 # Here are the resample specs we'll use. They follow the Contents.json format of information.
-resampleSpecs="iphone|0|0|0 iphone|1x|0|0 iphone|2x|41.666|@2x ipad|0|0|0 ipad|1x|50|~ipad ipad|2x|100|@2x~ipad"
+resampleSpecs="iphone|0|0|0 iphone|1x|0|0 iphone|2x|41.666|@2x~iphone ipad|0|0|0 ipad|1x|50.000|~ipad ipad|2x|100.000|@2x~ipad"
 
 #################################################################################################################################
 #

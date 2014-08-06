@@ -8,10 +8,9 @@
 
 import SpriteKit
 
-extension SKSpriteNode
-    {
-    func log()
-    {
+extension SKSpriteNode {
+	
+    func log() {
         NSLog(" Name     : %@", name)
         NSLog(" Position : %@, %@", position.x, position.y)
         NSLog(" Size     : %@, %@", size.width, size.height)

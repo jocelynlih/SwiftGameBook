@@ -2,6 +2,7 @@
 //  ImageTools.swift
 //
 //  Created by Paul Nettle on 8/1/14.
+//  Copyright (c) 2014 backstopmedia. All rights reserved.
 //
 
 import SpriteKit
@@ -202,7 +203,6 @@ class ImageTools
 		
 		let widthPix = Int(CGImageGetWidth(image!.CGImage))
 		let heightPix = Int(CGImageGetHeight(image!.CGImage))
-		NSLog("Vectorizing image: %@ (%dx%d)", name ?? "unknown", widthPix, heightPix)
 		var imgData = getBitmapBitsForImage(image!)
 		var imgMap = getImageMap(imgData, widthPix: widthPix, heightPix: heightPix)
 		var totalPoints = 1
@@ -313,7 +313,7 @@ class ImageTools
 			return .None
 		}
 		
-		NSLog("vectorized %d points for [" + (name ?? "unnamed") + "]", totalPoints)
+		//NSLog("vectorized %d points for [" + (name ?? "unnamed") + "]", totalPoints)
 		
 		if name != .None
 		{

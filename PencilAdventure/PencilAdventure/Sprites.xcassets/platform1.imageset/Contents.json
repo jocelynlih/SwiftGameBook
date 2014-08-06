@@ -10,12 +10,7 @@
     {
       "idiom" : "iphone",
       "scale" : "2x",
-      "filename" : "platform1@2x.png"
-    },
-    {
-      "idiom" : "iphone",
-      "subtype" : "retina4",
-      "scale" : "2x"
+      "filename" : "platform1@2x~iphone.png"
     },
     {
       "idiom" : "ipad"
@@ -33,6 +28,6 @@
   ],
   "info" : {
     "version" : 1,
-    "author" : "xcode"
+    "author" : "artgen"
   }
 }
