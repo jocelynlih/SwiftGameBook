@@ -42,6 +42,13 @@ class GameScene : SKScene, SKPhysicsContactDelegate
         self.addChild(moving)
         //create bg layer, use a bit of color feature for book demo purpose
         let background = SKTexture(imageNamed: "background")
+			
+		if background == .None
+		{
+			NSLog("***********NO BACKGROUND")
+			return
+		}
+		
         background.filteringMode = SKTextureFilteringMode.Nearest
         //parallax background
         let scrollBgSprite = SKAction.moveByX(-background.size().width * 2.0, y: 0, duration: NSTimeInterval(0.1 * background.size().width * 2.0))
@@ -62,16 +69,17 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 		// Give our root scene a name
 		name = "SceneRroot"
 
-		//create pencil
-		pencil = SKSpriteNode(imageNamed: "pencil")
+		// Create pencil
+		var atlas = SKTextureAtlas(named: "Sprites")
+		var pencilTex = atlas.textureNamed("pencil")
+		pencil = SKSpriteNode(texture: pencilTex)
 		pencil.name = "pencil"
-		pencil.xScale = 0.5
-		pencil.yScale = 0.5
 		pencil.physicsBody = SKPhysicsBody(rectangleOfSize: pencil.size)
 		pencil.physicsBody.dynamic = true
         pencil.physicsBody.allowsRotation = false
         pencil.physicsBody.categoryBitMask = pencilCategory
         pencil.physicsBody.collisionBitMask = platformCategory | sharpenerCategory
+		pencil.physicsBody.mass = 0.3 // TODO - what to do about this?
         pencil.physicsBody.contactTestBitMask = sharpenerCategory
 		pencil.color = UIColor(red: 1, green: 1, blue: 0, alpha: 1)
 		pencil.position = CGPoint(x:frame.size.width/4, y:frame.size.height/2)
@@ -169,30 +177,32 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 			if let sprite = child as? SKSpriteNode
 			{
 				// We need a name
-				if sprite.name == nil
+				if let name = sprite.name
 				{
-					continue
-				}
-                let name = sprite.name
-                //moving platform and background
-                if name == "platform1" || name.hasPrefix("block") {
-                    movingPlatformFromLevel(sprite)
-                } else if name.hasPrefix("cloud") || name.hasPrefix("shrubbery") {
-                    movingBgFromLevel(sprite)
-                }
-                
-				if name == SketchName
-				{
-					// If it's hidden, let's add it to our list of possible sprites to un-hide
-					if sprite.hidden
-					{
-						sketchSprites += sprite
+					// TODO - this doesn't belong here - this is about animating the texture, not moving sprites
+					// also, I don't think this works always because sprites sometimes don't have textures? [Investigate]
+					if sprite.texture != .None {
+						//moving platform and background
+						if name == "platform1" || name.hasPrefix("block") {
+							movingPlatformFromLevel(sprite)
+						} else if name.hasPrefix("cloud") || name.hasPrefix("shrubbery") {
+							movingBgFromLevel(sprite)
+						}
 					}
-					else
+					
+					if name == SketchName
 					{
-						// This is the one that's already been visible, so let's make sure we get a different one
-						// by not adding it to the list. We do, however, want to hide it.
-						sprite.hidden = true
+						// If it's hidden, let's add it to our list of possible sprites to un-hide
+						if sprite.hidden
+						{
+							sketchSprites.append(sprite)
+						}
+						else
+						{
+							// This is the one that's already been visible, so let's make sure we get a different one
+							// by not adding it to the list. We do, however, want to hide it.
+							sprite.hidden = true
+						}
 					}
 				}
 			}
