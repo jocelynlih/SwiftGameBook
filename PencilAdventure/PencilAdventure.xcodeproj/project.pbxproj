@@ -17,6 +17,8 @@
 		018BAE29198779330067C10C /* PencilAdventureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018BAE28198779330067C10C /* PencilAdventureTests.swift */; };
 		018BAE3719877EDE0067C10C /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018BAE3619877EDE0067C10C /* GameScene.swift */; };
 		9234A3EF198F029C0022246B /* SKNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9234A3EE198F029C0022246B /* SKNode+Extensions.swift */; };
+		9284FC2A1991A4D300B348CF /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9284FC291991A4D300B348CF /* SoundManager.swift */; };
+		9284FC2C1991A81F00B348CF /* background.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9284FC2B1991A81F00B348CF /* background.mp3 */; };
 		92E2E745198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E2E744198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift */; };
 		92E2E747198DB72300BABDB5 /* SKSpriteNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E2E746198DB72300BABDB5 /* SKSpriteNode+Extensions.swift */; };
 		AE2056D3198B58CF00E7E302 /* CGPoint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2056D2198B58CF00E7E302 /* CGPoint+Extensions.swift */; };
@@ -59,6 +61,8 @@
 		018BAE3619877EDE0067C10C /* GameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		018BAE3819877F090067C10C /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
 		9234A3EE198F029C0022246B /* SKNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKNode+Extensions.swift"; sourceTree = "<group>"; };
+		9284FC291991A4D300B348CF /* SoundManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
+		9284FC2B1991A81F00B348CF /* background.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = background.mp3; sourceTree = "<group>"; };
 		92E2E744198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKShapeNode+Extensions.swift"; sourceTree = "<group>"; };
 		92E2E746198DB72300BABDB5 /* SKSpriteNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKSpriteNode+Extensions.swift"; sourceTree = "<group>"; };
 		AE2056D2198B58CF00E7E302 /* CGPoint+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extensions.swift"; sourceTree = "<group>"; };
@@ -123,6 +127,7 @@
 				0155FA20198EBDC80098CE69 /* LevelSelectScene.swift */,
 				018BAE3619877EDE0067C10C /* GameScene.swift */,
 				018BAE17198779330067C10C /* GameViewController.swift */,
+				9284FC291991A4D300B348CF /* SoundManager.swift */,
 				AE2056D6198B66D300E7E302 /* ImageTools.swift */,
 				018BAE19198779330067C10C /* Main.storyboard */,
 				AE36099A198F1CCA00441B49 /* SketchRender.swift */,
@@ -138,6 +143,7 @@
 		018BAE13198779330067C10C /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				9284FC2B1991A81F00B348CF /* background.mp3 */,
 				018BAE3819877F090067C10C /* SpriteKit.framework */,
 				018BAE14198779330067C10C /* Info.plist */,
 			);
@@ -268,6 +274,7 @@
 				018BAE1B198779330067C10C /* Main.storyboard in Resources */,
 				AE5468471988D85500C55823 /* GameScene.sks in Resources */,
 				018A322C198F6696009CDA21 /* 1.sks in Resources */,
+				9284FC2C1991A81F00B348CF /* background.mp3 in Resources */,
 				018BAE1D198779330067C10C /* Images.xcassets in Resources */,
 				AE52D5331992112C00FCC6E3 /* Steve.atlas in Resources */,
 			);
@@ -302,6 +309,7 @@
 				018BAE18198779330067C10C /* GameViewController.swift in Sources */,
 				018BAE16198779330067C10C /* AppDelegate.swift in Sources */,
 				0155FA21198EBDC80098CE69 /* LevelSelectScene.swift in Sources */,
+				9284FC2A1991A4D300B348CF /* SoundManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -369,7 +377,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				METAL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -406,7 +414,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				METAL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_INSTALL_OBJC_HEADER = NO;

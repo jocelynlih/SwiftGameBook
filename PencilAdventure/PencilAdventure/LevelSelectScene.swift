@@ -18,6 +18,7 @@ class LevelSelectScene : SKScene {
     }
     
     func addLevelSelectNode() {
+        SoundManager.toggleBackgroundMusic()
 		var atlas = SKTextureAtlas(named: "Sprites")
 		var blueTile = atlas.textureNamed("bluetile")
 		
@@ -52,6 +53,8 @@ class LevelSelectScene : SKScene {
 		//TODO: create loading level animation
         NSLog("loading level")
 		
+        SoundManager.restartBackgroundMusic()
+
 		if let newScene = GameScene.unarchiveFromFile(level) as? GameScene {
             self.scene.view.presentScene(newScene)
         }

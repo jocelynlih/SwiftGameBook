@@ -129,7 +129,7 @@ class SketchRender
 	{
 		if !parent.texture
 		{
-			return nil
+			return .None
 		}
 		
 		// Setup our material
@@ -140,8 +140,8 @@ class SketchRender
 		
 		for path in pathArray
 		{
-			var startPoint: CGVector? = nil
-			var endPoint: CGVector? = nil
+			var startPoint: CGVector?
+			var endPoint: CGVector?
 			
 			for point in path
 			{
