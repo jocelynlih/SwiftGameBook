@@ -74,7 +74,16 @@ class SketchRender
 					// for sprites, rather than specifying a generic name which is used to dynamically select the proper resolution/
 					// density at run time. So we'll do that here...
 					var img = UIImage(named: name)
+					if img == .None
+					{
+						continue
+					}
 					sprite.texture = SKTexture(image: img)
+					if sprite.texture == .None
+					{
+						NSLog("Unable to create texture from image for sprite named \(name)")
+						continue
+					}
 					
 					// TODO: We should cache sketches of similar sprites rather than create fresh copies for each.
 					//       Example: three instances of "cloud1" will each create 4 brand new sketch sprites for a
@@ -102,7 +111,7 @@ class SketchRender
 
 								// Set our size to that of our parent, taking it's scale into account
 								sketchSprite.size = CGSize(width: sprite.size.width / sprite.xScale, height: sprite.size.height / sprite.yScale)
-								
+
 								// All sketch sprites are hidden until we unhide them at random for animation
 								sketchSprite.hidden = true
 								

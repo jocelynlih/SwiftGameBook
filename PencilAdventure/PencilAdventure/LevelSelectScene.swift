@@ -13,7 +13,7 @@ class LevelSelectScene : SKScene {
 	let MaxLevels = 8
 	
     override func didMoveToView(view: SKView) {
-        self.backgroundColor = SKColor.whiteColor()
+		scene.backgroundColor = UIColor.whiteColor()
         addLevelSelectNode()
     }
     
@@ -32,21 +32,26 @@ class LevelSelectScene : SKScene {
             let level = SKSpriteNode(texture: blueTile)
             level.name = "\(i)"
 			level.position =  CGPoint(x: x, y: y)
+			level.xScale = getSceneScaleX()
+			level.yScale = getSceneScaleY()
             self.addChild(level)
 			
 			x += tileWidth + gap
         }
 		
+		// TODO: SKLabelNode isn't available on iOS 7 - if we plan to support that, we might consider an alternative
 		let levelLabel = SKLabelNode(text: "Please choose a level")
 		levelLabel.fontColor = SKColor.blueColor()
 		levelLabel.position = CGPointMake(view.frame.width / 2, y + tileHeight * 3)
+		levelLabel.xScale = getSceneScaleX()
+		levelLabel.yScale = getSceneScaleY()
 		self.addChild(levelLabel)
     }
 	
     func loadLevel(level: String) {
+		//TODO: create loading level animation
         NSLog("loading level")
-        //TODO: create loading level animation
-
+		
 		if let newScene = GameScene.unarchiveFromFile(level) as? GameScene {
             self.scene.view.presentScene(newScene)
         }
