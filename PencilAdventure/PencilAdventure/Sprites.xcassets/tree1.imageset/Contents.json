@@ -13,6 +13,11 @@
       "filename" : "tree1@2x.png"
     },
     {
+      "idiom" : "iphone",
+      "subtype" : "retina4",
+      "scale" : "2x"
+    },
+    {
       "idiom" : "ipad"
     },
     {
@@ -28,6 +33,6 @@
   ],
   "info" : {
     "version" : 1,
-    "author" : "artgen"
+    "author" : "xcode"
   }
 }

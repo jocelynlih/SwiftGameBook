@@ -23,6 +23,8 @@ class GameViewController: UIViewController
 		skView.showsFPS = true
 		skView.showsNodeCount = true
 		skView.ignoresSiblingOrder = true
+        
+        SoundManager.playBackgroundMusic()
     }
 	
     @IBAction func startGame(sender : AnyObject) {
