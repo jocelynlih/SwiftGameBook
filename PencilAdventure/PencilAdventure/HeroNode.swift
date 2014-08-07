@@ -45,5 +45,6 @@ public class HeroNode: SKSpriteNode {
             self.powerUpParticle.paused = true
             self.powerUpParticle.hidden = true
         }
+        self.runAction(SKAction.playSoundFileNamed("collision.mp3", waitForCompletion: false))
     }
 }

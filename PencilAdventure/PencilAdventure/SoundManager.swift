@@ -55,5 +55,4 @@ class SoundManager {
         BackgroundPlayer.currentTime = 0.0
         BackgroundPlayer.play()
     }
-
 }

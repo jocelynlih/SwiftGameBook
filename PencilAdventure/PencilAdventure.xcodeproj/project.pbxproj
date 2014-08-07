@@ -16,6 +16,7 @@
 		018BAE1D198779330067C10C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 018BAE1C198779330067C10C /* Images.xcassets */; };
 		018BAE29198779330067C10C /* PencilAdventureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018BAE28198779330067C10C /* PencilAdventureTests.swift */; };
 		018BAE3719877EDE0067C10C /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018BAE3619877EDE0067C10C /* GameScene.swift */; };
+		922E4D7A199318F10018EF7B /* collision.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 922E4D79199318F10018EF7B /* collision.mp3 */; };
 		9234A3EF198F029C0022246B /* SKNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9234A3EE198F029C0022246B /* SKNode+Extensions.swift */; };
 		9284FC2A1991A4D300B348CF /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9284FC291991A4D300B348CF /* SoundManager.swift */; };
 		9284FC2C1991A81F00B348CF /* background.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9284FC2B1991A81F00B348CF /* background.mp3 */; };
@@ -63,6 +64,7 @@
 		018BAE28198779330067C10C /* PencilAdventureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PencilAdventureTests.swift; sourceTree = "<group>"; };
 		018BAE3619877EDE0067C10C /* GameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		018BAE3819877F090067C10C /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
+		922E4D79199318F10018EF7B /* collision.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = collision.mp3; sourceTree = "<group>"; };
 		9234A3EE198F029C0022246B /* SKNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKNode+Extensions.swift"; sourceTree = "<group>"; };
 		9284FC291991A4D300B348CF /* SoundManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
 		9284FC2B1991A81F00B348CF /* background.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = background.mp3; sourceTree = "<group>"; };
@@ -137,8 +139,8 @@
 				018BAE17198779330067C10C /* GameViewController.swift */,
 				9284FC291991A4D300B348CF /* SoundManager.swift */,
 				AE2056D6198B66D300E7E302 /* ImageTools.swift */,
-				018BAE19198779330067C10C /* Main.storyboard */,
 				AE36099A198F1CCA00441B49 /* SketchRender.swift */,
+				018BAE19198779330067C10C /* Main.storyboard */,
 				018BAE1C198779330067C10C /* Images.xcassets */,
 				AE23C73E199187420036E447 /* Sprites.xcassets */,
 				AE52D5321992112C00FCC6E3 /* Steve.atlas */,
@@ -151,6 +153,7 @@
 		018BAE13198779330067C10C /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				922E4D79199318F10018EF7B /* collision.mp3 */,
 				9284FC2B1991A81F00B348CF /* background.mp3 */,
 				018BAE3819877F090067C10C /* SpriteKit.framework */,
 				018BAE14198779330067C10C /* Info.plist */,
@@ -296,6 +299,7 @@
 			files = (
 				9284FC321992F67B00B348CF /* PowerUpParticle.sks in Resources */,
 				AE23C73F199187420036E447 /* Sprites.xcassets in Resources */,
+				922E4D7A199318F10018EF7B /* collision.mp3 in Resources */,
 				AE2D47A9199180ED00C95756 /* Sprites.atlas in Resources */,
 				018BAE1B198779330067C10C /* Main.storyboard in Resources */,
 				AE5468471988D85500C55823 /* GameScene.sks in Resources */,
