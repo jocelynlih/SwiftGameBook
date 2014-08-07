@@ -19,6 +19,9 @@
 		9234A3EF198F029C0022246B /* SKNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9234A3EE198F029C0022246B /* SKNode+Extensions.swift */; };
 		9284FC2A1991A4D300B348CF /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9284FC291991A4D300B348CF /* SoundManager.swift */; };
 		9284FC2C1991A81F00B348CF /* background.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9284FC2B1991A81F00B348CF /* background.mp3 */; };
+		9284FC321992F67B00B348CF /* PowerUpParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = 9284FC301992F67B00B348CF /* PowerUpParticle.sks */; };
+		9284FC331992F67B00B348CF /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = 9284FC311992F67B00B348CF /* spark.png */; };
+		9284FC361993000600B348CF /* HeroNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9284FC351993000600B348CF /* HeroNode.swift */; };
 		92E2E745198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E2E744198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift */; };
 		92E2E747198DB72300BABDB5 /* SKSpriteNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E2E746198DB72300BABDB5 /* SKSpriteNode+Extensions.swift */; };
 		AE2056D3198B58CF00E7E302 /* CGPoint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2056D2198B58CF00E7E302 /* CGPoint+Extensions.swift */; };
@@ -63,6 +66,9 @@
 		9234A3EE198F029C0022246B /* SKNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKNode+Extensions.swift"; sourceTree = "<group>"; };
 		9284FC291991A4D300B348CF /* SoundManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
 		9284FC2B1991A81F00B348CF /* background.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = background.mp3; sourceTree = "<group>"; };
+		9284FC301992F67B00B348CF /* PowerUpParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = PowerUpParticle.sks; sourceTree = "<group>"; };
+		9284FC311992F67B00B348CF /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spark.png; sourceTree = "<group>"; };
+		9284FC351993000600B348CF /* HeroNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeroNode.swift; sourceTree = "<group>"; };
 		92E2E744198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKShapeNode+Extensions.swift"; sourceTree = "<group>"; };
 		92E2E746198DB72300BABDB5 /* SKSpriteNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKSpriteNode+Extensions.swift"; sourceTree = "<group>"; };
 		AE2056D2198B58CF00E7E302 /* CGPoint+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extensions.swift"; sourceTree = "<group>"; };
@@ -118,6 +124,8 @@
 		018BAE12198779330067C10C /* PencilAdventure */ = {
 			isa = PBXGroup;
 			children = (
+				9284FC341992FFD300B348CF /* Sprites */,
+				9284FC2F1992F65200B348CF /* Particles */,
 				92E2E743198DB68D00BABDB5 /* Extensions */,
 				AE5468451988D80D00C55823 /* Vector */,
 				018BAE15198779330067C10C /* AppDelegate.swift */,
@@ -165,6 +173,23 @@
 				018BAE27198779330067C10C /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		9284FC2F1992F65200B348CF /* Particles */ = {
+			isa = PBXGroup;
+			children = (
+				9284FC301992F67B00B348CF /* PowerUpParticle.sks */,
+				9284FC311992F67B00B348CF /* spark.png */,
+			);
+			name = Particles;
+			sourceTree = "<group>";
+		};
+		9284FC341992FFD300B348CF /* Sprites */ = {
+			isa = PBXGroup;
+			children = (
+				9284FC351993000600B348CF /* HeroNode.swift */,
+			);
+			name = Sprites;
 			sourceTree = "<group>";
 		};
 		92E2E743198DB68D00BABDB5 /* Extensions */ = {
@@ -269,10 +294,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9284FC321992F67B00B348CF /* PowerUpParticle.sks in Resources */,
 				AE23C73F199187420036E447 /* Sprites.xcassets in Resources */,
 				AE2D47A9199180ED00C95756 /* Sprites.atlas in Resources */,
 				018BAE1B198779330067C10C /* Main.storyboard in Resources */,
 				AE5468471988D85500C55823 /* GameScene.sks in Resources */,
+				9284FC331992F67B00B348CF /* spark.png in Resources */,
 				018A322C198F6696009CDA21 /* 1.sks in Resources */,
 				9284FC2C1991A81F00B348CF /* background.mp3 in Resources */,
 				018BAE1D198779330067C10C /* Images.xcassets in Resources */,
@@ -305,6 +332,7 @@
 				AE5468441988D80000C55823 /* CGFloat+Extensions.swift in Sources */,
 				018BAE3719877EDE0067C10C /* GameScene.swift in Sources */,
 				0155FA23198F39630098CE69 /* Platform.swift in Sources */,
+				9284FC361993000600B348CF /* HeroNode.swift in Sources */,
 				AE7B19151992DBE80043071B /* SKScene+Extensions.swift in Sources */,
 				018BAE18198779330067C10C /* GameViewController.swift in Sources */,
 				018BAE16198779330067C10C /* AppDelegate.swift in Sources */,

@@ -35,13 +35,11 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 	private var sketchAnimationTimer: NSTimer?
 	
 	// Steve (our hero)
-	private var steveTheSprite: SKSpriteNode!
-	private let SteveAnimationFPS = 25.0
-	private let SteveMaxFrames = 12
-	private let SteveTextureNameBase = "steve"
-	private var steveAtlas: SKTextureAtlas?
-	private var steveWalkingFrames = [SKTexture]()
-
+	private var steveTheSprite: HeroNode!
+    private let SteveMaxFrames = 12
+    private let SteveTextureNameBase = "steve"
+    private var steveWalkingFrames = [SKTexture]()
+    
 	override func didMoveToView(view: SKView)
 	{
         // Setup physics
@@ -77,7 +75,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 			let moveBgSpritesForever = SKAction.repeatActionForever(SKAction.sequence([scrollBgSprite,resetBgSprite]))
 
 			// Finally we can add the background tiles
-			for i in 0 ..< backgroundTileCount {
+			for i in 0..<backgroundTileCount {
 				let bgSprite = SKSpriteNode(texture: background)
 				bgSprite.size = frame.size
 				bgSprite.position = CGPoint(x: frame.size.width/2.0 + backgroundScrollDist * CGFloat(i), y: frame.size.height/2.0)
@@ -91,40 +89,22 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 		name = "SceneRroot"
 
 		// Create our hero
-		steveAtlas = SKTextureAtlas(named: "Steve")
-		if let atlas = steveAtlas {
-			for i in 1 ... SteveMaxFrames {
-				let texName = "\(SteveTextureNameBase)\(i)"
-				if let texture = atlas.textureNamed(texName) {
-					steveWalkingFrames.append(texture)
-				}
-			}
-			
-			steveTheSprite = SKSpriteNode(texture: steveWalkingFrames[0])
-			steveTheSprite.name = "steve"
-			steveTheSprite.xScale = getSceneScaleX()
-			steveTheSprite.yScale = getSceneScaleY()
-			steveTheSprite.physicsBody = SKPhysicsBody(rectangleOfSize: steveTheSprite.size)
-			steveTheSprite.physicsBody.dynamic = true
-			steveTheSprite.physicsBody.allowsRotation = false
-			steveTheSprite.physicsBody.categoryBitMask = heroCategory
-			steveTheSprite.physicsBody.collisionBitMask = levelCategory | sharpenerCategory
-			steveTheSprite.physicsBody.mass = 0.3 // TODO - what to do about this?
-			steveTheSprite.physicsBody.contactTestBitMask = sharpenerCategory
-			steveTheSprite.position = CGPoint(x:frame.size.width/4, y:frame.size.height/2)
-			steveTheSprite.zPosition = PlayerZPosition
-			
-			// (Steve is not a child, he's a 34-year old divorcee)
-			addChild(steveTheSprite)
+        let atlas = SKTextureAtlas(named: "Steve")
+        for i in 1 ... SteveMaxFrames {
+            let texName = "\(SteveTextureNameBase)\(i)"
+            if let texture = atlas.textureNamed(texName) {
+                steveWalkingFrames.append(texture)
+            }
+        }
+        
+        steveTheSprite = HeroNode(textures: steveWalkingFrames, xScale: getSceneScaleX(), yScale: getSceneScaleY(), postition: frame, zPosition: PlayerZPosition)
+        steveTheSprite.physicsBody.categoryBitMask = heroCategory
+        steveTheSprite.physicsBody.collisionBitMask = levelCategory | sharpenerCategory
+        steveTheSprite.physicsBody.contactTestBitMask = sharpenerCategory
+        
+        // (Steve is not a child, he's a 34-year old divorcee)
+        addChild(steveTheSprite)
 
-			// Run Steve, run!
-			steveTheSprite.runAction(
-				SKAction.repeatActionForever(
-					SKAction.animateWithTextures(steveWalkingFrames, timePerFrame:1.0 / SteveAnimationFPS, resize:false, restore:false)
-				), withKey:"steveRun"
-			)
-		}
-		
 		// Attach our sketch nodes to all sprites
 		SketchRender.attachSketchNodes(self)
 		
@@ -200,8 +180,8 @@ class GameScene : SKScene, SKPhysicsContactDelegate
     func didBeginContact(contact: SKPhysicsContact) {
 		if ( contact.bodyA.categoryBitMask & sharpenerCategory ) == sharpenerCategory ||
 			( contact.bodyB.categoryBitMask & sharpenerCategory ) == sharpenerCategory {
-			//TODO: HUD display show character gets extra life
 			NSLog("get extra life")
+                steveTheSprite.didGetPowerUp()
         }
     }
     
