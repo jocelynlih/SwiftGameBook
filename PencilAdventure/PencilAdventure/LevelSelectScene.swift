@@ -10,16 +10,16 @@ import SpriteKit
 
 class LevelSelectScene : SKScene {
   
-  var progressLoader: ProgressLoaderNode! = nil
+  let progressLoader = ProgressLoaderNode()
 	let MaxLevels = 8
 	
     override func didMoveToView(view: SKView) {
       scene.backgroundColor = UIColor.whiteColor()
       addProgressLoaderNode()
-        addLevelSelectNode()
+      addLevelSelectNode()
     }
     
-    func addLevelSelectNode() {
+    internal func addLevelSelectNode() {
         SoundManager.toggleBackgroundMusic()
 		var atlas = SKTextureAtlas(named: "Sprites")
 		var blueTile = atlas.textureNamed("bluetile")
@@ -54,11 +54,10 @@ class LevelSelectScene : SKScene {
     }
   
   
-  func addProgressLoaderNode () {
-    progressLoader = ProgressLoaderNode()
+  internal func addProgressLoaderNode () {
     progressLoader.position = CGPoint(x: view.frame.width / 2, y: view.frame.height / 2 + 100)
     progressLoader.setProgress(0)
-    self.addChild(progressLoader)
+    addChild(progressLoader)
   }
 	
   func loadLevel(level: String) {
@@ -68,15 +67,15 @@ class LevelSelectScene : SKScene {
     SoundManager.restartBackgroundMusic()
     
     // A few background working jobs added to examplify how it works.
-    work.append({
+    work.append {
       usleep(500000)
       return
-    })
+    }
     
-    work.append({
+    work.append {
       usleep(500000)
       return
-    })
+    }
     
     // Unarchive scene.
     work.append({
@@ -94,18 +93,14 @@ class LevelSelectScene : SKScene {
         if done == work.count {
           // Notify the main that that we're ready!
           dispatch_async(dispatch_get_main_queue()) {
-            self.presentGameScene(scene!)
+            self.scene.view.presentScene(scene!)
           }
         }
       }
     }
 
   }
-  
-  func presentGameScene (scene: SKScene) {
-    self.scene.view.presentScene(scene)
-  }
-  
+
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
       for touch: AnyObject in touches {
         let location = touch.locationInNode(self)
