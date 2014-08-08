@@ -16,6 +16,8 @@
 		018BAE1D198779330067C10C /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 018BAE1C198779330067C10C /* Images.xcassets */; };
 		018BAE29198779330067C10C /* PencilAdventureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018BAE28198779330067C10C /* PencilAdventureTests.swift */; };
 		018BAE3719877EDE0067C10C /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018BAE3619877EDE0067C10C /* GameScene.swift */; };
+		018BAE3919877F090067C10C /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 018BAE3819877F090067C10C /* SpriteKit.framework */; };
+		8A0D4A6A1992E527009D020B /* ProgressLoaderNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0D4A691992E527009D020B /* ProgressLoaderNode.swift */; };
 		922E4D7A199318F10018EF7B /* collision.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 922E4D79199318F10018EF7B /* collision.mp3 */; };
 		9234A3EF198F029C0022246B /* SKNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9234A3EE198F029C0022246B /* SKNode+Extensions.swift */; };
 		9284FC2A1991A4D300B348CF /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9284FC291991A4D300B348CF /* SoundManager.swift */; };
@@ -64,6 +66,7 @@
 		018BAE28198779330067C10C /* PencilAdventureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PencilAdventureTests.swift; sourceTree = "<group>"; };
 		018BAE3619877EDE0067C10C /* GameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		018BAE3819877F090067C10C /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
+		8A0D4A691992E527009D020B /* ProgressLoaderNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressLoaderNode.swift; sourceTree = "<group>"; };
 		922E4D79199318F10018EF7B /* collision.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = collision.mp3; sourceTree = "<group>"; };
 		9234A3EE198F029C0022246B /* SKNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKNode+Extensions.swift"; sourceTree = "<group>"; };
 		9284FC291991A4D300B348CF /* SoundManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
@@ -146,6 +149,7 @@
 				AE52D5321992112C00FCC6E3 /* Steve.atlas */,
 				AE2D47A8199180ED00C95756 /* Sprites.atlas */,
 				018BAE13198779330067C10C /* Supporting Files */,
+				8A0D4A691992E527009D020B /* ProgressLoaderNode.swift */,
 			);
 			path = PencilAdventure;
 			sourceTree = "<group>";
@@ -327,6 +331,7 @@
 			files = (
 				AE2056D5198B62B500E7E302 /* Point2D.swift in Sources */,
 				AE2056D3198B58CF00E7E302 /* CGPoint+Extensions.swift in Sources */,
+				8A0D4A6A1992E527009D020B /* ProgressLoaderNode.swift in Sources */,
 				AE5468431988D80000C55823 /* CGVector+Extensions.swift in Sources */,
 				AE36099B198F1CCA00441B49 /* SketchRender.swift in Sources */,
 				92E2E745198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift in Sources */,

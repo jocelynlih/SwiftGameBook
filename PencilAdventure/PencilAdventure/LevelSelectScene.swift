@@ -9,22 +9,25 @@
 import SpriteKit
 
 class LevelSelectScene : SKScene {
-   
+  
+  let progressLoader = ProgressLoaderNode()
 	let MaxLevels = 8
 	
     override func didMoveToView(view: SKView) {
-		scene.backgroundColor = UIColor.whiteColor()
-        addLevelSelectNode()
+      scene.backgroundColor = UIColor.whiteColor()
+      addProgressLoaderNode()
+      addLevelSelectNode()
     }
     
-    func addLevelSelectNode() {
+    internal func addLevelSelectNode() {
         SoundManager.toggleBackgroundMusic()
 		var atlas = SKTextureAtlas(named: "Sprites")
 		var blueTile = atlas.textureNamed("bluetile")
+
 		
-		var tileWidth = blueTile.size().width
-		var tileHeight = blueTile.size().height
-		var gap = tileWidth * 2
+      var tileWidth = blueTile.size().width
+      var tileHeight = blueTile.size().height
+      var gap = tileWidth * 2
 		
 		var selectorWidth = tileWidth * CGFloat(MaxLevels) + gap * CGFloat(MaxLevels - 1)
         var x = (view.frame.width - selectorWidth) / 2.0
@@ -47,36 +50,72 @@ class LevelSelectScene : SKScene {
 		levelLabel.xScale = getSceneScaleX()
 		levelLabel.yScale = getSceneScaleY()
 		self.addChild(levelLabel)
-    }
-	
-    func loadLevel(level: String) {
-		//TODO: create loading level animation
-        NSLog("loading level")
-		
-        SoundManager.restartBackgroundMusic()
 
-		if let newScene = GameScene.unarchiveFromFile(level) as? GameScene {
-            self.scene.view.presentScene(newScene)
-        }
+    }
+  
+  
+  internal func addProgressLoaderNode () {
+    progressLoader.position = CGPoint(x: view.frame.width / 2, y: view.frame.height / 2 + 100)
+    progressLoader.setProgress(0)
+    addChild(progressLoader)
+  }
+	
+  func loadLevel(level: String) {
+    var scene: GameScene? = nil
+    var work: Array<(Void) -> (Void)> = []
+    
+    SoundManager.restartBackgroundMusic()
+    
+    // A few background working jobs added to examplify how it works.
+    work.append {
+      usleep(500000)
+      return
     }
     
-    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        for touch: AnyObject in touches {
-            let location = touch.locationInNode(self)
-            let node = self.nodeAtPoint(location)
-			var loaded = false
-            if let buttonName = node.name
-			{
-				if buttonName == "1" {
-					//TODO: add more levels
-					loadLevel("1")
-					loaded = true
-				}
-			}
-			
-			if !loaded {
-				loadLevel("GameScene")
-			}
+    work.append {
+      usleep(500000)
+      return
+    }
+    
+    // Unarchive scene.
+    work.append({
+      scene = GameScene.unarchiveFromFile(level) as? GameScene
+    })
+
+    // Perform all the work and move the progress along, this is done in the background as to
+    // not block the main thread which renders the scene
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+      var done = 0
+      for job in work {
+        done++
+        self.progressLoader.setProgress(CGFloat(done) / CGFloat(work.count))
+        job()
+        if done == work.count {
+          // Notify the main that that we're ready!
+          dispatch_async(dispatch_get_main_queue()) {
+            self.scene.view.presentScene(scene!)
+          }
         }
+      }
+    }
+
+  }
+
+    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+      for touch: AnyObject in touches {
+        let location = touch.locationInNode(self)
+        let node = self.nodeAtPoint(location)
+        var loaded = false
+        if let buttonName = node.name {
+          if buttonName == "1" {
+            //TODO: add more levels
+            loadLevel("1")
+            loaded = true
+          }
+        }
+        if !loaded {
+          loadLevel("GameScene")
+        }
+      }
     }
 }

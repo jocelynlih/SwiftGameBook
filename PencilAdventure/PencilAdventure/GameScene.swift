@@ -85,7 +85,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 			}
 		}
 		
-		// Give our root scene a name
+		// Give our root scene a namex
 		name = "SceneRroot"
 
 		// Create our hero
