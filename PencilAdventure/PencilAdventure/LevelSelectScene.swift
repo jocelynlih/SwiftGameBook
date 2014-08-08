@@ -18,6 +18,7 @@ class LevelSelectScene : SKScene {
     }
     
     func addLevelSelectNode() {
+
         SoundManager.toggleBackgroundMusic()
 		var atlas = SKTextureAtlas(named: "Sprites")
 		var blueTile = atlas.textureNamed("bluetile")

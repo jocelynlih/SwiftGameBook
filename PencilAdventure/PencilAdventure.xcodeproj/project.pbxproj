@@ -23,8 +23,10 @@
 		9284FC321992F67B00B348CF /* PowerUpParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = 9284FC301992F67B00B348CF /* PowerUpParticle.sks */; };
 		9284FC331992F67B00B348CF /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = 9284FC311992F67B00B348CF /* spark.png */; };
 		9284FC361993000600B348CF /* HeroNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9284FC351993000600B348CF /* HeroNode.swift */; };
+		92D3262C19946C2000CFE3FC /* HUDNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D3262B19946C2000CFE3FC /* HUDNode.swift */; };
 		92E2E745198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E2E744198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift */; };
 		92E2E747198DB72300BABDB5 /* SKSpriteNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E2E746198DB72300BABDB5 /* SKSpriteNode+Extensions.swift */; };
+		92E3DAC7199486600089DAEE /* Macros.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E3DAC6199486600089DAEE /* Macros.swift */; };
 		AE2056D3198B58CF00E7E302 /* CGPoint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2056D2198B58CF00E7E302 /* CGPoint+Extensions.swift */; };
 		AE2056D5198B62B500E7E302 /* Point2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2056D4198B62B500E7E302 /* Point2D.swift */; };
 		AE2056D7198B66D300E7E302 /* ImageTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2056D6198B66D300E7E302 /* ImageTools.swift */; };
@@ -71,8 +73,10 @@
 		9284FC301992F67B00B348CF /* PowerUpParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = PowerUpParticle.sks; sourceTree = "<group>"; };
 		9284FC311992F67B00B348CF /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spark.png; sourceTree = "<group>"; };
 		9284FC351993000600B348CF /* HeroNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeroNode.swift; sourceTree = "<group>"; };
+		92D3262B19946C2000CFE3FC /* HUDNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HUDNode.swift; sourceTree = "<group>"; };
 		92E2E744198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKShapeNode+Extensions.swift"; sourceTree = "<group>"; };
 		92E2E746198DB72300BABDB5 /* SKSpriteNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKSpriteNode+Extensions.swift"; sourceTree = "<group>"; };
+		92E3DAC6199486600089DAEE /* Macros.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Macros.swift; sourceTree = "<group>"; };
 		AE2056D2198B58CF00E7E302 /* CGPoint+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extensions.swift"; sourceTree = "<group>"; };
 		AE2056D4198B62B500E7E302 /* Point2D.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Point2D.swift; sourceTree = "<group>"; };
 		AE2056D6198B66D300E7E302 /* ImageTools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageTools.swift; sourceTree = "<group>"; };
@@ -126,20 +130,14 @@
 		018BAE12198779330067C10C /* PencilAdventure */ = {
 			isa = PBXGroup;
 			children = (
-				9284FC341992FFD300B348CF /* Sprites */,
+				9274A9AC19946B85004BA541 /* Controller */,
+				9274A9AA19946B43004BA541 /* Helper */,
+				9274A9A919946A4B004BA541 /* Scenes */,
+				9284FC341992FFD300B348CF /* SpriteNodes */,
 				9284FC2F1992F65200B348CF /* Particles */,
 				92E2E743198DB68D00BABDB5 /* Extensions */,
 				AE5468451988D80D00C55823 /* Vector */,
 				018BAE15198779330067C10C /* AppDelegate.swift */,
-				AE5468461988D85500C55823 /* GameScene.sks */,
-				018A322B198F6696009CDA21 /* 1.sks */,
-				0155FA22198F39630098CE69 /* Platform.swift */,
-				0155FA20198EBDC80098CE69 /* LevelSelectScene.swift */,
-				018BAE3619877EDE0067C10C /* GameScene.swift */,
-				018BAE17198779330067C10C /* GameViewController.swift */,
-				9284FC291991A4D300B348CF /* SoundManager.swift */,
-				AE2056D6198B66D300E7E302 /* ImageTools.swift */,
-				AE36099A198F1CCA00441B49 /* SketchRender.swift */,
 				018BAE19198779330067C10C /* Main.storyboard */,
 				018BAE1C198779330067C10C /* Images.xcassets */,
 				AE23C73E199187420036E447 /* Sprites.xcassets */,
@@ -178,6 +176,44 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		9274A9A919946A4B004BA541 /* Scenes */ = {
+			isa = PBXGroup;
+			children = (
+				0155FA20198EBDC80098CE69 /* LevelSelectScene.swift */,
+				018BAE3619877EDE0067C10C /* GameScene.swift */,
+				9274A9AB19946B65004BA541 /* sks */,
+			);
+			name = Scenes;
+			sourceTree = "<group>";
+		};
+		9274A9AA19946B43004BA541 /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				AE2056D6198B66D300E7E302 /* ImageTools.swift */,
+				AE36099A198F1CCA00441B49 /* SketchRender.swift */,
+				9284FC291991A4D300B348CF /* SoundManager.swift */,
+				92E3DAC6199486600089DAEE /* Macros.swift */,
+			);
+			name = Helper;
+			sourceTree = "<group>";
+		};
+		9274A9AB19946B65004BA541 /* sks */ = {
+			isa = PBXGroup;
+			children = (
+				AE5468461988D85500C55823 /* GameScene.sks */,
+				018A322B198F6696009CDA21 /* 1.sks */,
+			);
+			name = sks;
+			sourceTree = "<group>";
+		};
+		9274A9AC19946B85004BA541 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				018BAE17198779330067C10C /* GameViewController.swift */,
+			);
+			name = Controller;
+			sourceTree = "<group>";
+		};
 		9284FC2F1992F65200B348CF /* Particles */ = {
 			isa = PBXGroup;
 			children = (
@@ -187,12 +223,14 @@
 			name = Particles;
 			sourceTree = "<group>";
 		};
-		9284FC341992FFD300B348CF /* Sprites */ = {
+		9284FC341992FFD300B348CF /* SpriteNodes */ = {
 			isa = PBXGroup;
 			children = (
+				92D3262B19946C2000CFE3FC /* HUDNode.swift */,
 				9284FC351993000600B348CF /* HeroNode.swift */,
+				0155FA22198F39630098CE69 /* Platform.swift */,
 			);
-			name = Sprites;
+			name = SpriteNodes;
 			sourceTree = "<group>";
 		};
 		92E2E743198DB68D00BABDB5 /* Extensions */ = {
@@ -332,7 +370,9 @@
 				92E2E745198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift in Sources */,
 				92E2E747198DB72300BABDB5 /* SKSpriteNode+Extensions.swift in Sources */,
 				9234A3EF198F029C0022246B /* SKNode+Extensions.swift in Sources */,
+				92D3262C19946C2000CFE3FC /* HUDNode.swift in Sources */,
 				AE2056D7198B66D300E7E302 /* ImageTools.swift in Sources */,
+				92E3DAC7199486600089DAEE /* Macros.swift in Sources */,
 				AE5468441988D80000C55823 /* CGFloat+Extensions.swift in Sources */,
 				018BAE3719877EDE0067C10C /* GameScene.swift in Sources */,
 				0155FA23198F39630098CE69 /* Platform.swift in Sources */,
