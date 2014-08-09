@@ -42,7 +42,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol
     private var steveWalkingFrames = [SKTexture]()
     
     // HUD Label
-    private var hudNode: HUDNode!
+    private var hudNode: LifeLineNode!
     
 	override func didMoveToView(view: SKView)
 	{
@@ -110,7 +110,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol
         // (Steve is not a child, he's a 34-year old divorcee)
         addChild(steveTheSprite)
 
-        hudNode = HUDNode(forScene: self)
+        hudNode = LifeLineNode(forScene: self)
         addChild(hudNode)
         
 		// Attach our sketch nodes to all sprites
@@ -191,7 +191,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol
 			( contact.bodyB.categoryBitMask & sharpenerCategory ) == sharpenerCategory {
 			NSLog("get extra life")
             steveTheSprite.didGetPowerUp()
-            hudNode.addPowerUpPoint(10)
+            hudNode.addLifeLine(0.1)
         }
     }
     
