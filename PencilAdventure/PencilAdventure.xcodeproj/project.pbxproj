@@ -26,6 +26,7 @@
 		9284FC361993000600B348CF /* HeroNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9284FC351993000600B348CF /* HeroNode.swift */; };
 		92D3262C19946C2000CFE3FC /* LifeLineNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D3262B19946C2000CFE3FC /* LifeLineNode.swift */; };
 		92E1CA321995D23E00BFA007 /* 2.sks in Resources */ = {isa = PBXBuildFile; fileRef = 92E1CA311995D23E00BFA007 /* 2.sks */; };
+		92E258151996A4AE003E503A /* StarCountNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E258141996A4AE003E503A /* StarCountNode.swift */; };
 		92E2E745198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E2E744198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift */; };
 		92E2E747198DB72300BABDB5 /* SKSpriteNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E2E746198DB72300BABDB5 /* SKSpriteNode+Extensions.swift */; };
 		92E3DAC7199486600089DAEE /* Macros.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E3DAC6199486600089DAEE /* Macros.swift */; };
@@ -78,6 +79,7 @@
 		9284FC351993000600B348CF /* HeroNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeroNode.swift; sourceTree = "<group>"; };
 		92D3262B19946C2000CFE3FC /* LifeLineNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LifeLineNode.swift; sourceTree = "<group>"; };
 		92E1CA311995D23E00BFA007 /* 2.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = 2.sks; sourceTree = "<group>"; };
+		92E258141996A4AE003E503A /* StarCountNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StarCountNode.swift; sourceTree = "<group>"; };
 		92E2E744198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKShapeNode+Extensions.swift"; sourceTree = "<group>"; };
 		92E2E746198DB72300BABDB5 /* SKSpriteNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKSpriteNode+Extensions.swift"; sourceTree = "<group>"; };
 		92E3DAC6199486600089DAEE /* Macros.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Macros.swift; sourceTree = "<group>"; };
@@ -235,6 +237,7 @@
 				92D3262B19946C2000CFE3FC /* LifeLineNode.swift */,
 				9284FC351993000600B348CF /* HeroNode.swift */,
 				0155FA22198F39630098CE69 /* Platform.swift */,
+				92E258141996A4AE003E503A /* StarCountNode.swift */,
 			);
 			name = Nodes;
 			sourceTree = "<group>";
@@ -377,6 +380,7 @@
 				AE36099B198F1CCA00441B49 /* SketchRender.swift in Sources */,
 				92E2E745198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift in Sources */,
 				92E2E747198DB72300BABDB5 /* SKSpriteNode+Extensions.swift in Sources */,
+				92E258151996A4AE003E503A /* StarCountNode.swift in Sources */,
 				9234A3EF198F029C0022246B /* SKNode+Extensions.swift in Sources */,
 				92D3262C19946C2000CFE3FC /* LifeLineNode.swift in Sources */,
 				AE2056D7198B66D300E7E302 /* ImageTools.swift in Sources */,

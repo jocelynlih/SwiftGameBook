@@ -28,15 +28,15 @@ public class LifeLineNode: SKCropNode {
         // Start reducing led from the pencil
         callbackAfter(0.10, subtractPoints)
         
-        let anchorPoint = CGPoint(x: 0, y: 0.5)
+        let anchorPoint = CGPoint(x: 0, y: 0)
         let pencilSprite = SKSpriteNode(imageNamed: "pencil")
         pencilSprite.anchorPoint = anchorPoint
         addChild(pencilSprite)
-        let mask = SKSpriteNode(color: SKColor.whiteColor().colorWithAlphaComponent(0.5), size: pencilSprite.size)
-        mask.anchorPoint = CGPoint(x: 0, y: 0.5)
+        let mask = SKSpriteNode(color: SKColor.yellowColor(), size: pencilSprite.size)
+        mask.anchorPoint = CGPoint(x: 0, y: 0)
         maskNode = mask
         
-        position = CGPointMake((scene.frame.width - pencilSprite.frame.width) / 2, scene.frame.height - (pencilSprite.frame.height * 3))
+        position = CGPointMake(scene.frame.width - (pencilSprite.size.width * 3), scene.frame.height - (pencilSprite.size.height * 4))
     }
     
     private func subtractPoints() {
@@ -54,7 +54,7 @@ public class LifeLineNode: SKCropNode {
         if lifeLine < 1 {
             lifeLine += life
         }
-        self.maskNode.yScale = lifeLine
+        maskNode.yScale = lifeLine
     }
     
 }
