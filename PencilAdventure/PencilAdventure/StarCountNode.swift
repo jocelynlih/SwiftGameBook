@@ -25,6 +25,10 @@ public class StarCountNode: SKLabelNode {
         zPosition = 100
     }
     
+    public func getPoints() -> Int {
+        return points
+    }
+    
     public func addPoint() {
         // Give more led till Mr Pencil reaches the end
         points += 1

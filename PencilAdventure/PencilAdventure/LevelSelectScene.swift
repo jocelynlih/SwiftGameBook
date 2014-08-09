@@ -51,7 +51,17 @@ class LevelSelectScene : SKScene {
 		levelLabel.xScale = getSceneScaleX()
 		levelLabel.yScale = getSceneScaleY()
 		self.addChild(levelLabel)
+        
+        if let highestScores = ScoreManager.getAllHighScores() {
+            let highScoreLabel = SKLabelNode(text: "High Score\n\(highestScores)")
 
+            highScoreLabel.fontColor = SKColor.darkGrayColor()
+            highScoreLabel.fontName = "Noteworthy"
+            highScoreLabel.position = CGPointMake(view.frame.width / 2, y - highScoreLabel.frame.height)
+            highScoreLabel.xScale = getSceneScaleX()
+            highScoreLabel.yScale = getSceneScaleY()
+            addChild(highScoreLabel)
+        }
     }
   
   
