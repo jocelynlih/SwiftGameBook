@@ -47,7 +47,8 @@ class GameScene : SKScene, SKPhysicsContactDelegate
         physicsWorld.contactDelegate = self
 
         // Create the background layer sprite
-        let background = SKTexture(imageNamed: "background")
+		// TODO: We need a better solution which allows us to select the proper background based on the level
+        let background = SKTexture(imageNamed: "house_background")
 			
 		if background != .None {
 			// Make it cheap to draw
@@ -57,7 +58,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 			// AspectFill (and because we're a landscape game) SpriteKit will automatically scale everything
 			// in the scene's viewport (including the background) to fill the screen horizontally. These
 			// scaled dimensions are stored in 'SKScene.frame'.
-			let backgroundWidth = frame.width
+			let backgroundWidth = frame.width // (we subtract two just to make sure we have a little overlap)
 			
 			// Our total scroll distance. We calculate this based on the width of the background sprite
 			// which will be tiled backgroundTiles times. Note that we scroll one less than this to avoid
@@ -170,7 +171,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
         let ground = SKSpriteNode(color: UIColor(white: 1.0, alpha: 0), size:CGSizeMake(frame.size.width, 5))
 		
 		// Find the ground (where our screen and view intersect at the bottom
-		ground.position = CGPointMake(frame.width/2, (frame.height - view.frame.size.height) / 2 / getSceneScaleY())
+		ground.position = CGPointMake(frame.width/2, (frame.height - view.frame.height) / 2 / getSceneScaleY())
         ground.physicsBody = SKPhysicsBody(rectangleOfSize: ground.size)
         ground.physicsBody.dynamic = false
         self.addChild(ground)

@@ -38,6 +38,7 @@
 		AE5468471988D85500C55823 /* GameScene.sks in Resources */ = {isa = PBXBuildFile; fileRef = AE5468461988D85500C55823 /* GameScene.sks */; };
 		AE7B1909199284580043071B /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 018BAE3819877F090067C10C /* SpriteKit.framework */; };
 		AE7B19151992DBE80043071B /* SKScene+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE7B19141992DBE80043071B /* SKScene+Extensions.swift */; };
+		AEE9430319959BCF009E36FE /* 2.sks in Resources */ = {isa = PBXBuildFile; fileRef = AEE9430219959BCF009E36FE /* 2.sks */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -86,6 +87,7 @@
 		AE5468421988D80000C55823 /* CGFloat+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGFloat+Extensions.swift"; sourceTree = "<group>"; };
 		AE5468461988D85500C55823 /* GameScene.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = GameScene.sks; sourceTree = "<group>"; };
 		AE7B19141992DBE80043071B /* SKScene+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKScene+Extensions.swift"; sourceTree = "<group>"; };
+		AEE9430219959BCF009E36FE /* 2.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = 2.sks; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,13 +130,13 @@
 		018BAE12198779330067C10C /* PencilAdventure */ = {
 			isa = PBXGroup;
 			children = (
-				9284FC341992FFD300B348CF /* Sprites */,
 				9284FC2F1992F65200B348CF /* Particles */,
 				92E2E743198DB68D00BABDB5 /* Extensions */,
 				AE5468451988D80D00C55823 /* Vector */,
+				9284FC341992FFD300B348CF /* Sprites */,
 				018BAE15198779330067C10C /* AppDelegate.swift */,
-				AE5468461988D85500C55823 /* GameScene.sks */,
 				018A322B198F6696009CDA21 /* 1.sks */,
+				AEE9430219959BCF009E36FE /* 2.sks */,
 				0155FA22198F39630098CE69 /* Platform.swift */,
 				0155FA20198EBDC80098CE69 /* LevelSelectScene.swift */,
 				018BAE3619877EDE0067C10C /* GameScene.swift */,
@@ -215,6 +217,7 @@
 		AE5468451988D80D00C55823 /* Vector */ = {
 			isa = PBXGroup;
 			children = (
+				AE5468461988D85500C55823 /* GameScene.sks */,
 				AE2056D4198B62B500E7E302 /* Point2D.swift */,
 			);
 			name = Vector;
@@ -306,6 +309,7 @@
 				AE2D47A9199180ED00C95756 /* Sprites.atlas in Resources */,
 				018BAE1B198779330067C10C /* Main.storyboard in Resources */,
 				AE5468471988D85500C55823 /* GameScene.sks in Resources */,
+				AEE9430319959BCF009E36FE /* 2.sks in Resources */,
 				9284FC331992F67B00B348CF /* spark.png in Resources */,
 				018A322C198F6696009CDA21 /* 1.sks in Resources */,
 				9284FC2C1991A81F00B348CF /* background.mp3 in Resources */,
