@@ -8,11 +8,9 @@
 
 import SpriteKit
 
-extension SKNode
-{
+extension SKNode {
 
-    class func unarchiveFromFile(file : String) -> SKNode?
-    {
+    class func unarchiveFromFile(file : String) -> SKNode? {
         let path = NSBundle.mainBundle().pathForResource(file, ofType: "sks")
         
         var sceneData = NSData.dataWithContentsOfFile(path, options: .DataReadingMappedIfSafe, error: nil)
@@ -35,8 +33,7 @@ extension SKNode
         return scene
     }
 
-    func getTransform() -> CGAffineTransform
-    {
+    func getTransform() -> CGAffineTransform {
         // Transform the path as specified by the sprite
         //
         // Note the order of operations we want to happen are specified in reverse. We want to scale first,
