@@ -41,7 +41,7 @@ public class HeroNode: SKSpriteNode {
     public func didGetPowerUp() {
         powerUpParticle.paused = false
         powerUpParticle.hidden = false
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(NSEC_PER_SEC / 2)), dispatch_get_main_queue()) {
+        callbackAfter(0.5) {
             self.powerUpParticle.paused = true
             self.powerUpParticle.hidden = true
         }

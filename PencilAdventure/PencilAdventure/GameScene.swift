@@ -8,13 +8,14 @@
 
 import SpriteKit
 
-class GameScene : SKScene, SKPhysicsContactDelegate
+class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol
 {
 	// The scene has sketch sprites added, which are in front of each sprite. We then need to ensure that our
 	// enemies and hero are in front of them (and their sketches). We'll play with these numbers as development
 	// progresses to ensure that they are indeed in front. Here are some good defaults:
 	private let EnemyZPosition: CGFloat = 30
 	private let PlayerZPosition: CGFloat = 90
+    private let HUDZPosition: CGFloat = 100
 
 	// Background layer
 	private let BackgroundScrollSpeed: CGFloat = 0.01
@@ -39,6 +40,9 @@ class GameScene : SKScene, SKPhysicsContactDelegate
     private let SteveMaxFrames = 12
     private let SteveTextureNameBase = "steve"
     private var steveWalkingFrames = [SKTexture]()
+    
+    // HUD Label
+    private var hudNode: LifeLineNode!
     
 	override func didMoveToView(view: SKView)
 	{
@@ -106,6 +110,9 @@ class GameScene : SKScene, SKPhysicsContactDelegate
         // (Steve is not a child, he's a 34-year old divorcee)
         addChild(steveTheSprite)
 
+        hudNode = LifeLineNode(forScene: self)
+        addChild(hudNode)
+        
 		// Attach our sketch nodes to all sprites
 		SketchRender.attachSketchNodes(self)
 		
@@ -154,6 +161,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate
     
 	override func update(currentTime: CFTimeInterval)
 	{
+
 	}
 	
     //TODO: we can add more action later, to keep the demo simple, we use touch to jump for now
@@ -182,7 +190,8 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 		if ( contact.bodyA.categoryBitMask & sharpenerCategory ) == sharpenerCategory ||
 			( contact.bodyB.categoryBitMask & sharpenerCategory ) == sharpenerCategory {
 			NSLog("get extra life")
-                steveTheSprite.didGetPowerUp()
+            steveTheSprite.didGetPowerUp()
+            hudNode.addLifeLine(0.1)
         }
     }
     
@@ -247,4 +256,8 @@ class GameScene : SKScene, SKPhysicsContactDelegate
 			sketchSprites[Int(rnd)].hidden = false
 		}
 	}
+    
+    func onGameOver() {
+        NSLog("Game Over")
+    }
 }
