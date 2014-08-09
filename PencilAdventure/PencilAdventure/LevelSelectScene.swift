@@ -45,7 +45,8 @@ class LevelSelectScene : SKScene {
 		
 		// TODO: SKLabelNode isn't available on iOS 7 - if we plan to support that, we might consider an alternative
 		let levelLabel = SKLabelNode(text: "Please choose a level")
-		levelLabel.fontColor = SKColor.blueColor()
+		levelLabel.fontColor = SKColor.darkGrayColor()
+        levelLabel.fontName = "Noteworthy"
 		levelLabel.position = CGPointMake(view.frame.width / 2, y + tileHeight * 3)
 		levelLabel.xScale = getSceneScaleX()
 		levelLabel.yScale = getSceneScaleY()
@@ -62,25 +63,14 @@ class LevelSelectScene : SKScene {
 	
   func loadLevel(level: String) {
     var scene: GameScene? = nil
-    var work: Array<(Void) -> (Void)> = []
+    var work: [Void -> Any?] = []
     
     SoundManager.restartBackgroundMusic()
     
-    // A few background working jobs added to examplify how it works.
-    work.append {
-      usleep(500000)
-      return
-    }
-    
-    work.append {
-      usleep(500000)
-      return
-    }
-    
     // Unarchive scene.
-    work.append({
+    work.append {
       scene = GameScene.unarchiveFromFile(level) as? GameScene
-    })
+    }
 
     // Perform all the work and move the progress along, this is done in the background as to
     // not block the main thread which renders the scene

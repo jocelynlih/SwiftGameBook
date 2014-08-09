@@ -7,9 +7,9 @@
 //
 
 import SpriteKit
+import GameKit
 
-class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol
-{
+class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
 	// The scene has sketch sprites added, which are in front of each sprite. We then need to ensure that our
 	// enemies and hero are in front of them (and their sketches). We'll play with these numbers as development
 	// progresses to ensure that they are indeed in front. Here are some good defaults:
@@ -47,54 +47,51 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol
     // Star Count
     private var starCountNode: StarCountNode!
     
-	override func didMoveToView(view: SKView)
-	{
+	override func didMoveToView(view: SKView) {
         // Setup physics
-		physicsWorld.gravity = CGVector(dx: 0.0, dy: -9.8 )
+		physicsWorld.gravity = CGVector(dx: 0.0, dy: -9.8)
         physicsWorld.contactDelegate = self
 
         // Create the background layer sprite
 		// TODO: We need a better solution which allows us to select the proper background based on the level
         let background = SKTexture(imageNamed: "house_background")
 			
-		if background != .None {
-			// Make it cheap to draw
-			background.filteringMode = SKTextureFilteringMode.Nearest
-			
-			// Note that our background width uses 'frame.width'. This is because our scene is set to
-			// AspectFill (and because we're a landscape game) SpriteKit will automatically scale everything
-			// in the scene's viewport (including the background) to fill the screen horizontally. These
-			// scaled dimensions are stored in 'SKScene.frame'.
-			let backgroundWidth = frame.width // (we subtract two just to make sure we have a little overlap)
-			
-			// Our total scroll distance. We calculate this based on the width of the background sprite
-			// which will be tiled backgroundTiles times. Note that we scroll one less than this to avoid
-			// scrolling past the trailing edge of the last tile.
-			let backgroundScrollDist = backgroundWidth * CGFloat(backgroundTileCount - 1)
-			let frameCenter = CGPoint(x: frame.width / 2.0, y: frame.height / 2.0)
+        // Make it cheap to draw
+        background.filteringMode = SKTextureFilteringMode.Nearest
+        
+        // Note that our background width uses 'frame.width'. This is because our scene is set to
+        // AspectFill (and because we're a landscape game) SpriteKit will automatically scale everything
+        // in the scene's viewport (including the background) to fill the screen horizontally. These
+        // scaled dimensions are stored in 'SKScene.frame'.
+        let backgroundWidth = frame.width // (we subtract two just to make sure we have a little overlap)
+        
+        // Our total scroll distance. We calculate this based on the width of the background sprite
+        // which will be tiled backgroundTiles times. Note that we scroll one less than this to avoid
+        // scrolling past the trailing edge of the last tile.
+        let backgroundScrollDist = backgroundWidth * CGFloat(backgroundTileCount - 1)
+        let frameCenter = CGPoint(x: frame.width / 2.0, y: frame.height / 2.0)
 
-			// Setup our parallax scrolling actions
-			//
-			// The speed is based on the distance we need to travel, the relative speed and the number of tiles we
-			// have to cover. Doing this allows our speed to stay the same even if we change backgroundTileCount.
-			let scrollTime = backgroundScrollDist * BackgroundScrollSpeed * CGFloat(backgroundTileCount)
-			let scrollBgSprite = SKAction.moveByX(-backgroundScrollDist, y: 0, duration: NSTimeInterval(scrollTime))
-			let resetBgSprite = SKAction.moveByX(backgroundScrollDist, y: 0, duration: 0.0)
-			let moveBgSpritesForever = SKAction.repeatActionForever(SKAction.sequence([scrollBgSprite,resetBgSprite]))
+        // Setup our parallax scrolling actions
+        //
+        // The speed is based on the distance we need to travel, the relative speed and the number of tiles we
+        // have to cover. Doing this allows our speed to stay the same even if we change backgroundTileCount.
+        let scrollTime = backgroundScrollDist * BackgroundScrollSpeed * CGFloat(backgroundTileCount)
+        let scrollBgSprite = SKAction.moveByX(-backgroundScrollDist, y: 0, duration: NSTimeInterval(scrollTime))
+        let resetBgSprite = SKAction.moveByX(backgroundScrollDist, y: 0, duration: 0.0)
+        let moveBgSpritesForever = SKAction.repeatActionForever(SKAction.sequence([scrollBgSprite,resetBgSprite]))
 
-			// Finally we can add the background tiles
-			for i in 0..<backgroundTileCount {
-				let bgSprite = SKSpriteNode(texture: background)
-				bgSprite.size = frame.size
-				bgSprite.position = CGPoint(x: frame.size.width/2.0 + backgroundScrollDist * CGFloat(i), y: frame.size.height/2.0)
-				bgSprite.zPosition = -10
-				bgSprite.runAction(moveBgSpritesForever)
-				addChild(bgSprite)
-			}
-		}
+        // Finally we can add the background tiles
+        for i in 0..<backgroundTileCount {
+            let bgSprite = SKSpriteNode(texture: background)
+            bgSprite.size = frame.size
+            bgSprite.position = CGPoint(x: frame.size.width/2.0 + backgroundScrollDist * CGFloat(i), y: frame.size.height/2.0)
+            bgSprite.zPosition = -10
+            bgSprite.runAction(moveBgSpritesForever)
+            addChild(bgSprite)
+        }
 		
 		// Give our root scene a namex
-		name = "SceneRroot"
+		name = "SceneRoot"
 
 		// Create our hero
         let atlas = SKTextureAtlas(named: "Steve")
@@ -113,7 +110,6 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol
         lifeLineNode = LifeLineNode(forScene: self)
         starCountNode = StarCountNode(forScene: self)
 
-        // (Steve is not a child, he's a 34-year old divorcee)
         addChild(steveTheSprite)
         addChild(lifeLineNode)
         addChild(starCountNode)
@@ -128,18 +124,14 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol
 		sketchAnimationTimer = NSTimer.scheduledTimerWithTimeInterval(1.0 / SketchAnimationFPS, target: self, selector: Selector("sketchAnimationTimer:"), userInfo: nil, repeats: true)
 	}
 	
-	private func scaleToFillScreenWithAspect(srcSize: CGSize, targetSize: CGSize) -> CGFloat
-	{
+	private func scaleToFillScreenWithAspect(srcSize: CGSize, targetSize: CGSize) -> CGFloat {
 		// Find the dimension that has to grow the most
 		let deltaWidth = abs(targetSize.width - srcSize.width)
 		let deltaHeight = abs(targetSize.height - srcSize.height)
 		
-		if deltaWidth > deltaHeight
-		{
+		if deltaWidth > deltaHeight {
 			return targetSize.width / srcSize.width
-		}
-		else
-		{
+		} else {
 			return targetSize.height / srcSize.height
 		}
 	}
@@ -164,8 +156,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol
         platform.runAction(movePlatformAndRemove)
     }
     
-	override func update(currentTime: CFTimeInterval)
-	{
+	override func update(currentTime: CFTimeInterval) {
 
 	}
 	
@@ -192,8 +183,8 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol
 
     
     func didBeginContact(contact: SKPhysicsContact) {
-		if ( contact.bodyA.categoryBitMask & sharpenerCategory ) == sharpenerCategory ||
-			( contact.bodyB.categoryBitMask & sharpenerCategory ) == sharpenerCategory {
+		if (contact.bodyA.categoryBitMask & sharpenerCategory) == sharpenerCategory ||
+			(contact.bodyB.categoryBitMask & sharpenerCategory) == sharpenerCategory {
 			NSLog("get extra life")
             steveTheSprite.didGetPowerUp()
             starCountNode.addPoint()
@@ -201,31 +192,25 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol
         }
     }
     
-    func sketchAnimationTimer(timer: NSTimer)
-    {
+    func sketchAnimationTimer(timer: NSTimer) {
         animateSketchSprites(self)
     }
     
-    private func animateSketchSprites(node: SKNode)
-	{
+    private func animateSketchSprites(node: SKNode) {
 		var sketchSprites: [SKSpriteNode] = []
 		
 		// Find our sketch sprites
-		for child in node.children as [SKNode]
-		{
+		for child in node.children as [SKNode] {
 			// Depth-first traversal
 			//
 			// Note that we don't bother to traverse into our sketch sprites
-			if child.name != SketchName
-			{
+			if child.name != SketchName {
 				animateSketchSprites(child)
 			}
 
-			if let sprite = child as? SKSpriteNode
-			{
+			if let sprite = child as? SKSpriteNode {
 				// We need a name
-				if let name = sprite.name
-				{
+				if let name = sprite.name {
 					// TODO - this doesn't belong here - this is about animating the texture, not moving sprites
 					// also, I don't think this always works because sprites sometimes don't have textures? [Investigate]
 					if sprite.texture != .None {
@@ -234,18 +219,14 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol
 							movingPlatformFromLevel(sprite)
 						} else if name.hasPrefix("cloud") || name.hasPrefix("shrubbery") {
 							movingBgFromLevel(sprite)
-						}
+                        }
 					}
 					
-					if name == SketchName
-					{
+					if name == SketchName {
 						// If it's hidden, let's add it to our list of possible sprites to un-hide
-						if sprite.hidden
-						{
+						if sprite.hidden {
 							sketchSprites.append(sprite)
-						}
-						else
-						{
+						} else {
 							// This is the one that's already been visible, so let's make sure we get a different one
 							// by not adding it to the list. We do, however, want to hide it.
 							sprite.hidden = true
@@ -256,8 +237,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol
 		}
 		
 		// If we found a set of sketch sprites, then unhide just one of them
-		if sketchSprites.count != 0
-		{
+		if sketchSprites.count != 0 {
 			let rnd = arc4random_uniform(UInt32(sketchSprites.count))
 			sketchSprites[Int(rnd)].hidden = false
 		}
