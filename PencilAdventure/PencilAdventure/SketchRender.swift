@@ -20,14 +20,22 @@ class SketchRender
 	// Material properties for sketch rendering
 	internal struct SketchMaterial
 	{
-		var lineDensity: CGFloat = 2 // lower numbers are more dense
-		var minSegmentLength: CGFloat = 1
-		var maxSegmentLength: CGFloat = 15
-		var pixJitterDistance: CGFloat = 2
-		var lineInteriorOverlapJitterDistance: CGFloat = 5
+		var lineDensity: CGFloat = 1 // lower numbers are more dense
+		var minSegmentLength: CGFloat = 10
+		var maxSegmentLength: CGFloat = 35
+		var pixJitterDistance: CGFloat = 3
+		var lineInteriorOverlapJitterDistance: CGFloat = 35
 		var lineEndpointOverlapJitterDistance: CGFloat = 5
-		var lineOffsetJitterDistance: CGFloat = 0
+		var lineOffsetJitterDistance: CGFloat = 4
 		var color: UIColor = UIColor.blackColor()
+//		var lineDensity: CGFloat = 2 // lower numbers are more dense
+//		var minSegmentLength: CGFloat = 1
+//		var maxSegmentLength: CGFloat = 15
+//		var pixJitterDistance: CGFloat = 2
+//		var lineInteriorOverlapJitterDistance: CGFloat = 5
+//		var lineEndpointOverlapJitterDistance: CGFloat = 5
+//		var lineOffsetJitterDistance: CGFloat = 0
+//		var color: UIColor = UIColor.blackColor()
 		
 		init(scaled: Bool = true)
 		{

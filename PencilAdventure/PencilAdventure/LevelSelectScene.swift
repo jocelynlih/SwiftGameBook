@@ -107,11 +107,15 @@ class LevelSelectScene : SKScene {
         let node = self.nodeAtPoint(location)
         var loaded = false
         if let buttonName = node.name {
-          if buttonName == "1" {
-            //TODO: add more levels
-            loadLevel("1")
-            loaded = true
-          }
+			//TODO: add more levels
+			if buttonName == "1" {
+				loadLevel("1")
+				loaded = true
+			}
+			if buttonName == "2" {
+				loadLevel("2")
+				loaded = true
+			}
         }
         if !loaded {
           loadLevel("GameScene")
