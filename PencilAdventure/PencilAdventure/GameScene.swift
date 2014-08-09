@@ -41,8 +41,11 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol
     private let SteveTextureNameBase = "steve"
     private var steveWalkingFrames = [SKTexture]()
     
-    // HUD Label
-    private var hudNode: LifeLineNode!
+    // Pencil lifeline
+    private var lifeLineNode: LifeLineNode!
+    
+    // Star Count
+    private var starCountNode: StarCountNode!
     
 	override func didMoveToView(view: SKView)
 	{
@@ -106,12 +109,14 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol
         steveTheSprite.physicsBody.categoryBitMask = heroCategory
         steveTheSprite.physicsBody.collisionBitMask = levelCategory | sharpenerCategory
         steveTheSprite.physicsBody.contactTestBitMask = sharpenerCategory
-        
+
+        lifeLineNode = LifeLineNode(forScene: self)
+        starCountNode = StarCountNode(forScene: self)
+
         // (Steve is not a child, he's a 34-year old divorcee)
         addChild(steveTheSprite)
-
-        hudNode = LifeLineNode(forScene: self)
-        addChild(hudNode)
+        addChild(lifeLineNode)
+        addChild(starCountNode)
         
 		// Attach our sketch nodes to all sprites
 		SketchRender.attachSketchNodes(self)
@@ -191,7 +196,8 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol
 			( contact.bodyB.categoryBitMask & sharpenerCategory ) == sharpenerCategory {
 			NSLog("get extra life")
             steveTheSprite.didGetPowerUp()
-            hudNode.addLifeLine(0.1)
+            starCountNode.addPoint()
+            lifeLineNode.addLifeLine(0.1)
         }
     }
     
