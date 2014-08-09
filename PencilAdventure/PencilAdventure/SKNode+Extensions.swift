@@ -22,7 +22,7 @@ extension SKNode
         let scene = archiver.decodeObjectForKey(NSKeyedArchiveRootObjectKey) as GameScene
         archiver.finishDecoding()
 
-		// Set the scene's scale mode to maintain aspect, but fill inside the screen (AspectFill)
+		// Set the scene's scale mode to maintain aspect, but fill the screen (AspectFill)
 		//
 		// Since we're a landscape-only game the screen will always be wider than it is tall. AspectFill
 		// will always end up filling the screen horizontally and cipping some graphics off the top/bottom
