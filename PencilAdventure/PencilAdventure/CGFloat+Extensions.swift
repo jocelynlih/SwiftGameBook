@@ -8,10 +8,9 @@
 
 import SpriteKit
 
-extension CGFloat
-{
-	static func randomScalar() -> CGFloat
-	{
+extension CGFloat {
+	
+	static func randomScalar() -> CGFloat {
 		// Get a random value - we use a large range for more precision in the scalar returned
 		let rand = Int(arc4random_uniform(UInt32(Int32.max)))
 
@@ -19,8 +18,7 @@ extension CGFloat
 		return CGFloat(rand) / CGFloat(Int(Int32.max))
 	}
 	
-	static func randomScalarSigned() -> CGFloat
-	{
+	static func randomScalarSigned() -> CGFloat {
 		// Get a random value - we use a large range for more precision in the scalar returned
 		let rand = Int(arc4random_uniform(UInt32(Int32.max)))
 		
@@ -28,13 +26,11 @@ extension CGFloat
 		return CGFloat(rand) / CGFloat(Int(Int32.max / 2)) - 1
 	}
 	
-	static func randomValue(range: CGFloat) -> CGFloat
-	{
+	static func randomValue(range: CGFloat) -> CGFloat {
 		return randomScalar() * range
 	}
 	
-	static func randomValueSigned(range: CGFloat) -> CGFloat
-	{
+	static func randomValueSigned(range: CGFloat) -> CGFloat {
 		return randomScalarSigned() * range
 	}
 }
