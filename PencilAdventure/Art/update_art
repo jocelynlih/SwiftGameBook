@@ -1,7 +1,7 @@
 #!/bin/bash
-./artgen -o -n Sprites Staging/Staging-Sprites.atlas ../PencilAdventure
-./artgen -o -n Steve Staging/Staging-Steve.atlas ../PencilAdventure
-./artgen -a -o -n Images Staging/Staging-Images.catalog ../PencilAdventure
+./artgen -n Sprites Staging/Staging-Sprites.atlas ../PencilAdventure
+./artgen -n Steve Staging/Staging-Steve.atlas ../PencilAdventure
+./artgen -a -n Images Staging/Staging-Images.catalog ../PencilAdventure
 
 # Here we generate a set of sprites NOT in a texture atlas so we can access them as UIImage files
-./artgen -a -o -n Sprites Staging/Staging-Sprites.atlas ../PencilAdventure
+./artgen -a -n Sprites Staging/Staging-Sprites.atlas ../PencilAdventure
