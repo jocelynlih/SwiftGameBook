@@ -90,7 +90,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
             addChild(bgSprite)
         }
 		
-		// Give our root scene a namex
+		// Give our root scene a name
 		name = "SceneRoot"
 
 		// Create our hero
@@ -244,6 +244,6 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
 	}
     
     func onGameOver() {
-        NSLog("Game Over")
+        ScoreManager.saveScore(starCountNode.getPoints(), forLevel: 1)
     }
 }
