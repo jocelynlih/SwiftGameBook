@@ -6,6 +6,9 @@
 #
 #################################################################################################################################
 
+# ImageMagick lives here:
+convertTool="/usr/local/bin/convert"
+
 exitSuccess="0"
 exitError="1"
 
@@ -64,7 +67,7 @@ function resample
 	info "  Resampling: $(baseOf "$srcfile") to $(baseOf "$dstfile") ($percent%)"
 
 	# Reduce the image
-	convert "$srcfile" -background none -resize "$percent"% "$dstfile"
+	$convertTool "$srcfile" -background none -resize "$percent"% "$dstfile"
 }
 
 # Call with outputDir srcBase resampleSpecs
@@ -119,13 +122,12 @@ function writeContentsJSON
 	echo '}' >> "$outFile"
 }
 
-# Call with $src $dst $overwriteFlag $resampleSpecs
+# Call with $src $dst $resampleSpecs
 function convertFiles
 {
 	local src="$1"
 	local dst="$2"
-	local overwrite="$3"
-	local specs="$4"
+	local specs="$3"
 
 	# Ensure we have a source directory
 	if [ ! -e "$src" ]; then
@@ -158,11 +160,6 @@ function convertFiles
 			continue
 		fi
 
-		# If we're overwriting and the dir exists, delete it so we can recreate it
-		if [ "$overwrite" == "1" ] && [ -e "$outputDir" ]; then
-			rm -rf "$outputDir"
-		fi
-
 		# If it doesn't exist, create it
 		if [ ! -e "$outputDir" ]; then
 			makeDir "$outputDir"
@@ -176,17 +173,12 @@ function convertFiles
 		# Base filename for the source file (i.e. foo/bar/baz.png returns baz.png)
 		local srcBase=$(baseOf "$srcFile")
 
-		# If we're using an asset catalog, that that up here, on a per-file basis
+		# If we're using an asset catalog, set that up here, on a per-file basis
 		if [ "$assetCatalog" == "1" ]; then
 			outputDir="$dst/$atlasOrAssetCatalogName.xcassets/$(prefixOf "$srcBase").imageset"
 			if [ ! -d "$outputDir" ] && [ -e "$outputDir" ]; then
 				error "'$outputDir' exists, but is not a directory!"
 				continue
-			fi
-
-			# If we're overwriting and the dir exists, delete it so we can recreate it
-			if [ "$overwrite" == "1" ] && [ -e "$outputDir" ]; then
-				rm -rf "$outputDir"
 			fi
 
 			# If it doesn't exist, create it
@@ -196,6 +188,7 @@ function convertFiles
 		fi
 
 		# For each specification that we're resampling to...
+		local filesUpdated=0
 		local loIFS=$IFS
 		IFS=$oIFS
 		for spec in $specs ; do
@@ -210,16 +203,17 @@ function convertFiles
 			# Our destination filename (foo/bar/bazrSuffix.png)
 			local dstFile="$outputDir/$(prefixOf "$srcBase")$suffix.$(extOf "$srcFile")"
 
-			# Check for overwrite
-			if [ -e "$dstFile" ] && [ "$overwrite" == "0" ]; then
+			# Check file dates
+			if [ -e "$dstFile" ] && [ "$dstFile" -nt "$srcFile" ]; then
 				continue
 			fi
 
 			# Finally, do the real work
 			resample "$srcFile" "$dstFile" "$percent"
+			filesUpdated=1
 		done
 
-		if [ "$assetCatalog" == "1" ]; then
+		if [ "$assetCatalog" == "1" ] && [ "$filesUpdated" == "1" ]; then
 			writeContentsJSON "$outputDir" "$srcBase" "$specs"
 		fi
 
@@ -235,9 +229,6 @@ function printUsage
 	info "  $scriptFile [options] src-directory xcassets-dir"
 	info "      Options:"
 	info "          -a      - Use Asset Catalog (the default is to generate a Texture Atlas)"
-	info "          -o      - Enable overwriting files"
-	info "                    For Texture Atlases, the entire *.atlas directory is recreated."
-	info "                    For Asset Catalogs, each *.imageset subdirecotry is recreated."
 	info "          -n name - Use this name prefix for the Texture Atlas or Asset Catalog"
 	info "                    Specifying \"foo\" will place files in an Asset Catalog named"
 	info "                    \"foo.xcassets\". Similarly, a Texture Atlas would be created"
@@ -260,23 +251,19 @@ info "$scriptFile v$scriptVersion - $scriptDescription"
 # Ensure our external processes are present
 verifyDependency "basename" "common tool for extracting the filename portion of a pathname"
 verifyDependency "dirname" "common tool for extracting the directory portion of a pathname"
-verifyDependency "convert" "part of the ImageMagick package, required for resizing images. You can get it through MacPorts, Brew or directly from http://www.imagemagick.org/"
+verifyDependency "$convertTool" "part of the ImageMagick package, required for resizing images. You can get it through MacPorts, Brew or directly from http://www.imagemagick.org/"
 
 # Default parameters
-overwriteFlag=0
 assetCatalog=0
 src=""
 dst=""
 atlasOrAssetCatalogName="Images"
 
 # Parse command-line parameters
-while getopts ":aohn:" opt; do
+while getopts ":ahn:" opt; do
 	case $opt in
 		a)
 			assetCatalog=1
-			;;
-		o)
-			overwriteFlag=1
 			;;
 		h)
 			printUsage
@@ -320,7 +307,7 @@ if [ "$#" -ne "0" ]; then
 fi
 
 # Do the work
-convertFiles "$src" "$dst" "$overwriteFlag" "$resampleSpecs"
+convertFiles "$src" "$dst" "$resampleSpecs"
 echo ""
 exit $exitSuccess
 

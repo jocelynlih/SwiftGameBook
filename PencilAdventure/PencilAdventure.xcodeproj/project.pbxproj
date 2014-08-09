@@ -23,7 +23,6 @@
 		9284FC2A1991A4D300B348CF /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9284FC291991A4D300B348CF /* SoundManager.swift */; };
 		9284FC2C1991A81F00B348CF /* background.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 9284FC2B1991A81F00B348CF /* background.mp3 */; };
 		9284FC321992F67B00B348CF /* PowerUpParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = 9284FC301992F67B00B348CF /* PowerUpParticle.sks */; };
-		9284FC331992F67B00B348CF /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = 9284FC311992F67B00B348CF /* spark.png */; };
 		9284FC361993000600B348CF /* HeroNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9284FC351993000600B348CF /* HeroNode.swift */; };
 		92D3262C19946C2000CFE3FC /* LifeLineNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92D3262B19946C2000CFE3FC /* LifeLineNode.swift */; };
 		92E1CA321995D23E00BFA007 /* 2.sks in Resources */ = {isa = PBXBuildFile; fileRef = 92E1CA311995D23E00BFA007 /* 2.sks */; };
@@ -77,7 +76,6 @@
 		9284FC291991A4D300B348CF /* SoundManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
 		9284FC2B1991A81F00B348CF /* background.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = background.mp3; sourceTree = "<group>"; };
 		9284FC301992F67B00B348CF /* PowerUpParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = PowerUpParticle.sks; sourceTree = "<group>"; };
-		9284FC311992F67B00B348CF /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spark.png; sourceTree = "<group>"; };
 		9284FC351993000600B348CF /* HeroNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HeroNode.swift; sourceTree = "<group>"; };
 		92D3262B19946C2000CFE3FC /* LifeLineNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LifeLineNode.swift; sourceTree = "<group>"; };
 		92E1CA311995D23E00BFA007 /* 2.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = 2.sks; sourceTree = "<group>"; };
@@ -228,7 +226,6 @@
 			isa = PBXGroup;
 			children = (
 				9284FC301992F67B00B348CF /* PowerUpParticle.sks */,
-				9284FC311992F67B00B348CF /* spark.png */,
 			);
 			name = Particles;
 			sourceTree = "<group>";
@@ -274,6 +271,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 018BAE2C198779330067C10C /* Build configuration list for PBXNativeTarget "PencilAdventure" */;
 			buildPhases = (
+				AEF6AE801996D71200E58C03 /* ShellScript */,
 				018BAE0C198779330067C10C /* Sources */,
 				018BAE0D198779330067C10C /* Frameworks */,
 				018BAE0E198779330067C10C /* Resources */,
@@ -354,7 +352,6 @@
 				018BAE1B198779330067C10C /* Main.storyboard in Resources */,
 				AE5468471988D85500C55823 /* GameScene.sks in Resources */,
 				92E1CA321995D23E00BFA007 /* 2.sks in Resources */,
-				9284FC331992F67B00B348CF /* spark.png in Resources */,
 				018A322C198F6696009CDA21 /* 1.sks in Resources */,
 				9284FC2C1991A81F00B348CF /* background.mp3 in Resources */,
 				018BAE1D198779330067C10C /* Images.xcassets in Resources */,
@@ -370,6 +367,22 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		AEF6AE801996D71200E58C03 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "cd \"$SOURCE_ROOT\"/Art\npwd\n./update_art";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		018BAE0C198779330067C10C /* Sources */ = {
