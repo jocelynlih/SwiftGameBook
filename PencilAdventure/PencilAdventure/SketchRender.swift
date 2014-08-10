@@ -19,6 +19,7 @@ class SketchRender {
 	
 	// Material properties for sketch rendering
 	internal struct SketchMaterial {
+		let SketchTuneHeight: CGFloat = 1536.0
 		var lineDensity: CGFloat = 1 // lower numbers are more dense
 		var minSegmentLength: CGFloat = 10
 		var maxSegmentLength: CGFloat = 35
@@ -37,9 +38,18 @@ class SketchRender {
 //		var color: UIColor = UIColor.blackColor()
 		
 		init(scaled: Bool = true) {
-			// Some properties need to take into account the backing scale (i.e. *2 for retina displays)
-			// TODO: I'm not sure this is entirely correct. The iPhone looks pretty different from the retina ipad
-			let scale = UIScreen.mainScreen().scale
+			// Some of our material properties work on a per-pixel level. And since pixels are different sizes
+			// on different devices, we need to take that into account. Normally, we would just use the screen's
+			// scale factor (UIScreen.mainScreen().scale) but that doesn't actually give us all the information
+			// we need to properly scale across all devices. Consider retina iPhone devices and retina iPad devices
+			// will have the same scale factor, which means that we'll scale the material properties the same, but
+			// the artwork for each will be different sizes because the retina iPhone's screen isn't the same
+			// resolution as the iPad's screen. This would result in larger sketch renders on top of the retina
+			// iPhone's screen.
+			//
+			// The solution is to tune our material for a specific device (in this case, retina iPads) and then
+			// scale the other devices based on that constant, which we'll call "SketchTuneHeight".
+			let scale = UIScreen.mainScreen().currentMode.size.height / SketchTuneHeight
 			
 			minSegmentLength *= scale
 			maxSegmentLength *= scale
