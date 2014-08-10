@@ -10,12 +10,11 @@ import SpriteKit
 
 class LevelSelectScene : SKScene {
   
-  let progressLoader = ProgressLoaderNode()
-	let MaxLevels = 8
+	private var progressLoader: ProgressLoaderNode!
+	private let MaxLevels = 8
 	
     override func didMoveToView(view: SKView) {
       scene.backgroundColor = UIColor.whiteColor()
-      addProgressLoaderNode()
       addLevelSelectNode()
     }
     
@@ -66,6 +65,7 @@ class LevelSelectScene : SKScene {
   
   
   internal func addProgressLoaderNode () {
+	progressLoader = ProgressLoaderNode(scene: self)
     progressLoader.position = CGPoint(x: view.frame.width / 2, y: view.frame.height / 2 + 100)
     progressLoader.setProgress(0)
     addChild(progressLoader)
@@ -76,7 +76,10 @@ class LevelSelectScene : SKScene {
     var work: [Void -> Any?] = []
     
     SoundManager.restartBackgroundMusic()
-    
+	
+	// Add our progress to the scene
+	addProgressLoaderNode()
+	
     // Unarchive scene.
     work.append {
       scene = GameScene.unarchiveFromFile(level) as? GameScene

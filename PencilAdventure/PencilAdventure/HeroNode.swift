@@ -8,32 +8,49 @@
 
 import SpriteKit
 
+// Note that these would normally be class properties, but Swift doesn't currently support class properties.
+let SteveMaxFrames = 12
+let SteveTextureNameBase = "steve"
+var steveWalkingFrames = [SKTexture]()
+
 public class HeroNode: SKSpriteNode {
 
     private let SteveAnimationFPS = 25.0
     private var powerUpParticle = SKEmitterNode(fileNamed: "PowerUpParticle")
     
-    convenience init(textures: [SKTexture]!, xScale: CGFloat, yScale: CGFloat, postition: CGRect, zPosition: CGFloat) {
-        
-        self.init(texture: textures[0])
-        
-        self.name = "steve"
-        self.xScale = xScale
-        self.yScale = yScale
-        self.physicsBody = SKPhysicsBody(rectangleOfSize: self.size)
-        self.physicsBody.dynamic = true
-        self.physicsBody.allowsRotation = false
-        self.physicsBody.mass = 0.3 // TODO - what to do about this?
-        self.position = CGPoint(x: postition.size.width/4, y: postition.size.height/2)
-        self.zPosition = zPosition
+	convenience init(scene: SKScene, withPhysicsBody: Bool) {
+
+		let atlas = SKTextureAtlas(named: "Steve")
+		for i in 1 ... SteveMaxFrames {
+			let texName = "\(SteveTextureNameBase)\(i)"
+			if let texture = atlas.textureNamed(texName) {
+				steveWalkingFrames.append(texture)
+			}
+		}
+        self.init(texture: steveWalkingFrames[0])
+		
+        name = "steve"
+        xScale = scene.getSceneScaleX()
+        yScale = scene.getSceneScaleY()
+        zPosition = HeroZPosition
 
         powerUpParticle.paused = true
-        
+		
+		if withPhysicsBody {
+			physicsBody = SKPhysicsBody(rectangleOfSize: self.size)
+			physicsBody.dynamic = true
+			physicsBody.allowsRotation = false
+			physicsBody.mass = 0.3 // TODO - what to do about this?
+			physicsBody.categoryBitMask = heroCategory
+			physicsBody.collisionBitMask = levelCategory | sharpenerCategory
+			physicsBody.contactTestBitMask = sharpenerCategory
+		}
+		
         self.addChild(powerUpParticle)
         
         self.runAction(
             SKAction.repeatActionForever(
-                SKAction.animateWithTextures(textures, timePerFrame:1.0 / SteveAnimationFPS, resize:false, restore:false)
+                SKAction.animateWithTextures(steveWalkingFrames, timePerFrame:1.0 / SteveAnimationFPS, resize:false, restore:false)
             ), withKey:"steveRun"
         )
     }
