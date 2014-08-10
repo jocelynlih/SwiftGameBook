@@ -9,14 +9,23 @@
 import SpriteKit
 import GameKit
 
-class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
-	// The scene has sketch sprites added, which are in front of each sprite. We then need to ensure that our
-	// enemies and hero are in front of them (and their sketches). We'll play with these numbers as development
-	// progresses to ensure that they are indeed in front. Here are some good defaults:
-	private let EnemyZPosition: CGFloat = 30
-	private let PlayerZPosition: CGFloat = 90
-    private let HUDZPosition: CGFloat = 100
+// The scene has sketch sprites added, which are in front of each sprite. We then need to ensure that our
+// enemies and hero are in front of them (and their sketches). We'll play with these numbers as development
+// progresses to ensure that they are indeed in front. Here are some good defaults:
+//
+// Note that these would normally be class properties, but Swift doesn't currently support class properties.
+let EnemyZPosition: CGFloat = 30
+let HeroZPosition: CGFloat = 90
+let HUDZPosition: CGFloat = 100
 
+// Category masks (including our hero, items that make up the level, etc.)
+//
+// Note that these would normally be class properties, but Swift doesn't currently support class properties.
+let heroCategory: UInt32 = 1 << 0
+let levelCategory: UInt32 = 1 << 1
+let sharpenerCategory: UInt32 = 1 << 2
+
+class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
 	// Background layer
 	private let BackgroundScrollSpeed: CGFloat = 0.01
     private var background:SKTexture!
@@ -26,20 +35,12 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
 	// their sizes.
 	private let backgroundTileCount = 2
 	
-    // Category masks (including our hero, items that make up the level, etc.)
-    private let heroCategory: UInt32 = 1 << 0
-    private let levelCategory: UInt32 = 1 << 1
-    private let sharpenerCategory: UInt32 = 1 << 2
-	
 	// Sketch lines animation
 	private let SketchAnimationFPS = 8.0
 	private var sketchAnimationTimer: NSTimer?
 	
 	// Steve (our hero)
 	private var steveTheSprite: HeroNode!
-    private let SteveMaxFrames = 12
-    private let SteveTextureNameBase = "steve"
-    private var steveWalkingFrames = [SKTexture]()
     
     // Pencil lifeline
     private var lifeLineNode: LifeLineNode!
@@ -94,18 +95,8 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
 		name = "SceneRoot"
 
 		// Create our hero
-        let atlas = SKTextureAtlas(named: "Steve")
-        for i in 1 ... SteveMaxFrames {
-            let texName = "\(SteveTextureNameBase)\(i)"
-            if let texture = atlas.textureNamed(texName) {
-                steveWalkingFrames.append(texture)
-            }
-        }
-        
-        steveTheSprite = HeroNode(textures: steveWalkingFrames, xScale: getSceneScaleX(), yScale: getSceneScaleY(), postition: frame, zPosition: PlayerZPosition)
-        steveTheSprite.physicsBody.categoryBitMask = heroCategory
-        steveTheSprite.physicsBody.collisionBitMask = levelCategory | sharpenerCategory
-        steveTheSprite.physicsBody.contactTestBitMask = sharpenerCategory
+		steveTheSprite = HeroNode(scene: self, withPhysicsBody: true)
+		steveTheSprite.position = CGPoint(x: scene.frame.size.width/4, y: scene.frame.size.height/2)
 
         lifeLineNode = LifeLineNode(forScene: self)
         starCountNode = StarCountNode(forScene: self)
@@ -213,14 +204,14 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
 				if let name = sprite.name {
 					// TODO - this doesn't belong here - this is about animating the texture, not moving sprites
 					// also, I don't think this always works because sprites sometimes don't have textures? [Investigate]
-					if sprite.texture != .None {
-						//moving platform and background
-						if name == "platform1" || name.hasPrefix("block") {
-							movingPlatformFromLevel(sprite)
-						} else if name.hasPrefix("cloud") || name.hasPrefix("shrubbery") {
-							movingBgFromLevel(sprite)
-                        }
-					}
+//					if sprite.texture != .None {
+//						//moving platform and background
+//						if name == "platform1" || name.hasPrefix("block") {
+//							movingPlatformFromLevel(sprite)
+//						} else if name.hasPrefix("cloud") || name.hasPrefix("shrubbery") {
+//							movingBgFromLevel(sprite)
+//                        }
+//					}
 					
 					if name == SketchName {
 						// If it's hidden, let's add it to our list of possible sprites to un-hide
