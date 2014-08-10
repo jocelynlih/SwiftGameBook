@@ -55,9 +55,6 @@ function makeDir
 }
 
 # Call with resample <source file> <dest file> <percentage size reduction>
-#
-# Note that this routine detects the existence of 9-patches and redirects to the routine
-# for resampling 9-pathces.
 function resample
 {
 	local srcfile="$1"
@@ -172,6 +169,11 @@ function convertFiles
 	for srcFile in $srcFiles; do
 		# Base filename for the source file (i.e. foo/bar/baz.png returns baz.png)
 		local srcBase=$(baseOf "$srcFile")
+
+		# Ignore hidden files
+		if [ `echo "$srcBase" | cut -b 1` = "." ]; then
+			continue
+		fi
 
 		# If we're using an asset catalog, set that up here, on a per-file basis
 		if [ "$assetCatalog" == "1" ]; then
