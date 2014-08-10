@@ -10,7 +10,12 @@
     {
       "idiom" : "iphone",
       "scale" : "2x",
-      "filename" : "sketchTexture@2x~iphone.png"
+      "filename" : "health@2x~iphone.png"
+    },
+    {
+      "idiom" : "iphone",
+      "subtype" : "retina4",
+      "scale" : "2x"
     },
     {
       "idiom" : "ipad"
@@ -18,16 +23,16 @@
     {
       "idiom" : "ipad",
       "scale" : "1x",
-      "filename" : "sketchTexture~ipad.png"
+      "filename" : "health~ipad.png"
     },
     {
       "idiom" : "ipad",
       "scale" : "2x",
-      "filename" : "sketchTexture@2x~ipad.png"
+      "filename" : "health@2x~ipad.png"
     }
   ],
   "info" : {
     "version" : 1,
-    "author" : "artgen"
+    "author" : "xcode"
   }
 }

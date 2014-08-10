@@ -28,7 +28,7 @@ class GameViewController: UIViewController
 	
     @IBAction func startGame(sender : AnyObject) {
         //load level select scene
-		levelScene = LevelSelectScene(size: CGSizeMake(self.view.frame.width, self.view.frame.height))
+		levelScene = LevelSelectScene(size: CGSize(width: view.frame.width, height: view.frame.height))
 		let skView = self.view as SKView
 		skView.presentScene(levelScene)
 		

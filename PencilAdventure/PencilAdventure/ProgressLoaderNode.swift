@@ -20,6 +20,9 @@ class ProgressLoaderNode: SKCropNode {
 	init (scene: SKScene) {
 		super.init()
 		
+		xScale = scene.getSceneScaleX()
+		yScale = scene.getSceneScaleY()
+		
 		// Add our progress background
 		progressBarSprite = SKSpriteNode(imageNamed: "progress")
 		self.addChild(progressBarSprite)
