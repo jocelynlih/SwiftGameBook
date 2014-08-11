@@ -11,7 +11,7 @@ import SpriteKit
 //
 // Example: [ "cloud1", "platform1" ]
 let forceRevectorization: [String] = [ ]
-let disableCache = false
+let disableCache = true
 
 // Constants
 let LeftNeighborMask = 0x01

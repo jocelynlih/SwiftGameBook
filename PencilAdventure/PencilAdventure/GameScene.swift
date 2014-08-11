@@ -195,8 +195,8 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
     private func addGroundLevel() {
 		let ground = SKSpriteNode(color: UIColor(white: 1.0, alpha: 0), size:CGSize(width: frame.size.width, height: 5))
 		
-		// Find the ground (where our screen and view intersect at the bottom
-		ground.position = CGPoint(x: self.frame.size.width/2, y: self.frame.origin.y)
+		// The ground is at the bottom of our viewable area
+		ground.position = CGPoint(x: self.frame.size.width/2, y: self.viewableArea.origin.y)
         ground.physicsBody = SKPhysicsBody(rectangleOfSize: ground.size)
         ground.physicsBody.dynamic = false
         //TODO: need to have this comment out for building the game level.
@@ -205,7 +205,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
         self.addChild(ground)
         // add a wall to the left edge of view and detect if character runs into it
         let wall = SKSpriteNode(color: UIColor(white: 1.0, alpha: 0), size: CGSize(width: 5, height: frame.size.height))
-        wall.position = CGPoint(x: self.frame.origin.x, y: self.frame.size.height/2)
+        wall.position = CGPoint(x: self.viewableArea.origin.x, y: self.viewableArea.size.height/2)
         wall.physicsBody = SKPhysicsBody(rectangleOfSize: wall.size)
         wall.physicsBody.dynamic = false
         wall.physicsBody.categoryBitMask = groundCategory
