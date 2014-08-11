@@ -12,12 +12,16 @@ import SpriteKit
 let SteveMaxFrames = 12
 let SteveTextureNameBase = "steve"
 var steveWalkingFrames = [SKTexture]()
+//currently Steve can run, jump and Die
+public enum HeroState: UInt32 {
+    case Run=0, Jump, PowerUp, Death
+}
 
 public class HeroNode: SKSpriteNode {
 
     private let SteveAnimationFPS = 25.0
     private var powerUpParticle = SKEmitterNode(fileNamed: "PowerUpParticle")
-    
+    public var heroState = HeroState.Run
 	convenience init(scene: SKScene, withPhysicsBody: Bool) {
 
 		let atlas = SKTextureAtlas(named: "Steve")
@@ -33,17 +37,17 @@ public class HeroNode: SKSpriteNode {
         xScale = scene.getSceneScaleX()
         yScale = scene.getSceneScaleY()
         zPosition = HeroZPosition
-
+        speed = 1
         powerUpParticle.paused = true
 		
 		if withPhysicsBody {
 			physicsBody = SKPhysicsBody(rectangleOfSize: self.size)
 			physicsBody.dynamic = true
 			physicsBody.allowsRotation = false
-			physicsBody.mass = 0.3 // TODO - what to do about this?
+			physicsBody.mass = 0.6 // TODO - what to do about this?
 			physicsBody.categoryBitMask = heroCategory
-			physicsBody.collisionBitMask = levelCategory | sharpenerCategory
-			physicsBody.contactTestBitMask = sharpenerCategory
+			physicsBody.collisionBitMask = levelCategory | sharpenerCategory | groundCategory | finishCategory
+			physicsBody.contactTestBitMask = levelCategory | sharpenerCategory | groundCategory | finishCategory
 		}
 		
         self.addChild(powerUpParticle)
@@ -56,12 +60,20 @@ public class HeroNode: SKSpriteNode {
     }
     
     public func didGetPowerUp() {
+        heroState = HeroState.PowerUp
         powerUpParticle.paused = false
         powerUpParticle.hidden = false
         callbackAfter(0.5) {
             self.powerUpParticle.paused = true
             self.powerUpParticle.hidden = true
+            self.heroState = HeroState.Run
         }
+        self.runAction(SKAction.playSoundFileNamed("collision.mp3", waitForCompletion: false))
+    }
+    
+    public func die() {
+        heroState = HeroState.Death
+        //TODO run animation of death
         self.runAction(SKAction.playSoundFileNamed("collision.mp3", waitForCompletion: false))
     }
 }
