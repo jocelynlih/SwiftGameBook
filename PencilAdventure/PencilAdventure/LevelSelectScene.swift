@@ -119,6 +119,14 @@ class LevelSelectScene : SKScene {
 				loadLevel("2")
 				loaded = true
 			}
+            if buttonName == "3" {
+                loadLevel("3")
+                loaded = true
+            }
+            if buttonName == "4" {
+                loadLevel("4")
+                loaded = true
+            }
         }
         if !loaded {
           loadLevel("GameScene")
