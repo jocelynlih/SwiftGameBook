@@ -21,10 +21,22 @@ public class StarCountNode: SKLabelNode {
         fontColor = SKColor.darkGrayColor()
         xScale = scene.getSceneScaleX()
         yScale = scene.getSceneScaleY()
-        position = CGPointMake(frame.width, scene.frame.height - (frame.height * 2))
-        zPosition = 100
-    }
-    
+        zPosition = HUDZPosition
+
+		// Position ourselves in the upper-left corner
+		position.x = scene.viewableArea.origin.x
+		position.y = scene.viewableArea.origin.y + scene.viewableArea.size.height
+		
+		// Let's move this away from the corner
+		position.x += frame.size.width
+		position.y -= frame.size.height
+		
+		// Let's also give it a small gap, relative to the size of the sprite (say... 1/8th?)
+		position.x += frame.size.width/8
+		position.y -= frame.size.height/8
+	
+	}
+	
     public func getPoints() -> Int {
         return points
     }

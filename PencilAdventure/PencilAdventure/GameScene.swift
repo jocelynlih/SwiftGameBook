@@ -30,6 +30,9 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
 	private let BackgroundScrollSpeed: CGFloat = 0.01
     private var background:SKTexture!
 	
+	// Our viewable area. This originates at the bottom/left corner and extends up/right in scene points.
+	internal var viewableArea: CGRect!
+	
 	// We'll place a series of horizontal background tiles into the scene that will get a parallax
 	// scroll. Let's define some information about the number of tiles we'll scroll through and
 	// their sizes.
@@ -72,6 +75,14 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
         let backgroundScrollDist = backgroundWidth * CGFloat(backgroundTileCount - 1)
         let frameCenter = CGPoint(x: frame.width / 2.0, y: frame.height / 2.0)
 
+		// Calculate our viewable area (in points)
+		let viewToFrameScale = frame.width / view.frame.size.width
+		viewableArea = CGRect()
+		viewableArea.size.width = view.frame.size.width * viewToFrameScale
+		viewableArea.size.height = view.frame.size.height * viewToFrameScale
+		viewableArea.origin.x = (frame.size.width - viewableArea.size.width) / 2
+		viewableArea.origin.y = (frame.size.height - viewableArea.size.height) / 2		
+		
         // Setup our parallax scrolling actions
         //
         // The speed is based on the distance we need to travel, the relative speed and the number of tiles we
@@ -163,10 +174,10 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
     
     // Define physics world ground
     private func addGroundLevel() {
-        let ground = SKSpriteNode(color: UIColor(white: 1.0, alpha: 0), size:CGSizeMake(frame.size.width, 5))
+		let ground = SKSpriteNode(color: UIColor(white: 1.0, alpha: 0), size:CGSize(width: frame.size.width, height: 5))
 		
 		// Find the ground (where our screen and view intersect at the bottom
-		ground.position = CGPointMake(frame.width/2, (frame.height - view.frame.height) / 2 / getSceneScaleY())
+		ground.position = CGPoint(x: viewableArea.size.width/2, y: viewableArea.origin.y)
         ground.physicsBody = SKPhysicsBody(rectangleOfSize: ground.size)
         ground.physicsBody.dynamic = false
         self.addChild(ground)

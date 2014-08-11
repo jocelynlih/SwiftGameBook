@@ -46,7 +46,7 @@ class LevelSelectScene : SKScene {
 		let levelLabel = SKLabelNode(text: "Please choose a level")
 		levelLabel.fontColor = SKColor.darkGrayColor()
         levelLabel.fontName = "Noteworthy"
-		levelLabel.position = CGPointMake(view.frame.width / 2, y + tileHeight * 3)
+		levelLabel.position = CGPoint(x: view.frame.width / 2, y: y + tileHeight * 3)
 		levelLabel.xScale = getSceneScaleX()
 		levelLabel.yScale = getSceneScaleY()
 		self.addChild(levelLabel)
@@ -56,7 +56,7 @@ class LevelSelectScene : SKScene {
 
             highScoreLabel.fontColor = SKColor.darkGrayColor()
             highScoreLabel.fontName = "Noteworthy"
-            highScoreLabel.position = CGPointMake(view.frame.width / 2, y - highScoreLabel.frame.height)
+			highScoreLabel.position = CGPoint(x: view.frame.width / 2, y: y - highScoreLabel.frame.height)
             highScoreLabel.xScale = getSceneScaleX()
             highScoreLabel.yScale = getSceneScaleY()
             addChild(highScoreLabel)

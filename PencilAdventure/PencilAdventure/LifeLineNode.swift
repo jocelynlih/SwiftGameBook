@@ -21,22 +21,31 @@ public class LifeLineNode: SKCropNode {
         self.init()
         
         gameScene = scene
-        xScale = scene.getSceneScaleX()
-        yScale = scene.getSceneScaleY()
-        zPosition = 100
+        zPosition = HUDZPosition
         
         // Start reducing led from the pencil
         callbackAfter(0.10, subtractPoints)
         
-        let anchorPoint = CGPoint(x: 0, y: 0)
-        let pencilSprite = SKSpriteNode(imageNamed: "pencil")
-        pencilSprite.anchorPoint = anchorPoint
-        addChild(pencilSprite)
-        let mask = SKSpriteNode(color: SKColor.yellowColor(), size: pencilSprite.size)
-        mask.anchorPoint = CGPoint(x: 0, y: 0)
-        maskNode = mask
-        
-        position = CGPointMake(scene.frame.width - (pencilSprite.size.width * 3), scene.frame.height - (pencilSprite.size.height * 4))
+        let healthSprite = SKSpriteNode(imageNamed: "health")
+		healthSprite.xScale = scene.getSceneScaleX()
+		healthSprite.yScale = scene.getSceneScaleY()
+        addChild(healthSprite)
+		
+		// Position ourselves in the upper-right corner
+		position.x = scene.viewableArea.origin.x + scene.viewableArea.size.width
+		position.y = scene.viewableArea.origin.y + scene.viewableArea.size.height
+
+		// Our sprite anchor is the center, so this means the center of the sprite is at the corner.
+		// So let's move this away from the corner by half of it's size so it's just inside the screen
+		position.x -= healthSprite.size.width/2
+		position.y -= healthSprite.size.height/2
+		
+		// Let's also give it a small gap, relative to the size of the sprite (say... 1/8th?)
+		position.x -= healthSprite.size.width/8
+		position.y -= healthSprite.size.height/8
+		
+		// Create the maskNode
+		maskNode = SKSpriteNode(color: SKColor.whiteColor(), size: healthSprite.size)
     }
     
     private func subtractPoints() {
