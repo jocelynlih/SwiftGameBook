@@ -93,10 +93,12 @@ class SketchRender {
 						continue
 					}
 					
-					// TODO: We should cache sketches of similar sprites rather than create fresh copies for each.
-					//       Example: three instances of "cloud1" will each create 4 brand new sketch sprites for a
-					//       total of 12 new sprites. Ideally, each instance of "cloud1" should use the same four
-					//       sketch sprites.
+					// For better performance & memory usage, we should cache sketches of similar sprites rather
+					// than create fresh copies for each.
+					//
+					// Example: three instances of "cloud1" will each create 4 brand new sketch sprites for a
+					// total of 12 new sprites. Ideally, each instance of "cloud1" should use the same four
+					// sketch sprites.
 					//
 					// Get the vectorized path for our bitmap
 					if let pathArray = ImageTools.vectorizeImage(name: name, image: img) {
