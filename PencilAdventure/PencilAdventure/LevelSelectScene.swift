@@ -11,7 +11,7 @@ import SpriteKit
 class LevelSelectScene : SKScene {
   
 	private var progressLoader: ProgressLoaderNode!
-	private let MaxLevels = 8
+	private let MaxLevels = 4
 	
     override func didMoveToView(view: SKView) {
       scene.backgroundColor = UIColor.whiteColor()
