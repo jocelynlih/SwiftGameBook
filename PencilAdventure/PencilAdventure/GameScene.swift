@@ -24,7 +24,8 @@ let HUDZPosition: CGFloat = 100
 let heroCategory: UInt32 = 1 << 0
 let levelCategory: UInt32 = 1 << 1
 let sharpenerCategory: UInt32 = 1 << 2
-
+let groundCategory: UInt32 = 1 << 3
+let finishCategory: UInt32 = 1 << 4
 class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
 	// Background layer
 	private let BackgroundScrollSpeed: CGFloat = 0.01
@@ -119,6 +120,9 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
 		// Attach our sketch nodes to all sprites
 		SketchRender.attachSketchNodes(self)
 		
+        
+        //move sprites
+        movingSprites()
         //add ground level
         addGroundLevel()
 		
@@ -139,11 +143,11 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
 	}
 	
     func movingBgFromLevel(sprite: SKSpriteNode) {
-        let scrollBgSprite = SKAction.moveByX(-sprite.texture.size().width * 2.0, y: 0, duration: NSTimeInterval(0.5 * sprite.texture.size().width * 2.0))
-        let resetBgSprite = SKAction.moveByX(sprite.texture.size().width * 2.0, y: 0, duration: 0.0)
+        let scrollBgSprite = SKAction.moveByX(-sprite.size.width * 2.0, y: 0, duration: NSTimeInterval(0.5 * sprite.size.width * 2.0))
+        let resetBgSprite = SKAction.moveByX(sprite.size.width * 2.0, y: 0, duration: 0.0)
         let moveBgSpritesForever = SKAction.repeatActionForever(SKAction.sequence([scrollBgSprite,resetBgSprite]))
         
-        for var i:CGFloat = 0; i < 2.0 + self.frame.size.width / ( sprite.texture.size().width * 2.0 ); ++i {
+        for var i:CGFloat = 0; i < 2.0 + self.frame.size.width / ( sprite.size.width * 2.0 ); ++i {
             sprite.runAction(moveBgSpritesForever)
         }
     }
@@ -151,11 +155,22 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
     func movingPlatformFromLevel(sprite: SKSpriteNode) {
         //move the objects horizontally
         let platform = sprite
-        let distanceToMove = CGFloat(self.frame.size.width + sprite.texture.size().width)
-        let movePlatform = SKAction.moveByX(-distanceToMove, y:0.0, duration:NSTimeInterval(0.1 * distanceToMove))
+        let distanceToMove = CGFloat(self.frame.size.width + sprite.size.width)
+        let movePlatform = SKAction.moveByX(-distanceToMove, y:0.0, duration:NSTimeInterval(0.01 * distanceToMove))
         let removePlatform = SKAction.removeFromParent()
         let movePlatformAndRemove = SKAction.sequence([movePlatform, removePlatform])
         platform.runAction(movePlatformAndRemove)
+    }
+    
+    private func movingSprites() {
+        // Find our sprites at z=0
+        for child in self.children as [SKNode] {
+            if let sprite = child as? SKSpriteNode {
+                if sprite.zPosition == 0 {
+                    movingPlatformFromLevel(sprite)
+                }
+            }
+        }
     }
     
 	override func update(currentTime: CFTimeInterval) {
@@ -164,11 +179,15 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
 	
     //TODO: we can add more action later, to keep the demo simple, we use touch to jump for now
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
-        // touch to jump
-		for touch: AnyObject in touches {
-			let location = touch.locationInNode(self)
-			steveTheSprite.physicsBody.velocity = CGVector(dx: 0, dy: 50)
-			steveTheSprite.physicsBody.applyImpulse(CGVector(dx: 0, dy: 400))
+        // only jump when steve is running
+        if (steveTheSprite.heroState == HeroState.Run) {
+            // touch to jump
+            for touch: AnyObject in touches {
+                let location = touch.locationInNode(self)
+                steveTheSprite.physicsBody.velocity = CGVector(dx: 0, dy: 50)
+                steveTheSprite.physicsBody.applyImpulse(CGVector(dx: 0, dy: 400))
+                steveTheSprite.heroState = HeroState.Jump
+            }
         }
     }
     
@@ -177,20 +196,54 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
 		let ground = SKSpriteNode(color: UIColor(white: 1.0, alpha: 0), size:CGSize(width: frame.size.width, height: 5))
 		
 		// Find the ground (where our screen and view intersect at the bottom
-		ground.position = CGPoint(x: viewableArea.size.width/2, y: viewableArea.origin.y)
+		ground.position = CGPoint(x: self.frame.size.width/2, y: self.frame.origin.y)
         ground.physicsBody = SKPhysicsBody(rectangleOfSize: ground.size)
         ground.physicsBody.dynamic = false
+        //TODO: need to have this comment out for building the game level.
+        ground.physicsBody.categoryBitMask = groundCategory
+        ground.physicsBody.collisionBitMask = heroCategory
         self.addChild(ground)
+        // add a wall to the left edge of view and detect if character runs into it
+        let wall = SKSpriteNode(color: UIColor(white: 1.0, alpha: 0), size: CGSize(width: 5, height: frame.size.height))
+        wall.position = CGPoint(x: self.frame.origin.x, y: self.frame.size.height/2)
+        wall.physicsBody = SKPhysicsBody(rectangleOfSize: wall.size)
+        wall.physicsBody.dynamic = false
+        wall.physicsBody.categoryBitMask = groundCategory
+        wall.physicsBody.collisionBitMask = heroCategory
+        self.addChild(wall)
     }
 
+    func steveDidColliadeWith(body: SKPhysicsBody) {
+        if (body.categoryBitMask & sharpenerCategory) == sharpenerCategory {
+                NSLog("get extra life")
+                steveTheSprite.didGetPowerUp()
+                starCountNode.addPoint()
+                lifeLineNode.addLifeLine(0.1)
+        }
+        if (body.categoryBitMask & groundCategory) == groundCategory {
+                NSLog("Oh No! Game over")
+                steveTheSprite.die()
+                gameEnd(false)
+        }
+        if (body.categoryBitMask & levelCategory) == levelCategory {
+                NSLog("Steve can Jump")
+                steveTheSprite.heroState = HeroState.Run
+        }
+        
+        if (body.categoryBitMask & finishCategory) == finishCategory {
+                NSLog("You Won")
+                gameEnd(true)
+                steveTheSprite.heroState = HeroState.Run
+        }
+    }
+    
     
     func didBeginContact(contact: SKPhysicsContact) {
-		if (contact.bodyA.categoryBitMask & sharpenerCategory) == sharpenerCategory ||
-			(contact.bodyB.categoryBitMask & sharpenerCategory) == sharpenerCategory {
-			NSLog("get extra life")
-            steveTheSprite.didGetPowerUp()
-            starCountNode.addPoint()
-            lifeLineNode.addLifeLine(0.1)
+        if let steve = contact.bodyA.node as? HeroNode {
+            steveDidColliadeWith(contact.bodyB)
+        }
+        if let steve = contact.bodyB.node as? HeroNode {
+            steveDidColliadeWith(contact.bodyA)
         }
     }
     
@@ -213,17 +266,6 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
 			if let sprite = child as? SKSpriteNode {
 				// We need a name
 				if let name = sprite.name {
-					// TODO - this doesn't belong here - this is about animating the texture, not moving sprites
-					// also, I don't think this always works because sprites sometimes don't have textures? [Investigate]
-//					if sprite.texture != .None {
-//						//moving platform and background
-//						if name == "platform1" || name.hasPrefix("block") {
-//							movingPlatformFromLevel(sprite)
-//						} else if name.hasPrefix("cloud") || name.hasPrefix("shrubbery") {
-//							movingBgFromLevel(sprite)
-//                        }
-//					}
-					
 					if name == SketchName {
 						// If it's hidden, let's add it to our list of possible sprites to un-hide
 						if sprite.hidden {
@@ -244,6 +286,16 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
 			sketchSprites[Int(rnd)].hidden = false
 		}
 	}
+    //TODO: need game end scene for logic here
+    func gameEnd(didWin:Bool) {
+        if (didWin) {
+            
+        } else {
+            
+        }
+        self.scene.view.paused = true
+        onGameOver()
+    }
     
     func onGameOver() {
         ScoreManager.saveScore(starCountNode.getPoints(), forLevel: 1)
