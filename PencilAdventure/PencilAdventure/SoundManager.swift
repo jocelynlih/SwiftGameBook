@@ -11,19 +11,19 @@ import AVFoundation
 private var onceToken : dispatch_once_t = 0
 private var SharedPlayer: AVAudioPlayer!
 private var BackgroundPlayer: AVAudioPlayer! {
-    get {
-        dispatch_once(&onceToken) {
-            let url = NSURL.fileURLWithPath(NSBundle.mainBundle().pathForResource("background.mp3", ofType: .None))
-            SharedPlayer = AVAudioPlayer(contentsOfURL: url, error: nil)
-            SharedPlayer.prepareToPlay()
-            SharedPlayer.numberOfLoops = -1
-        }
-        return SharedPlayer
+get {
+    dispatch_once(&onceToken) {
+        let url = NSURL.fileURLWithPath(NSBundle.mainBundle().pathForResource("background.mp3", ofType: .None))
+        SharedPlayer = AVAudioPlayer(contentsOfURL: url, error: nil)
+        SharedPlayer.prepareToPlay()
+        SharedPlayer.numberOfLoops = -1
     }
+    return SharedPlayer
+}
 }
 
 class SoundManager {
-
+    
     class func toggleBackgroundMusic() {
         if BackgroundPlayer.playing {
             BackgroundPlayer.pause()
