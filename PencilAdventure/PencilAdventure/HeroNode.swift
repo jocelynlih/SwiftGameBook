@@ -18,38 +18,38 @@ public enum HeroState: UInt32 {
 }
 
 public class HeroNode: SKSpriteNode {
-
+    
     private let SteveAnimationFPS = 25.0
     private var powerUpParticle = SKEmitterNode(fileNamed: "PowerUpParticle")
     public var heroState = HeroState.Run
-	convenience init(scene: SKScene, withPhysicsBody: Bool) {
-
-		let atlas = SKTextureAtlas(named: "Steve")
-		for i in 1 ... SteveMaxFrames {
-			let texName = "\(SteveTextureNameBase)\(i)"
-			if let texture = atlas.textureNamed(texName) {
-				steveWalkingFrames.append(texture)
-			}
-		}
+    convenience init(scene: SKScene, withPhysicsBody: Bool) {
+        
+        let atlas = SKTextureAtlas(named: "Steve")
+        for i in 1 ... SteveMaxFrames {
+            let texName = "\(SteveTextureNameBase)\(i)"
+            if let texture = atlas.textureNamed(texName) {
+                steveWalkingFrames.append(texture)
+            }
+        }
         self.init(texture: steveWalkingFrames[0])
-		
+        
         name = "steve"
         xScale = scene.getSceneScaleX()
         yScale = scene.getSceneScaleY()
         zPosition = HeroZPosition
         speed = 1
         powerUpParticle.paused = true
-		
-		if withPhysicsBody {
-			physicsBody = SKPhysicsBody(rectangleOfSize: self.size)
-			physicsBody.dynamic = true
-			physicsBody.allowsRotation = false
-			physicsBody.mass = 0.6 // TODO - what to do about this?
-			physicsBody.categoryBitMask = heroCategory
-			physicsBody.collisionBitMask = levelCategory | sharpenerCategory | groundCategory | finishCategory
-			physicsBody.contactTestBitMask = levelCategory | sharpenerCategory | groundCategory | finishCategory
-		}
-		
+        
+        if withPhysicsBody {
+            physicsBody = SKPhysicsBody(rectangleOfSize: self.size)
+            physicsBody.dynamic = true
+            physicsBody.allowsRotation = false
+            physicsBody.mass = 0.6 // TODO - what to do about this?
+            physicsBody.categoryBitMask = heroCategory
+            physicsBody.collisionBitMask = levelCategory | sharpenerCategory | groundCategory | finishCategory
+            physicsBody.contactTestBitMask = levelCategory | sharpenerCategory | groundCategory | finishCategory
+        }
+        
         self.addChild(powerUpParticle)
         
         self.runAction(
