@@ -13,15 +13,15 @@ let SteveMaxFrames = 12
 let SteveTextureNameBase = "steve"
 var steveWalkingFrames = [SKTexture]()
 //currently Steve can run, jump and Die
-public enum HeroState: UInt32 {
-    case Run=0, Jump, PowerUp, Death
+public enum HeroState {
+    case Run, Jump, PowerUp, Death
 }
 
 public class HeroNode: SKSpriteNode {
     
     private let SteveAnimationFPS = 25.0
     private var powerUpParticle = SKEmitterNode(fileNamed: "PowerUpParticle")
-    public var heroState = HeroState.Run
+    public var heroState: HeroState = .Run
     convenience init(scene: SKScene, withPhysicsBody: Bool) {
         
         let atlas = SKTextureAtlas(named: "Steve")
@@ -66,13 +66,13 @@ public class HeroNode: SKSpriteNode {
         callbackAfter(0.5) {
             self.powerUpParticle.paused = true
             self.powerUpParticle.hidden = true
-            self.heroState = HeroState.Run
+            self.heroState = .Run
         }
         self.runAction(SKAction.playSoundFileNamed("collision.mp3", waitForCompletion: false))
     }
     
     public func die() {
-        heroState = HeroState.Death
+        heroState = .Death
         //TODO run animation of death
         self.runAction(SKAction.playSoundFileNamed("collision.mp3", waitForCompletion: false))
     }
