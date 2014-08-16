@@ -13,10 +13,15 @@ private var SharedPlayer: AVAudioPlayer!
 private var BackgroundPlayer: AVAudioPlayer! {
 get {
     dispatch_once(&onceToken) {
-        let url = NSURL.fileURLWithPath(NSBundle.mainBundle().pathForResource("background.mp3", ofType: .None))
-        SharedPlayer = AVAudioPlayer(contentsOfURL: url, error: nil)
-        SharedPlayer.prepareToPlay()
-        SharedPlayer.numberOfLoops = -1
+        let url = NSURL.fileURLWithPath(NSBundle.mainBundle().pathForResource("background", ofType: "mp3"))
+        var err: NSError?
+        SharedPlayer = AVAudioPlayer(contentsOfURL: url, error: &err)
+        if let error = err {
+            NSLog("Error %@", error)
+        } else {
+            SharedPlayer.prepareToPlay()
+            SharedPlayer.numberOfLoops = -1
+        }
     }
     return SharedPlayer
 }

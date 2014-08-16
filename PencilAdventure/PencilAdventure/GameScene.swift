@@ -227,13 +227,13 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
         }
         if (body.categoryBitMask & levelCategory) == levelCategory {
             NSLog("Steve can Jump")
-            steveTheSprite.heroState = HeroState.Run
+            steveTheSprite.heroState = .Run
         }
         
         if (body.categoryBitMask & finishCategory) == finishCategory {
             NSLog("You Won")
             gameEnd(true)
-            steveTheSprite.heroState = HeroState.Run
+            steveTheSprite.heroState = .Run
         }
     }
     
