@@ -19,25 +19,33 @@ class LevelSelectScene : SKScene {
     }
     
     internal func addLevelSelectNode() {
+        addBackground()
         SoundManager.toggleBackgroundMusic()
-        var atlas = SKTextureAtlas(named: "Sprites")
-        var blueTile = atlas.textureNamed("bluetile")
+      
+        let atlas = SKTextureAtlas(named: "Levels")
+        let levelTile = atlas.textureNamed("L1-enabled")
         
+        var tileWidth = levelTile.size().width
+        var tileHeight = levelTile.size().height
+        var gap = tileWidth
         
-        var tileWidth = blueTile.size().width
-        var tileHeight = blueTile.size().height
-        var gap = tileWidth * 2
-        
-        var selectorWidth = tileWidth * CGFloat(MaxLevels) + gap * CGFloat(MaxLevels - 1)
+        var selectorWidth = tileWidth * CGFloat(MaxLevels) + gap * CGFloat(MaxLevels - 2)
         var x = (view.frame.width - selectorWidth) / 2.0
         var y = view.frame.height / 2
+      
         for i in 1...MaxLevels {
-            let level = SKSpriteNode(texture: blueTile)
+            var suffix = "disabled"
+          
+            if i == 1 || i == 2 {
+                suffix = "enabled"
+            }
+          
+            let level = SKSpriteNode(texture: atlas.textureNamed("L\(i)-\(suffix)"))
             level.name = "\(i)"
             level.position =  CGPoint(x: x, y: y)
             level.xScale = getSceneScaleX()
             level.yScale = getSceneScaleY()
-            self.addChild(level)
+            addChild(level)
             
             x += tileWidth + gap
         }
@@ -46,7 +54,7 @@ class LevelSelectScene : SKScene {
         let levelLabel = SKLabelNode(text: "Please choose a level")
         levelLabel.fontColor = SKColor.darkGrayColor()
         levelLabel.fontName = "Noteworthy"
-        levelLabel.position = CGPoint(x: view.frame.width / 2, y: y + tileHeight * 3)
+        levelLabel.position = CGPoint(x: view.frame.width / 2, y: y + tileHeight + 15)
         levelLabel.xScale = getSceneScaleX()
         levelLabel.yScale = getSceneScaleY()
         self.addChild(levelLabel)
@@ -56,13 +64,20 @@ class LevelSelectScene : SKScene {
             
             highScoreLabel.fontColor = SKColor.darkGrayColor()
             highScoreLabel.fontName = "Noteworthy"
-            highScoreLabel.position = CGPoint(x: view.frame.width / 2, y: y - highScoreLabel.frame.height)
+            highScoreLabel.fontSize = 14
+            highScoreLabel.position = CGPoint(x: view.frame.width / 2, y: y - highScoreLabel.frame.height - 35)
             highScoreLabel.xScale = getSceneScaleX()
             highScoreLabel.yScale = getSceneScaleY()
             addChild(highScoreLabel)
         }
     }
-    
+  
+    private func addBackground() {
+        let backgroundTexture = SKSpriteNode(color: UIColor(red: 154/255, green: 208/255, blue: 217/255, alpha: 1.0), size: frame.size)
+        backgroundTexture.position = CGPointMake(frame.width / 2, frame.height / 2)
+        addChild(backgroundTexture)
+    }
+  
     
     internal func addProgressLoaderNode () {
         progressLoader = ProgressLoaderNode(scene: self)
