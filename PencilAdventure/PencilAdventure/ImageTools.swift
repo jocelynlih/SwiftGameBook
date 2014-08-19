@@ -11,7 +11,7 @@ import SpriteKit
 //
 // Example: [ "cloud1", "platform1" ]
 let forceRevectorization: [String] = [ ]
-let disableCache = true
+let disableCache = false
 
 // Constants
 let LeftNeighborMask = 0x01
@@ -197,7 +197,7 @@ class ImageTools {
 					
 					if (pix & SelfAlphaMask) != 0 && (pix & AllNeighborMasks) != 0 && (pix & AllNeighborMasks) != AllNeighborMasks && (pix & VisitedMask) == 0 {
 						// Keep track of the first one we find, this is where we'll start tracing the image
-						if !pixCur {
+						if pixCur == nil {
 							pixCur = Point2D(x: x, y: y)
 							break pixSearchLoop
 						}
@@ -206,7 +206,7 @@ class ImageTools {
 			}
 			
 			// if we didn't find an edge pixel, there's no alpha in the entire image that's above our threshold
-			if !pixCur {
+			if pixCur == nil {
 				break
 			}
 			
@@ -230,7 +230,7 @@ class ImageTools {
 				pixCur = neighboringEdgePixel(imgMap, stride: widthPix, x: pixCur.x, y: pixCur.y)
 				
 				// Did we reach the end of our edge?
-				if !pixCur {
+				if pixCur == nil {
 					// We should have more than one point in the path, otherwise, we're just going to add another
 					// copy of our first point to this path (this would be a degenerate path)
 					if path.count > 1 {
@@ -278,7 +278,7 @@ class ImageTools {
 			return .None
 		}
 		
-		//NSLog("vectorized %d points for [" + (name ?? "unnamed") + "]", totalPoints)
+		NSLog("vectorized %d points for [" + (name ?? "unnamed") + "]", totalPoints)
 		
 		if name != .None {
 			vectorizedShapes[name!] = pathArray

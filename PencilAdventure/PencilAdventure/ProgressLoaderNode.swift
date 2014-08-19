@@ -13,7 +13,7 @@ class ProgressLoaderNode: SKCropNode {
 	private let markerSprite: HeroNode!
 	private let progressBarSprite: SKSpriteNode!
 
-	required init(coder aDecoder: NSCoder!) {
+	required init(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 	}
 

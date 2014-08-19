@@ -61,7 +61,7 @@ class SketchRender {
 	}
 	
 	internal class func attachSketchNodes(node: SKNode) {
-		if !node.children {
+		if node.children == nil {
 			return
 		}
 		
@@ -133,7 +133,7 @@ class SketchRender {
 	}
 	
 	private class func renderSketchSprite(pathArray: [[CGPoint]], size: CGSize, parent: SKSpriteNode ) -> SKSpriteNode? {
-		if !parent.texture {
+		if parent.texture == nil {
 			return .None
 		}
 		
