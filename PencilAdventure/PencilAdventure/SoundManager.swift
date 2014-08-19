@@ -11,20 +11,23 @@ import AVFoundation
 private var onceToken : dispatch_once_t = 0
 private var SharedPlayer: AVAudioPlayer!
 private var BackgroundPlayer: AVAudioPlayer! {
-get {
-    dispatch_once(&onceToken) {
-        let url = NSURL.fileURLWithPath(NSBundle.mainBundle().pathForResource("background", ofType: "mp3"))
-        var err: NSError?
-        SharedPlayer = AVAudioPlayer(contentsOfURL: url, error: &err)
-        if let error = err {
-            NSLog("Error %@", error)
-        } else {
-            SharedPlayer.prepareToPlay()
-            SharedPlayer.numberOfLoops = -1
-        }
-    }
-    return SharedPlayer
-}
+	get {
+		dispatch_once(&onceToken) {
+			if let resource = NSBundle.mainBundle().pathForResource("background", ofType: "mp3")
+			{
+				let url = NSURL.fileURLWithPath(resource)
+				var err: NSError?
+				SharedPlayer = AVAudioPlayer(contentsOfURL: url, error: &err)
+				if let error = err {
+					NSLog("Error %@", error)
+				} else {
+					SharedPlayer.prepareToPlay()
+					SharedPlayer.numberOfLoops = -1
+				}
+			}
+		}
+		return SharedPlayer
+	}
 }
 
 class SoundManager {
