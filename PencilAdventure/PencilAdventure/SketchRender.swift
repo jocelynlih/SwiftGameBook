@@ -16,7 +16,6 @@ let SketchName = "- SketchSprite -"
 let MaxAnimationSprites = 4
 
 class SketchRender {
-	
 	// Material properties for sketch rendering
 	internal struct SketchMaterial {
 		let SketchTuneHeight: CGFloat = 1536.0

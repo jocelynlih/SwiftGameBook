@@ -9,13 +9,13 @@
 import SpriteKit
 
 class Platform : SKSpriteNode {
-
-  // Platform category is 2
-  let platformCategory: UInt32 = 1 << 1
-
-  func configurePhysicsBody() {
-    physicsBody = SKPhysicsBody(rectangleOfSize: size)
-    physicsBody.dynamic = false
-    physicsBody.categoryBitMask = platformCategory
-  }
+    
+    // Platform category is 2
+    let platformCategory: UInt32 = 1 << 1
+    
+    func configurePhysicsBody() {
+        physicsBody = SKPhysicsBody(rectangleOfSize: size)
+        physicsBody.dynamic = false
+        physicsBody.categoryBitMask = platformCategory
+    }
 }

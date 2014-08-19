@@ -27,24 +27,24 @@ let sharpenerCategory: UInt32 = 1 << 2
 let groundCategory: UInt32 = 1 << 3
 let finishCategory: UInt32 = 1 << 4
 class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
-	// Background layer
-	private let BackgroundScrollSpeed: CGFloat = 0.01
+    // Background layer
+    private let BackgroundScrollSpeed: CGFloat = 0.01
     private var background:SKTexture!
-	
-	// Our viewable area. This originates at the bottom/left corner and extends up/right in scene points.
-	internal var viewableArea: CGRect!
-	
-	// We'll place a series of horizontal background tiles into the scene that will get a parallax
-	// scroll. Let's define some information about the number of tiles we'll scroll through and
-	// their sizes.
-	private let backgroundTileCount = 2
-	
-	// Sketch lines animation
-	private let SketchAnimationFPS = 8.0
-	private var sketchAnimationTimer: NSTimer?
-	
-	// Steve (our hero)
-	private var steveTheSprite: HeroNode!
+    
+    // Our viewable area. This originates at the bottom/left corner and extends up/right in scene points.
+    internal var viewableArea: CGRect!
+    
+    // We'll place a series of horizontal background tiles into the scene that will get a parallax
+    // scroll. Let's define some information about the number of tiles we'll scroll through and
+    // their sizes.
+    private let backgroundTileCount = 2
+    
+    // Sketch lines animation
+    private let SketchAnimationFPS = 8.0
+    private var sketchAnimationTimer: NSTimer?
+    
+    // Steve (our hero)
+    private var steveTheSprite: HeroNode!
     
     // Pencil lifeline
     private var lifeLineNode: LifeLineNode!
@@ -52,15 +52,15 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
     // Star Count
     private var starCountNode: StarCountNode!
     
-	override func didMoveToView(view: SKView) {
+    override func didMoveToView(view: SKView) {
         // Setup physics
-		physicsWorld.gravity = CGVector(dx: 0.0, dy: -9.8)
+        physicsWorld.gravity = CGVector(dx: 0.0, dy: -9.8)
         physicsWorld.contactDelegate = self
-
+        
         // Create the background layer sprite
-		// TODO: We need a better solution which allows us to select the proper background based on the level
+        // TODO: We need a better solution which allows us to select the proper background based on the level
         let background = SKTexture(imageNamed: "house_background")
-			
+        
         // Make it cheap to draw
         background.filteringMode = SKTextureFilteringMode.Nearest
         
@@ -75,15 +75,15 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
         // scrolling past the trailing edge of the last tile.
         let backgroundScrollDist = backgroundWidth * CGFloat(backgroundTileCount - 1)
         let frameCenter = CGPoint(x: frame.width / 2.0, y: frame.height / 2.0)
-
-		// Calculate our viewable area (in points)
-		let viewToFrameScale = frame.width / view.frame.size.width
-		viewableArea = CGRect()
-		viewableArea.size.width = view.frame.size.width * viewToFrameScale
-		viewableArea.size.height = view.frame.size.height * viewToFrameScale
-		viewableArea.origin.x = (frame.size.width - viewableArea.size.width) / 2
-		viewableArea.origin.y = (frame.size.height - viewableArea.size.height) / 2		
-		
+        
+        // Calculate our viewable area (in points)
+        let viewToFrameScale = frame.width / view.frame.size.width
+        viewableArea = CGRect()
+        viewableArea.size.width = view.frame.size.width * viewToFrameScale
+        viewableArea.size.height = view.frame.size.height * viewToFrameScale
+        viewableArea.origin.x = (frame.size.width - viewableArea.size.width) / 2
+        viewableArea.origin.y = (frame.size.height - viewableArea.size.height) / 2
+        
         // Setup our parallax scrolling actions
         //
         // The speed is based on the distance we need to travel, the relative speed and the number of tiles we
@@ -92,7 +92,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
         let scrollBgSprite = SKAction.moveByX(-backgroundScrollDist, y: 0, duration: NSTimeInterval(scrollTime))
         let resetBgSprite = SKAction.moveByX(backgroundScrollDist, y: 0, duration: 0.0)
         let moveBgSpritesForever = SKAction.repeatActionForever(SKAction.sequence([scrollBgSprite,resetBgSprite]))
-
+        
         // Finally we can add the background tiles
         for i in 0..<backgroundTileCount {
             let bgSprite = SKSpriteNode(texture: background)
@@ -102,46 +102,46 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
             bgSprite.runAction(moveBgSpritesForever)
             addChild(bgSprite)
         }
-		
-		// Give our root scene a name
-		name = "SceneRoot"
-
-		// Create our hero
-		steveTheSprite = HeroNode(scene: self, withPhysicsBody: true)
-		steveTheSprite.position = CGPoint(x: scene.frame.size.width/4, y: scene.frame.size.height/2)
-
+        
+        // Give our root scene a name
+        name = "SceneRoot"
+        
+        // Create our hero
+        steveTheSprite = HeroNode(scene: self, withPhysicsBody: true)
+        steveTheSprite.position = CGPoint(x: scene.frame.size.width/4, y: scene.frame.size.height/2)
+        
         lifeLineNode = LifeLineNode(forScene: self)
         starCountNode = StarCountNode(forScene: self)
-
+        
         addChild(steveTheSprite)
         addChild(lifeLineNode)
         addChild(starCountNode)
         
-		// Attach our sketch nodes to all sprites
-		SketchRender.attachSketchNodes(self)
-		
+        // Attach our sketch nodes to all sprites
+        SketchRender.attachSketchNodes(self)
+        
         
         //move sprites
         movingSprites()
         //add ground level
         addGroundLevel()
-		
-		// Setup a timer for the update
-		sketchAnimationTimer = NSTimer.scheduledTimerWithTimeInterval(1.0 / SketchAnimationFPS, target: self, selector: Selector("sketchAnimationTimer:"), userInfo: nil, repeats: true)
-	}
-	
-	private func scaleToFillScreenWithAspect(srcSize: CGSize, targetSize: CGSize) -> CGFloat {
-		// Find the dimension that has to grow the most
-		let deltaWidth = abs(targetSize.width - srcSize.width)
-		let deltaHeight = abs(targetSize.height - srcSize.height)
-		
-		if deltaWidth > deltaHeight {
-			return targetSize.width / srcSize.width
-		} else {
-			return targetSize.height / srcSize.height
-		}
-	}
-	
+        
+        // Setup a timer for the update
+        sketchAnimationTimer = NSTimer.scheduledTimerWithTimeInterval(1.0 / SketchAnimationFPS, target: self, selector: Selector("sketchAnimationTimer:"), userInfo: nil, repeats: true)
+    }
+    
+    private func scaleToFillScreenWithAspect(srcSize: CGSize, targetSize: CGSize) -> CGFloat {
+        // Find the dimension that has to grow the most
+        let deltaWidth = abs(targetSize.width - srcSize.width)
+        let deltaHeight = abs(targetSize.height - srcSize.height)
+        
+        if deltaWidth > deltaHeight {
+            return targetSize.width / srcSize.width
+        } else {
+            return targetSize.height / srcSize.height
+        }
+    }
+    
     func movingBgFromLevel(sprite: SKSpriteNode) {
         let scrollBgSprite = SKAction.moveByX(-sprite.size.width * 2.0, y: 0, duration: NSTimeInterval(0.5 * sprite.size.width * 2.0))
         let resetBgSprite = SKAction.moveByX(sprite.size.width * 2.0, y: 0, duration: 0.0)
@@ -173,10 +173,10 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
         }
     }
     
-	override func update(currentTime: CFTimeInterval) {
-
-	}
-	
+    override func update(currentTime: CFTimeInterval) {
+        
+    }
+    
     //TODO: we can add more action later, to keep the demo simple, we use touch to jump for now
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         // only jump when steve is running
@@ -193,10 +193,10 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
     
     // Define physics world ground
     private func addGroundLevel() {
-		let ground = SKSpriteNode(color: UIColor(white: 1.0, alpha: 0), size:CGSize(width: frame.size.width, height: 5))
-		
-		// The ground is at the bottom of our viewable area
-		ground.position = CGPoint(x: self.frame.size.width/2, y: self.viewableArea.origin.y)
+        let ground = SKSpriteNode(color: UIColor(white: 1.0, alpha: 0), size:CGSize(width: frame.size.width, height: 5))
+        
+        // The ground is at the bottom of our viewable area
+        ground.position = CGPoint(x: self.frame.size.width/2, y: self.viewableArea.origin.y)
         ground.physicsBody = SKPhysicsBody(rectangleOfSize: ground.size)
         ground.physicsBody.dynamic = false
         //TODO: need to have this comment out for building the game level.
@@ -212,28 +212,28 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
         wall.physicsBody.collisionBitMask = heroCategory
         self.addChild(wall)
     }
-
+    
     func steveDidColliadeWith(body: SKPhysicsBody) {
         if (body.categoryBitMask & sharpenerCategory) == sharpenerCategory {
-                NSLog("get extra life")
-                steveTheSprite.didGetPowerUp()
-                starCountNode.addPoint()
-                lifeLineNode.addLifeLine(0.1)
+            NSLog("get extra life")
+            steveTheSprite.didGetPowerUp()
+            starCountNode.addPoint()
+            lifeLineNode.addLifeLine(0.1)
         }
         if (body.categoryBitMask & groundCategory) == groundCategory {
-                NSLog("Oh No! Game over")
-                steveTheSprite.die()
-                gameEnd(false)
+            NSLog("Oh No! Game over")
+            steveTheSprite.die()
+            gameEnd(false)
         }
         if (body.categoryBitMask & levelCategory) == levelCategory {
-                NSLog("Steve can Jump")
-                steveTheSprite.heroState = HeroState.Run
+            NSLog("Steve can Jump")
+            steveTheSprite.heroState = .Run
         }
         
         if (body.categoryBitMask & finishCategory) == finishCategory {
-                NSLog("You Won")
-                gameEnd(true)
-                steveTheSprite.heroState = HeroState.Run
+            NSLog("You Won")
+            gameEnd(true)
+            steveTheSprite.heroState = .Run
         }
     }
     
@@ -252,40 +252,40 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
     }
     
     private func animateSketchSprites(node: SKNode) {
-		var sketchSprites: [SKSpriteNode] = []
-		
-		// Find our sketch sprites
-		for child in node.children as [SKNode] {
-			// Depth-first traversal
-			//
-			// Note that we don't bother to traverse into our sketch sprites
-			if child.name != SketchName {
-				animateSketchSprites(child)
-			}
-
-			if let sprite = child as? SKSpriteNode {
-				// We need a name
-				if let name = sprite.name {
-					if name == SketchName {
-						// If it's hidden, let's add it to our list of possible sprites to un-hide
-						if sprite.hidden {
-							sketchSprites.append(sprite)
-						} else {
-							// This is the one that's already been visible, so let's make sure we get a different one
-							// by not adding it to the list. We do, however, want to hide it.
-							sprite.hidden = true
-						}
-					}
-				}
-			}
-		}
-		
-		// If we found a set of sketch sprites, then unhide just one of them
-		if sketchSprites.count != 0 {
-			let rnd = arc4random_uniform(UInt32(sketchSprites.count))
-			sketchSprites[Int(rnd)].hidden = false
-		}
-	}
+        var sketchSprites: [SKSpriteNode] = []
+        
+        // Find our sketch sprites
+        for child in node.children as [SKNode] {
+            // Depth-first traversal
+            //
+            // Note that we don't bother to traverse into our sketch sprites
+            if child.name != SketchName {
+                animateSketchSprites(child)
+            }
+            
+            if let sprite = child as? SKSpriteNode {
+                // We need a name
+                if let name = sprite.name {
+                    if name == SketchName {
+                        // If it's hidden, let's add it to our list of possible sprites to un-hide
+                        if sprite.hidden {
+                            sketchSprites.append(sprite)
+                        } else {
+                            // This is the one that's already been visible, so let's make sure we get a different one
+                            // by not adding it to the list. We do, however, want to hide it.
+                            sprite.hidden = true
+                        }
+                    }
+                }
+            }
+        }
+        
+        // If we found a set of sketch sprites, then unhide just one of them
+        if sketchSprites.count != 0 {
+            let rnd = arc4random_uniform(UInt32(sketchSprites.count))
+            sketchSprites[Int(rnd)].hidden = false
+        }
+    }
     //TODO: need game end scene for logic here
     func gameEnd(didWin:Bool) {
         if (didWin) {

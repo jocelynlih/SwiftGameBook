@@ -64,5 +64,4 @@ class ProgressLoaderNode: SKCropNode {
 			marker.position.x = leftEdge + totalDistanceToMove * progress
 		}
 	}
-	
 }

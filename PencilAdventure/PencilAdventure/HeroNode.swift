@@ -13,43 +13,43 @@ let SteveMaxFrames = 12
 let SteveTextureNameBase = "steve"
 var steveWalkingFrames = [SKTexture]()
 //currently Steve can run, jump and Die
-public enum HeroState: UInt32 {
-    case Run=0, Jump, PowerUp, Death
+public enum HeroState {
+    case Run, Jump, PowerUp, Death
 }
 
 public class HeroNode: SKSpriteNode {
-
+    
     private let SteveAnimationFPS = 25.0
     private var powerUpParticle = SKEmitterNode(fileNamed: "PowerUpParticle")
-    public var heroState = HeroState.Run
-	convenience init(scene: SKScene, withPhysicsBody: Bool) {
-
-		let atlas = SKTextureAtlas(named: "Steve")
-		for i in 1 ... SteveMaxFrames {
-			let texName = "\(SteveTextureNameBase)\(i)"
-			if let texture = atlas.textureNamed(texName) {
-				steveWalkingFrames.append(texture)
-			}
-		}
+    public var heroState: HeroState = .Run
+    convenience init(scene: SKScene, withPhysicsBody: Bool) {
+        
+        let atlas = SKTextureAtlas(named: "Steve")
+        for i in 1 ... SteveMaxFrames {
+            let texName = "\(SteveTextureNameBase)\(i)"
+            if let texture = atlas.textureNamed(texName) {
+                steveWalkingFrames.append(texture)
+            }
+        }
         self.init(texture: steveWalkingFrames[0])
-		
+        
         name = "steve"
         xScale = scene.getSceneScaleX()
         yScale = scene.getSceneScaleY()
         zPosition = HeroZPosition
         speed = 1
         powerUpParticle.paused = true
-		
-		if withPhysicsBody {
-			physicsBody = SKPhysicsBody(rectangleOfSize: self.size)
-			physicsBody.dynamic = true
-			physicsBody.allowsRotation = false
-			physicsBody.mass = 0.6 // TODO - what to do about this?
-			physicsBody.categoryBitMask = heroCategory
-			physicsBody.collisionBitMask = levelCategory | sharpenerCategory | groundCategory | finishCategory
-			physicsBody.contactTestBitMask = levelCategory | sharpenerCategory | groundCategory | finishCategory
-		}
-		
+        
+        if withPhysicsBody {
+            physicsBody = SKPhysicsBody(rectangleOfSize: self.size)
+            physicsBody.dynamic = true
+            physicsBody.allowsRotation = false
+            physicsBody.mass = 0.6 // TODO - what to do about this?
+            physicsBody.categoryBitMask = heroCategory
+            physicsBody.collisionBitMask = levelCategory | sharpenerCategory | groundCategory | finishCategory
+            physicsBody.contactTestBitMask = levelCategory | sharpenerCategory | groundCategory | finishCategory
+        }
+        
         self.addChild(powerUpParticle)
         
         self.runAction(
@@ -66,13 +66,13 @@ public class HeroNode: SKSpriteNode {
         callbackAfter(0.5) {
             self.powerUpParticle.paused = true
             self.powerUpParticle.hidden = true
-            self.heroState = HeroState.Run
+            self.heroState = .Run
         }
         self.runAction(SKAction.playSoundFileNamed("collision.mp3", waitForCompletion: false))
     }
     
     public func die() {
-        heroState = HeroState.Death
+        heroState = .Death
         //TODO run animation of death
         self.runAction(SKAction.playSoundFileNamed("collision.mp3", waitForCompletion: false))
     }

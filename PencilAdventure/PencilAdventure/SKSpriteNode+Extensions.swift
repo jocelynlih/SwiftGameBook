@@ -9,7 +9,7 @@
 import SpriteKit
 
 extension SKSpriteNode {
-	
+    
     func log() {
         NSLog(" Name     : %@", name)
         NSLog(" Position : %@, %@", position.x, position.y)

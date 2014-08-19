@@ -10,7 +10,7 @@ import SpriteKit
 // Force re-vectorization of these sprite names (ignoring any existing cache files)
 //
 // Example: [ "cloud1", "platform1" ]
-let forceRevectorization: [String] = [ ]
+let forceRevectorization = [String]()
 let disableCache = false
 
 // Constants
@@ -32,16 +32,16 @@ let BytesPerPixel = 4
 let EdgeAngleTolerance: CGFloat = 1.5
 let AlphaThreshold: UInt8 = 128
 
-var vectorizedShapes: [ String : [[CGPoint]] ] = [:]
+var vectorizedShapes = [String :[[CGPoint]]]()
 
 class WritableCoordinate {
-	var x: CGFloat = 0
-	var y: CGFloat = 0
-	
-	init(x: CGFloat, y: CGFloat) {
-		self.x = x
-		self.y = y
-	}
+    var x: CGFloat = 0
+    var y: CGFloat = 0
+    
+    init(x: CGFloat, y: CGFloat) {
+        self.x = x
+        self.y = y
+    }
 }
 
 class ImageTools {

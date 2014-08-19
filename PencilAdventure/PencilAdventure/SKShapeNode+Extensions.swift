@@ -9,8 +9,8 @@
 import SpriteKit
 
 extension SKShapeNode {
-
-	func log() {
+    
+    func log() {
         NSLog(" Name     : %@", name)
         NSLog(" Position : %@, %@", position.x, position.y)
         NSLog(" Frame    : %@, %@ - %@ x %@", frame.origin.x, frame.origin.y, frame.size.width, frame.size.height)
