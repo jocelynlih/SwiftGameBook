@@ -14,6 +14,7 @@ class LevelSelectScene : SKScene {
     private let MaxLevels = 4
     
     override func didMoveToView(view: SKView) {
+      super.didMoveToView(view)
         scene.backgroundColor = UIColor.whiteColor()
         addLevelSelectNode()
     }
