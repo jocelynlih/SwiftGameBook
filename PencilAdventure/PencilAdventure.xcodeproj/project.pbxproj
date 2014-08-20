@@ -20,6 +20,8 @@
 		019A5CBF19996F6400C4DC4B /* 4.sks in Resources */ = {isa = PBXBuildFile; fileRef = 019A5CBE19996F6400C4DC4B /* 4.sks */; };
 		6FADF2F5199ABCF000A73D79 /* Levels.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 6FADF2F4199ABCF000A73D79 /* Levels.atlas */; };
 		8A0D4A6A1992E527009D020B /* ProgressLoaderNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0D4A691992E527009D020B /* ProgressLoaderNode.swift */; };
+		8A9B09F819A434C700E93587 /* GameOverScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9B09F719A434C700E93587 /* GameOverScene.swift */; };
+		8A9B09FA19A4353300E93587 /* LevelFinishedScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9B09F919A4353300E93587 /* LevelFinishedScene.swift */; };
 		922E4D7A199318F10018EF7B /* collision.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 922E4D79199318F10018EF7B /* collision.mp3 */; };
 		9234A3EF198F029C0022246B /* SKNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9234A3EE198F029C0022246B /* SKNode+Extensions.swift */; };
 		9245C2601996C259003EF53B /* ScoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9245C25F1996C259003EF53B /* ScoreManager.swift */; };
@@ -76,6 +78,8 @@
 		019A5CBE19996F6400C4DC4B /* 4.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = 4.sks; sourceTree = "<group>"; };
 		6FADF2F4199ABCF000A73D79 /* Levels.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Levels.atlas; sourceTree = "<group>"; };
 		8A0D4A691992E527009D020B /* ProgressLoaderNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressLoaderNode.swift; sourceTree = "<group>"; };
+		8A9B09F719A434C700E93587 /* GameOverScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameOverScene.swift; sourceTree = "<group>"; };
+		8A9B09F919A4353300E93587 /* LevelFinishedScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelFinishedScene.swift; sourceTree = "<group>"; };
 		922E4D79199318F10018EF7B /* collision.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = collision.mp3; sourceTree = "<group>"; };
 		9234A3EE198F029C0022246B /* SKNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKNode+Extensions.swift"; sourceTree = "<group>"; };
 		9245C25F1996C259003EF53B /* ScoreManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScoreManager.swift; sourceTree = "<group>"; };
@@ -192,9 +196,11 @@
 		9274A9A919946A4B004BA541 /* Scenes */ = {
 			isa = PBXGroup;
 			children = (
+				9274A9AB19946B65004BA541 /* sks */,
 				0155FA20198EBDC80098CE69 /* LevelSelectScene.swift */,
 				018BAE3619877EDE0067C10C /* GameScene.swift */,
-				9274A9AB19946B65004BA541 /* sks */,
+				8A9B09F719A434C700E93587 /* GameOverScene.swift */,
+				8A9B09F919A4353300E93587 /* LevelFinishedScene.swift */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
@@ -404,6 +410,7 @@
 				AE2056D5198B62B500E7E302 /* Point2D.swift in Sources */,
 				AE2056D3198B58CF00E7E302 /* CGPoint+Extensions.swift in Sources */,
 				8A0D4A6A1992E527009D020B /* ProgressLoaderNode.swift in Sources */,
+				8A9B09FA19A4353300E93587 /* LevelFinishedScene.swift in Sources */,
 				AE5468431988D80000C55823 /* CGVector+Extensions.swift in Sources */,
 				AE36099B198F1CCA00441B49 /* SketchRender.swift in Sources */,
 				92E2E745198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift in Sources */,
@@ -421,6 +428,7 @@
 				018BAE18198779330067C10C /* GameViewController.swift in Sources */,
 				018BAE16198779330067C10C /* AppDelegate.swift in Sources */,
 				0155FA21198EBDC80098CE69 /* LevelSelectScene.swift in Sources */,
+				8A9B09F819A434C700E93587 /* GameOverScene.swift in Sources */,
 				9245C2601996C259003EF53B /* ScoreManager.swift in Sources */,
 				9284FC2A1991A4D300B348CF /* SoundManager.swift in Sources */,
 			);
