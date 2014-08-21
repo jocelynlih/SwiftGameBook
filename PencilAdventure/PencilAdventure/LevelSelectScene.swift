@@ -55,7 +55,7 @@ class LevelSelectScene : SKScene {
         // We also need a selector width and an initial x
         // and y coordinate set.
         var selectorWidth = tileWidth * CGFloat(MaxLevels) + gap * CGFloat(MaxLevels - 2)
-        var x = (view.frame.width - selectorWidth) / 2.0
+        var x = (view.frame.width - selectorWidth) / 2
         var y = view.frame.height / 2
 
         // For every level, add a level selector.
