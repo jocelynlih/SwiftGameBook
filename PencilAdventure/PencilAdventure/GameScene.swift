@@ -14,6 +14,7 @@ import GameKit
 // progresses to ensure that they are indeed in front. Here are some good defaults:
 //
 // Note that these would normally be class properties, but Swift doesn't currently support class properties.
+let SceneBackgroundZPosition: CGFloat = -20
 let BackgroundZPosition: CGFloat = -10
 let levelItemZPosition: CGFloat = 0
 let EnemyZPosition: CGFloat = 30
@@ -32,7 +33,7 @@ let finishCategory: UInt32 = 1 << 5
 
 class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
     // Background layer
-    private let BackgroundScrollSpeed: CGFloat = 0.01
+    private let BackgroundScrollSpeedUnitsPerSecond: CGFloat = 200
     private var background:SKTexture!
 	
 	// Scrolling speed
@@ -40,11 +41,6 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
     
     // Our viewable area. This originates at the bottom/left corner and extends up/right in scene points.
     internal var viewableArea: CGRect!
-    
-    // We'll place a series of horizontal background tiles into the scene that will get a parallax
-    // scroll. Let's define some information about the number of tiles we'll scroll through and
-    // their sizes.
-    private let backgroundTileCount = 2
     
     // Sketch lines animation
     private let SketchAnimationFPS = 8.0
@@ -64,6 +60,14 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
         physicsWorld.gravity = CGVector(dx: 0.0, dy: -9.8)
         physicsWorld.contactDelegate = self
         
+		// Calculate our viewable area (in points)
+		let viewToFrameScale = frame.width / view.frame.size.width
+		viewableArea = CGRect()
+		viewableArea.size.width = view.frame.size.width * viewToFrameScale
+		viewableArea.size.height = view.frame.size.height * viewToFrameScale
+		viewableArea.origin.x = (frame.size.width - viewableArea.size.width) / 2
+		viewableArea.origin.y = (frame.size.height - viewableArea.size.height) / 2
+		
 		// Setup our level accessories (backgground items, powerups and deathtraps)
 		//
 		// It's important to do this before we add any of our additional nodes to
@@ -87,32 +91,24 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
         // Our total scroll distance. We calculate this based on the width of the background sprite
         // which will be tiled backgroundTiles times. Note that we scroll one less than this to avoid
         // scrolling past the trailing edge of the last tile.
-        let backgroundScrollDist = backgroundWidth * CGFloat(backgroundTileCount - 1)
+        let backgroundScrollDist = backgroundWidth
         let frameCenter = CGPoint(x: frame.width / 2.0, y: frame.height / 2.0)
-        
-        // Calculate our viewable area (in points)
-        let viewToFrameScale = frame.width / view.frame.size.width
-        viewableArea = CGRect()
-        viewableArea.size.width = view.frame.size.width * viewToFrameScale
-        viewableArea.size.height = view.frame.size.height * viewToFrameScale
-        viewableArea.origin.x = (frame.size.width - viewableArea.size.width) / 2
-        viewableArea.origin.y = (frame.size.height - viewableArea.size.height) / 2
-        
+		
         // Setup our parallax scrolling actions
         //
         // The speed is based on the distance we need to travel, the relative speed and the number of tiles we
         // have to cover. Doing this allows our speed to stay the same even if we change backgroundTileCount.
-        let scrollTime = backgroundScrollDist * BackgroundScrollSpeed * CGFloat(backgroundTileCount)
+        let scrollTime = backgroundScrollDist / BackgroundScrollSpeedUnitsPerSecond
         let scrollBgSprite = SKAction.moveByX(-backgroundScrollDist, y: 0, duration: NSTimeInterval(scrollTime))
         let resetBgSprite = SKAction.moveByX(backgroundScrollDist, y: 0, duration: 0.0)
         let moveBgSpritesForever = SKAction.repeatActionForever(SKAction.sequence([scrollBgSprite,resetBgSprite]))
         
-        // Finally we can add the background tiles
-        for i in 0..<backgroundTileCount {
+        // Finally we can add the background tiles. We use two so we always have coverage
+        for i in 0 ..< 2 {
             let bgSprite = SKSpriteNode(texture: background)
             bgSprite.size = frame.size
             bgSprite.position = CGPoint(x: frame.size.width/2.0 + backgroundScrollDist * CGFloat(i), y: frame.size.height/2.0)
-            bgSprite.zPosition = -10
+            bgSprite.zPosition = SceneBackgroundZPosition
             bgSprite.runAction(moveBgSpritesForever)
             addChild(bgSprite)
         }
@@ -290,7 +286,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
         // Find our sprites at z<=0 (this will be all of our level items)
         for child in self.children as [SKNode] {
             if let sprite = child as? SKSpriteNode {
-                if sprite.zPosition <= 0 {
+                if sprite.zPosition > SceneBackgroundZPosition && sprite.zPosition <= levelItemZPosition  {
                     movingPlatformFromLevel(sprite)
                 }
             }
