@@ -39,7 +39,9 @@ public class HeroNode: SKSpriteNode {
         zPosition = HeroZPosition
         speed = 1
         powerUpParticle.paused = true
-        
+		powerUpParticle.hidden = true
+
+		
         if withPhysicsBody {
             physicsBody = SKPhysicsBody(rectangleOfSize: self.size)
             physicsBody.dynamic = true
