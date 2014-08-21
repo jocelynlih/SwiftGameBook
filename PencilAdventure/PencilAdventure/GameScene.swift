@@ -26,10 +26,14 @@ let levelCategory: UInt32 = 1 << 1
 let sharpenerCategory: UInt32 = 1 << 2
 let groundCategory: UInt32 = 1 << 3
 let finishCategory: UInt32 = 1 << 4
+
 class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
     // Background layer
     private let BackgroundScrollSpeed: CGFloat = 0.01
     private var background:SKTexture!
+	
+	// Scrolling speed
+	private let ScrollSpeedInUnitsPerSecond: CGFloat = 100
     
     // Our viewable area. This originates at the bottom/left corner and extends up/right in scene points.
     internal var viewableArea: CGRect!
@@ -120,10 +124,10 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
         // Attach our sketch nodes to all sprites
         SketchRender.attachSketchNodes(self)
         
-        
-        //move sprites
+		// Move sprites
         movingSprites()
-        //add ground level
+		
+        // Add ground level
         addGroundLevel()
         
         // Setup a timer for the update
@@ -142,24 +146,10 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
         }
     }
     
-    func movingBgFromLevel(sprite: SKSpriteNode) {
-        let scrollBgSprite = SKAction.moveByX(-sprite.size.width * 2.0, y: 0, duration: NSTimeInterval(0.5 * sprite.size.width * 2.0))
-        let resetBgSprite = SKAction.moveByX(sprite.size.width * 2.0, y: 0, duration: 0.0)
-        let moveBgSpritesForever = SKAction.repeatActionForever(SKAction.sequence([scrollBgSprite,resetBgSprite]))
-        
-        for var i:CGFloat = 0; i < 2.0 + self.frame.size.width / ( sprite.size.width * 2.0 ); ++i {
-            sprite.runAction(moveBgSpritesForever)
-        }
-    }
-    
     func movingPlatformFromLevel(sprite: SKSpriteNode) {
-        //move the objects horizontally
-        let platform = sprite
-        let distanceToMove = CGFloat(self.frame.size.width + sprite.size.width)
-        let movePlatform = SKAction.moveByX(-distanceToMove, y:0.0, duration:NSTimeInterval(0.01 * distanceToMove))
-        let removePlatform = SKAction.removeFromParent()
-        let movePlatformAndRemove = SKAction.sequence([movePlatform, removePlatform])
-        platform.runAction(movePlatformAndRemove)
+        // Move the objects horizontally at a constant rate
+        let movePlatform = SKAction.moveByX(-ScrollSpeedInUnitsPerSecond, y:0.0, duration:NSTimeInterval(1))
+        sprite.runAction(SKAction.repeatActionForever(movePlatform))
     }
     
     private func movingSprites() {
@@ -236,8 +226,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
             steveTheSprite.heroState = .Run
         }
     }
-    
-    
+	
     func didBeginContact(contact: SKPhysicsContact) {
         if let steve = contact.bodyA.node as? HeroNode {
             steveDidColliadeWith(contact.bodyB)
