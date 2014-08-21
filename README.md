@@ -1,7 +1,7 @@
 SwiftGameBook
 =============
 # About our game
-<img src="http://cl.ly/image/0l1o1p1r2X3g" width=800px>
+<img src="http://f.cl.ly/items/013r1W041t0T1e1s471c/Image%202014-08-21%20at%204.39.40%20PM.png" width=600px>
 Our game is called Pencil Adventure. It is about our hero, Steve E. Stencil, a happy pencil living in Pencil Adventure. He is in love with Ms. Paperclip. One day she goes missing and our hero embarks on an epic journey to find her. What happened to her?
 
 # About our book
