@@ -46,8 +46,8 @@ public class HeroNode: SKSpriteNode {
             physicsBody.allowsRotation = false
             physicsBody.mass = 0.6 // TODO - what to do about this?
             physicsBody.categoryBitMask = heroCategory
-            physicsBody.collisionBitMask = levelCategory | sharpenerCategory | groundCategory | finishCategory
-            physicsBody.contactTestBitMask = levelCategory | sharpenerCategory | groundCategory | finishCategory
+            physicsBody.collisionBitMask = levelItemCategory | powerupCategory | deathtrapCategory | groundCategory | finishCategory
+            physicsBody.contactTestBitMask = levelItemCategory | powerupCategory | deathtrapCategory | groundCategory | finishCategory
         }
         
         self.addChild(powerUpParticle)

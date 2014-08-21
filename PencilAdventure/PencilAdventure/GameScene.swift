@@ -14,6 +14,8 @@ import GameKit
 // progresses to ensure that they are indeed in front. Here are some good defaults:
 //
 // Note that these would normally be class properties, but Swift doesn't currently support class properties.
+let BackgroundZPosition: CGFloat = -10
+let levelItemZPosition: CGFloat = 0
 let EnemyZPosition: CGFloat = 30
 let HeroZPosition: CGFloat = 90
 let HUDZPosition: CGFloat = 100
@@ -22,10 +24,11 @@ let HUDZPosition: CGFloat = 100
 //
 // Note that these would normally be class properties, but Swift doesn't currently support class properties.
 let heroCategory: UInt32 = 1 << 0
-let levelCategory: UInt32 = 1 << 1
-let sharpenerCategory: UInt32 = 1 << 2
-let groundCategory: UInt32 = 1 << 3
-let finishCategory: UInt32 = 1 << 4
+let groundCategory: UInt32 = 1 << 1
+let levelItemCategory: UInt32 = 1 << 2
+let powerupCategory: UInt32 = 1 << 3
+let deathtrapCategory: UInt32 = 1 << 4
+let finishCategory: UInt32 = 1 << 5
 
 class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
     // Background layer
@@ -33,7 +36,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
     private var background:SKTexture!
 	
 	// Scrolling speed
-	private let ScrollSpeedInUnitsPerSecond: CGFloat = 100
+	private let ScrollSpeedInUnitsPerSecond: CGFloat = 200
     
     // Our viewable area. This originates at the bottom/left corner and extends up/right in scene points.
     internal var viewableArea: CGRect!
@@ -61,6 +64,13 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
         physicsWorld.gravity = CGVector(dx: 0.0, dy: -9.8)
         physicsWorld.contactDelegate = self
         
+		// Setup our level accessories (backgground items, powerups and deathtraps)
+		//
+		// It's important to do this before we add any of our additional nodes to
+		// the scene (such as our hero, lifeline, etc.) since this goes through all
+		// nodes and may modify their properties.
+		setupAccessories()
+		
         // Create the background layer sprite
         // TODO: We need a better solution which allows us to select the proper background based on the level
         let background = SKTexture(imageNamed: "house_background")
@@ -124,8 +134,8 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
         // Attach our sketch nodes to all sprites
         SketchRender.attachSketchNodes(self)
         
-		// Move sprites
-        movingSprites()
+		// Setup the moving sprites
+		setupMovingSprites()
 		
         // Add ground level
         addGroundLevel()
@@ -145,18 +155,142 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
             return targetSize.height / srcSize.height
         }
     }
-    
+	
+	private func ensurePhysicsBody(sprite: SKSpriteNode, useTextureAlpha: Bool = true) -> Bool {
+		// Make sure our sprite has a physicsBody
+		if sprite.physicsBody == .None {
+			
+			// First, try to create a physicsBody from the texture alpha
+			if useTextureAlpha && sprite.texture != .None {
+				sprite.physicsBody = SKPhysicsBody(texture: sprite.texture, alphaThreshold: 0.9, size: sprite.size)
+			}
+			
+			// Next, try to create a physicsBody from the sprite's smallest
+			// bounding rectangle
+			if sprite.physicsBody == .None {
+				sprite.physicsBody = SKPhysicsBody(rectangleOfSize: sprite.frame.size)
+			}
+			
+			// If we still don't have a physicsBody, just move on to the next one
+			if sprite.physicsBody == nil {
+				return false
+			}
+			
+			// Default these to no collisions/contacts
+			sprite.physicsBody.categoryBitMask = 0
+			sprite.physicsBody.collisionBitMask = 0
+			sprite.physicsBody.contactTestBitMask = 0
+
+		}
+		
+		// Defaults for the physics body
+		sprite.physicsBody.dynamic = false
+		
+		return true
+	}
+	
+	private func setupAccessories() {
+		// The Xcode level designer doesn't currently allow for any custom
+		// data to be added to a node. So we've used the name field to add
+		// additional information in the form of a sprite specification. We
+		// format it like so:
+		//
+		//   <sprite name>|<accessory type>
+		//
+		// Therefore, a sprite named "picture|background" would represent a
+		// sprite named "picture" that is a background accessory type. We
+		// then remove the accessory type from the name and setup that accessory
+		// type appropriately. That might include collision/contact masks,
+		// z-position and/or other properties.
+		for child in self.children as [SKNode] {
+			if var sprite = child as? SKSpriteNode {
+				
+				// If the sprite doesn't have a name, we have no work to do here
+				if sprite.name == .None {
+					continue
+				}
+				
+				// Initialize the zPosition to a level item
+				sprite.zPosition = levelItemZPosition
+				
+				// Check our specification string for any accessory types applied
+				// to the sprite
+				if let spriteSpec = sprite.name {
+					var components = spriteSpec.componentsSeparatedByCharactersInSet(NSCharacterSet(charactersInString: "|"))
+					
+					// If we have no accessory specification, assume this is just
+					// a normal level item
+					if (components.count <= 1) {
+						if ensurePhysicsBody(sprite) {
+							sprite.physicsBody.categoryBitMask |= levelItemCategory
+							sprite.physicsBody.collisionBitMask |= heroCategory
+						}
+						continue
+					}
+					
+					// The first component is the name. Replace the sprite's
+					// name to remove the additional components. This is
+					// necessary because other aspects of the codebase will
+					// use the name to perform their work needed.
+					sprite.name = components[0]
+					components.removeAtIndex(0)
+					
+					// Loop through the components and apply the appropriate
+					// properties to this sprite
+					for accessory in components
+					{
+						switch accessory
+						{
+						case "background":
+							// Backgrond items should be behind everything
+							sprite.zPosition = BackgroundZPosition
+							
+						case "finish":
+							if ensurePhysicsBody(sprite, useTextureAlpha: false) {
+								sprite.physicsBody.categoryBitMask |= finishCategory
+								sprite.physicsBody.collisionBitMask |= heroCategory
+							}
+							
+							// We don't want to see the finish line
+							sprite.alpha = 0
+							
+						case "powerup":
+							if ensurePhysicsBody(sprite) {
+								sprite.physicsBody.categoryBitMask |= powerupCategory
+								sprite.physicsBody.contactTestBitMask |= heroCategory
+							}
+
+						case "death":
+							if ensurePhysicsBody(sprite) {
+								sprite.physicsBody.categoryBitMask |= deathtrapCategory
+								sprite.physicsBody.collisionBitMask |= heroCategory
+							}
+							
+						default:
+							NSLog("Treating unknown accessory in sprite specifier as normal level item: \(accessory)")
+							if ensurePhysicsBody(sprite) {
+								sprite.physicsBody.categoryBitMask |= levelItemCategory
+								sprite.physicsBody.collisionBitMask |= heroCategory
+							}
+						}
+					}
+
+				}
+			}
+		}
+	}
+	
     func movingPlatformFromLevel(sprite: SKSpriteNode) {
         // Move the objects horizontally at a constant rate
         let movePlatform = SKAction.moveByX(-ScrollSpeedInUnitsPerSecond, y:0.0, duration:NSTimeInterval(1))
         sprite.runAction(SKAction.repeatActionForever(movePlatform))
     }
     
-    private func movingSprites() {
-        // Find our sprites at z=0
+    private func setupMovingSprites() {
+        // Find our sprites at z<=0 (this will be all of our level items)
         for child in self.children as [SKNode] {
             if let sprite = child as? SKSpriteNode {
-                if sprite.zPosition == 0 {
+                if sprite.zPosition <= 0 {
                     movingPlatformFromLevel(sprite)
                 }
             }
@@ -204,24 +338,40 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
     }
     
     func steveDidColliadeWith(body: SKPhysicsBody) {
-        if (body.categoryBitMask & sharpenerCategory) == sharpenerCategory {
-            NSLog("get extra life")
+		if (body.categoryBitMask & powerupCategory) == powerupCategory {
+			if body.node == nil {
+				return
+			}
             steveTheSprite.didGetPowerUp()
+			body.node.removeFromParent()
             starCountNode.addPoint()
             lifeLineNode.addLifeLine(0.1)
         }
-        if (body.categoryBitMask & groundCategory) == groundCategory {
-            NSLog("Oh No! Game over")
-            steveTheSprite.die()
-            gameEnd(false)
-        }
-        if (body.categoryBitMask & levelCategory) == levelCategory {
-            NSLog("Steve can Jump")
+		if (body.categoryBitMask & deathtrapCategory) == deathtrapCategory {
+			if body.node == nil {
+				return
+			}
+			steveTheSprite.die()
+			gameEnd(false)
+		}
+		if (body.categoryBitMask & groundCategory) == groundCategory {
+			if body.node == nil {
+				return
+			}
+			steveTheSprite.die()
+			gameEnd(false)
+		}
+        if (body.categoryBitMask & levelItemCategory) == levelItemCategory {
+			if body.node == nil {
+				return
+			}
             steveTheSprite.heroState = .Run
         }
         
         if (body.categoryBitMask & finishCategory) == finishCategory {
-            NSLog("You Won")
+			if body.node == nil {
+				return
+			}
             gameEnd(true)
             steveTheSprite.heroState = .Run
         }

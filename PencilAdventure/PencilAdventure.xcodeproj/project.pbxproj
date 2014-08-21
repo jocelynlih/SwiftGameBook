@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		013FFBE019996E5C006D68CB /* 3.sks in Resources */ = {isa = PBXBuildFile; fileRef = 013FFBDF19996E5C006D68CB /* 3.sks */; };
 		0155FA21198EBDC80098CE69 /* LevelSelectScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0155FA20198EBDC80098CE69 /* LevelSelectScene.swift */; };
-		0155FA23198F39630098CE69 /* Platform.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0155FA22198F39630098CE69 /* Platform.swift */; };
 		018A322C198F6696009CDA21 /* 1.sks in Resources */ = {isa = PBXBuildFile; fileRef = 018A322B198F6696009CDA21 /* 1.sks */; };
 		018BAE16198779330067C10C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018BAE15198779330067C10C /* AppDelegate.swift */; };
 		018BAE18198779330067C10C /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018BAE17198779330067C10C /* GameViewController.swift */; };
@@ -61,7 +60,6 @@
 /* Begin PBXFileReference section */
 		013FFBDF19996E5C006D68CB /* 3.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = 3.sks; sourceTree = "<group>"; };
 		0155FA20198EBDC80098CE69 /* LevelSelectScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelSelectScene.swift; sourceTree = "<group>"; };
-		0155FA22198F39630098CE69 /* Platform.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Platform.swift; sourceTree = "<group>"; };
 		018A322B198F6696009CDA21 /* 1.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = 1.sks; sourceTree = "<group>"; };
 		018BAE10198779330067C10C /* PencilAdventure.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PencilAdventure.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		018BAE14198779330067C10C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -248,7 +246,6 @@
 				8A0D4A691992E527009D020B /* ProgressLoaderNode.swift */,
 				92D3262B19946C2000CFE3FC /* LifeLineNode.swift */,
 				9284FC351993000600B348CF /* HeroNode.swift */,
-				0155FA22198F39630098CE69 /* Platform.swift */,
 				92E258141996A4AE003E503A /* StarCountNode.swift */,
 			);
 			name = Nodes;
@@ -418,7 +415,6 @@
 				92E3DAC7199486600089DAEE /* Macros.swift in Sources */,
 				AE5468441988D80000C55823 /* CGFloat+Extensions.swift in Sources */,
 				018BAE3719877EDE0067C10C /* GameScene.swift in Sources */,
-				0155FA23198F39630098CE69 /* Platform.swift in Sources */,
 				9284FC361993000600B348CF /* HeroNode.swift in Sources */,
 				AE7B19151992DBE80043071B /* SKScene+Extensions.swift in Sources */,
 				018BAE18198779330067C10C /* GameViewController.swift in Sources */,
