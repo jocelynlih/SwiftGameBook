@@ -15,6 +15,7 @@ class LevelSelectScene : SKScene {
     
     // Variables
     var progressLoader: ProgressLoaderNode!
+    var isLoading = false
 
     override func didMoveToView(view: SKView) {
         super.didMoveToView(view)
@@ -103,6 +104,13 @@ class LevelSelectScene : SKScene {
     }
     
     internal func loadLevel(level: String) {
+        // If we're already loading a level, disallow
+        // other levels being loaded.
+        if isLoading {
+            return
+        }
+        isLoading = true
+        
         var scene: GameScene? = nil
         var work: [Void -> Any?] = []
 
