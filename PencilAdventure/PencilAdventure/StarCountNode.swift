@@ -21,11 +21,11 @@ public class StarCountNode: SKLabelNode {
         fontColor = SKColor.darkGrayColor()
         xScale = scene.getSceneScaleX()
         yScale = scene.getSceneScaleY()
-        zPosition = HUDZPosition
+        zPosition = 10
         
         // Position ourselves in the upper-left corner
-        position.x = scene.viewableArea.origin.x
-        position.y = scene.viewableArea.origin.y + scene.viewableArea.size.height
+        position.x = scene.frame.origin.x
+        position.y = scene.frame.origin.y + scene.frame.size.height
         
         // Let's move this away from the corner
         position.x += frame.size.width
