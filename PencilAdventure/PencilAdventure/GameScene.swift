@@ -289,11 +289,12 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
     //TODO: need game end scene for logic here
     func gameEnd(didWin:Bool) {
         if (didWin) {
-            
+            self.view.presentScene(LevelFinishedScene())
         } else {
-            
+            let gameOverScene = GameOverScene()
+            gameOverScene.level = 2
+            self.view.presentScene(gameOverScene)
         }
-        self.scene.view.paused = true
         onGameOver()
     }
     
