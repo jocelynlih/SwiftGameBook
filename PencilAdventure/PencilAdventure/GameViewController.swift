@@ -8,7 +8,6 @@
 
 import SpriteKit
 
-
 class GameViewController: UIViewController
 {
 	@IBOutlet weak var startGameButton: UIButton!
@@ -21,7 +20,7 @@ class GameViewController: UIViewController
     }
 	
     @IBAction func startGame(sender : AnyObject) {
-        //load level select scene
+        //load game scene
 		let gameScene = GameScene(size: CGSize(width: view.frame.width, height: view.frame.height))
 		let skView = self.view as SKView
 		skView.presentScene(gameScene)
