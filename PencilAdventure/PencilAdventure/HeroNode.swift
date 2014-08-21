@@ -60,7 +60,7 @@ public class HeroNode: SKSpriteNode {
     }
     
     public func didGetPowerUp() {
-        heroState = HeroState.PowerUp
+        heroState = .PowerUp
         powerUpParticle.paused = false
         powerUpParticle.hidden = false
         callbackAfter(0.5) {
