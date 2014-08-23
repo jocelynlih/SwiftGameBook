@@ -9,7 +9,7 @@ public class LifeLineNode: SKCropNode {
         gameScene = scene
         
         // Start reducing led from the pencil
-        callbackAfter(0.10, subtractPoints)
+        callbackAfter(0.10, subtractLifeLine)
         
         let healthSprite = SKSpriteNode(imageNamed: "health")
         healthSprite.xScale = scene.getSceneScaleX()
@@ -23,11 +23,11 @@ public class LifeLineNode: SKCropNode {
         maskNode = SKSpriteNode(color: SKColor.whiteColor(), size: healthSprite.size)
     }
     
-    private func subtractPoints() {
+    private func subtractLifeLine() {
         lifeLine -= 0.01
-        self.maskNode.yScale = lifeLine
+        maskNode.yScale = lifeLine
         if lifeLine > 0 {
-            callbackAfter(0.1, subtractPoints)
+            callbackAfter(0.1, subtractLifeLine)
         } else {
             println("Game Over")
         }
@@ -35,7 +35,9 @@ public class LifeLineNode: SKCropNode {
     
     public func addLifeLine(life: CGFloat) {
         // Give more led till Mr Pencil reaches the end
-        if lifeLine < 1 {
+        if lifeLine + life > 1 {
+            lifeLine = 1.0
+        } else {
             lifeLine += life
         }
         maskNode.yScale = lifeLine

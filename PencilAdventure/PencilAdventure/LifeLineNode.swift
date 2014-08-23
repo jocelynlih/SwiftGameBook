@@ -24,7 +24,7 @@ public class LifeLineNode: SKCropNode {
         zPosition = HUDZPosition
         
         // Start reducing led from the pencil
-        callbackAfter(0.10, subtractPoints)
+        callbackAfter(0.10, subtractLifeLine)
         
         let healthSprite = SKSpriteNode(imageNamed: "health")
         healthSprite.xScale = scene.getSceneScaleX()
@@ -48,11 +48,11 @@ public class LifeLineNode: SKCropNode {
         maskNode = SKSpriteNode(color: SKColor.whiteColor(), size: healthSprite.size)
     }
     
-    private func subtractPoints() {
+    private func subtractLifeLine() {
         lifeLine -= 0.01
-        self.maskNode.yScale = lifeLine
+        maskNode.yScale = lifeLine
         if lifeLine > 0 {
-            callbackAfter(0.1, subtractPoints)
+            callbackAfter(0.1, subtractLifeLine)
         } else {
             gameScene?.onGameOver()
         }
