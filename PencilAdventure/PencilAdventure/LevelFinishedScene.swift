@@ -33,20 +33,20 @@ class LevelFinishedScene: SKScene {
     titleLabel.xScale = getSceneScaleX()
     titleLabel.yScale = getSceneScaleY()
     addChild(titleLabel)
-    
-    let points = ScoreManager.getScoreForLevel(level!)
-    
-    if level != .None && points != .None {
-      
-      // Add a score.
-      let scoreLabel = SKLabelNode(text: "You scored \(points) points!")
-      scoreLabel.fontColor = SKColor.whiteColor()
-      scoreLabel.fontName = "Noteworthy"
-      scoreLabel.fontSize = 18
-      scoreLabel.position = CGPoint(x: 0.5, y: 0.5)
-      scoreLabel.xScale = getSceneScaleX()
-      scoreLabel.yScale = getSceneScaleY()
-      addChild(scoreLabel)
+
+    if level != .None {
+        let points = ScoreManager.getScoreForLevel(level!)
+        if points != .None {
+            // Add a score.
+            let scoreLabel = SKLabelNode(text: "You scored \(points) points!")
+            scoreLabel.fontColor = SKColor.whiteColor()
+            scoreLabel.fontName = "Noteworthy"
+            scoreLabel.fontSize = 18
+            scoreLabel.position = CGPoint(x: 0.5, y: 0.5)
+            scoreLabel.xScale = getSceneScaleX()
+            scoreLabel.yScale = getSceneScaleY()
+            addChild(scoreLabel)
+        }
     }
     
     // Add a back button button.

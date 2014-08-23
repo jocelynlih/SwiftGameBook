@@ -134,12 +134,13 @@ class LevelSelectScene : SKScene {
             var done = 0
             for job in work {
                 done++
-                self.progressLoader.setProgress(CGFloat(done) / CGFloat(work.count))
                 job()
+                self.progressLoader.setProgress(CGFloat(done) / CGFloat(work.count))
                 if done == work.count {
                     // Notify the main thread that that we're ready!
                     dispatch_async(dispatch_get_main_queue()) {
                         self.scene.view.presentScene(scene!)
+                        self.isLoading = false
                     }
                 }
             }
