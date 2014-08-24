@@ -107,6 +107,7 @@ class LevelSelectScene : SKScene {
         // If we're already loading a level, disallow
         // other levels being loaded.
         if isLoading {
+			NSLog("Avoiding interruptive load")
             return
         }
         isLoading = true
@@ -119,7 +120,7 @@ class LevelSelectScene : SKScene {
         SoundManager.restartBackgroundMusic()
         
         // Add our progress to the scene
-        addProgressLoaderNode()
+		addProgressLoaderNode()
         
         // Unarchive scene.
         work.append {
@@ -135,17 +136,22 @@ class LevelSelectScene : SKScene {
             for job in work {
                 done++
                 job()
-                self.progressLoader.setProgress(CGFloat(done) / CGFloat(work.count))
-                if done == work.count {
-                    // Notify the main thread that that we're ready!
-                    dispatch_async(dispatch_get_main_queue()) {
-                        self.scene.view.presentScene(scene!)
-                        self.isLoading = false
-                    }
-                }
+				self.progressLoader.setProgress(CGFloat(done) / CGFloat(work.count))
             }
+			
+			// Present our new scene
+			dispatch_async(dispatch_get_main_queue()) {
+				if let newScene = scene {
+					SKNode.cleanupScene(self)
+					self.view.presentScene(newScene)
+				}
+				else {
+					NSLog("The scene is nil!")
+				}
+				
+				self.isLoading = false
+			}
         }
-        
     }
 
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
