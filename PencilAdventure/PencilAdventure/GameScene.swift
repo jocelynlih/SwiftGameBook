@@ -139,7 +139,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
         // Setup a timer for the update
         sketchAnimationTimer = NSTimer.scheduledTimerWithTimeInterval(1.0 / SketchAnimationFPS, target: self, selector: Selector("sketchAnimationTimer:"), userInfo: nil, repeats: true)
     }
-    
+	
     private func scaleToFillScreenWithAspect(srcSize: CGSize, targetSize: CGSize) -> CGFloat {
         // Find the dimension that has to grow the most
         let deltaWidth = abs(targetSize.width - srcSize.width)
@@ -423,6 +423,8 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
     }
     //TODO: need game end scene for logic here
     func gameEnd(didWin:Bool) {
+		SKNode.cleanupScene(self)
+		
         if (didWin) {
             self.view.presentScene(LevelFinishedScene())
         } else {

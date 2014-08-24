@@ -17,8 +17,8 @@ class GameViewController: UIViewController {
 
     // Setup our SpriteKit view.
 		let view = self.view as SKView
-		view.showsFPS = true
-		view.showsNodeCount = true
+//		view.showsFPS = true
+//		view.showsNodeCount = true
 		view.ignoresSiblingOrder = true
 
     // Start the background music.

@@ -64,6 +64,7 @@ class GameOverScene: SKScene {
       if let buttonName = node.name {
         switch buttonName {
           case "okButton":
+			SKNode.cleanupScene(self)
             view.presentScene(LevelSelectScene(size: CGSize(width: view.frame.width, height: view.frame.height)))
             break
           default: break
