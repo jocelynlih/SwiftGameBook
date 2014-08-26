@@ -75,19 +75,46 @@ public class GameScene : SKScene, SKPhysicsContactDelegate, GameProtocol {
 		// nodes and may modify their properties.
 		setupAccessories()
 		
-        // Create the background layer sprite
-        let background = SKTexture(imageNamed: "paper\(random() % 4 + 1)")
-        background.filteringMode = SKTextureFilteringMode.Nearest
-		let frameCenter = CGPoint(x: frame.width / 2.0, y: frame.height / 2.0)
-		let bgSprite = SKSpriteNode(texture: background)
-		bgSprite.size = frame.size
-		bgSprite.position = CGPoint(x: frame.size.width/2.0, y: frame.size.height/2.0)
-		bgSprite.zPosition = SceneBackgroundZPosition
-		addChild(bgSprite)
+		// Create the background layer sprite
+		// TODO: We need a better solution which allows us to select the proper background based on the level
+		let background = SKTexture(imageNamed: "paper")
 		
+		// Make it cheap to draw
+		background.filteringMode = SKTextureFilteringMode.Nearest
+		
+		// Note that our background width uses 'frame.width'. This is because our scene is set to
+		// AspectFill (and because we're a landscape game) SpriteKit will automatically scale everything
+		// in the scene's viewport (including the background) to fill the screen horizontally. These
+		// scaled dimensions are stored in 'SKScene.frame'.
+		let backgroundWidth = frame.width
+		
+		// Our total scroll distance. We calculate this based on the width of the background sprite
+		// which will be tiled backgroundTiles times. Note that we scroll one less than this to avoid
+		// scrolling past the trailing edge of the last tile.
+		let backgroundScrollDist = backgroundWidth
+		let frameCenter = CGPoint(x: frame.width / 2.0, y: frame.height / 2.0)
+		
+		// Setup our parallax scrolling actions
+		//
+		// The speed is based on the distance we need to travel, the relative speed and the number of tiles we
+		// have to cover. Doing this allows our speed to stay the same even if we change backgroundTileCount.
+		let scrollTime = backgroundScrollDist / BackgroundScrollSpeedUnitsPerSecond
+		let scrollBgSprite = SKAction.moveByX(-backgroundScrollDist, y: 0, duration: NSTimeInterval(scrollTime))
+		let resetBgSprite = SKAction.moveByX(backgroundScrollDist, y: 0, duration: 0.0)
+		let moveBgSpritesForever = SKAction.repeatActionForever(SKAction.sequence([scrollBgSprite,resetBgSprite]))
+		
+		// Finally we can add the background tiles. We use two so we always have coverage
+		for i in 0 ..< 2 {
+			let bgSprite = SKSpriteNode(texture: background)
+			bgSprite.size = frame.size
+			bgSprite.position = CGPoint(x: frame.size.width/2.0 + backgroundScrollDist * CGFloat(i), y: frame.size.height/2.0)
+			bgSprite.zPosition = SceneBackgroundZPosition
+			bgSprite.runAction(moveBgSpritesForever)
+			addChild(bgSprite)
+		}
         // Give our root scene a name
         name = "SceneRoot"
-        
+		
         // Create our hero
         steveTheSprite = HeroNode(scene: self, withPhysicsBody: true)
         steveTheSprite.position = CGPoint(x: scene.frame.size.width/4, y: scene.frame.size.height/2)
