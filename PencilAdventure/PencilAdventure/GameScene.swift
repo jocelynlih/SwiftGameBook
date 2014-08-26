@@ -164,11 +164,13 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
 			// Next, try to create a physicsBody from the sprite's smallest
 			// bounding rectangle
 			if sprite.physicsBody == .None {
+				NSLog("*** Falling back to rectangle for sprite: \(sprite.name)")
 				sprite.physicsBody = SKPhysicsBody(rectangleOfSize: sprite.frame.size)
 			}
 			
 			// If we still don't have a physicsBody, just move on to the next one
 			if sprite.physicsBody == nil {
+				NSLog("*** Falling back to no physicsBody for sprite: \(sprite.name)")
 				return false
 			}
 			

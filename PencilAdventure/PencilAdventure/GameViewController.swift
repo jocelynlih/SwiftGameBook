@@ -19,7 +19,7 @@ class GameViewController: UIViewController {
 		let view = self.view as SKView
 //		view.showsFPS = true
 //		view.showsNodeCount = true
-		view.ignoresSiblingOrder = true
+//		view.ignoresSiblingOrder = true
 
     // Start the background music.
     SoundManager.playBackgroundMusic()

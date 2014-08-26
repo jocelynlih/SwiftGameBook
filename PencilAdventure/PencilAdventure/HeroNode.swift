@@ -46,9 +46,9 @@ public class HeroNode: SKSpriteNode {
             physicsBody = SKPhysicsBody(rectangleOfSize: self.size)
             physicsBody.dynamic = true
             physicsBody.allowsRotation = false
-            physicsBody.mass = 0.6 // TODO - what to do about this?
+            physicsBody.mass = 0.6 // TODO - Need to decide on a standard for this - maybe we just change this to a constant?
             physicsBody.categoryBitMask = heroCategory
-            physicsBody.collisionBitMask = levelItemCategory | powerupCategory | deathtrapCategory | groundCategory | finishCategory
+            physicsBody.collisionBitMask = levelItemCategory | deathtrapCategory | groundCategory | finishCategory
             physicsBody.contactTestBitMask = levelItemCategory | powerupCategory | deathtrapCategory | groundCategory | finishCategory
         }
         
