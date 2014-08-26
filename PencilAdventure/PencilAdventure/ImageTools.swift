@@ -32,9 +32,9 @@ let BytesPerPixel = 4
 
 // While tracing edges, we use this tolerance to determine when to break the segment into multiple pieces
 // Larger number means more error allowed, so there will be fewer segments making up the path
-let EdgeAngleTolerance: CGFloat = 1.0
+let EdgeAngleTolerance: CGFloat = 5
 let AlphaThreshold: UInt8 = 128
-let ColorThreshold: Int32 = 100
+let ColorThreshold: Int32 = 50
 
 var vectorizedShapes = [String :[[CGPoint]]]()
 
@@ -298,6 +298,7 @@ class ImageTools {
 			//
 			// We start with our first pixel point
 			var path: [CGPoint] = [pixCur.toCGPoint()]
+			totalPoints += 1
 			
 			while true {
 				// Find the next pixel on the perimeter
@@ -306,13 +307,9 @@ class ImageTools {
 				
 				// Did we reach the end of our edge?
 				if pixCur == nil {
-					// We should have more than one point in the path, otherwise, we're just going to add another
-					// copy of our first point to this path (this would be a degenerate path)
-					if path.count > 1 {
-						// Finish out the edge
-						path.append(pixPrev.toCGPoint())
-						totalPoints += 1
-					}
+					// Finish out the edge
+					path.append(pixPrev.toCGPoint())
+					totalPoints += 1
 					break
 				}
 				
@@ -378,7 +375,7 @@ class ImageTools {
 		var paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
 		var documentsDirectoryPath = paths[0] as String
 		var filePath = documentsDirectoryPath.stringByAppendingPathComponent(filename)
-
+		
 		if !pathArrayArr._bridgeToObjectiveC().writeToFile(filePath, atomically: true) {
 			NSLog("Error writing plist file: " + filePath)
 		}
@@ -403,7 +400,7 @@ class ImageTools {
 		if pathArrayArr == .None || pathArrayArr.count == 0 {
 			return .None
 		}
-
+		
 		var pathArray: [[CGPoint]] = []
 		for arr in pathArrayArr as [ [ [NSNumber] ] ] {
 			var path: [CGPoint] = []

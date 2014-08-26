@@ -76,7 +76,7 @@ public class GameScene : SKScene, SKPhysicsContactDelegate, GameProtocol {
 		setupAccessories()
 		
         // Create the background layer sprite
-        let background = SKTexture(imageNamed: "paper")
+        let background = SKTexture(imageNamed: "paper\(random() % 4 + 1)")
         background.filteringMode = SKTextureFilteringMode.Nearest
 		let frameCenter = CGPoint(x: frame.width / 2.0, y: frame.height / 2.0)
 		let bgSprite = SKSpriteNode(texture: background)
