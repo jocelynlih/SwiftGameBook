@@ -51,7 +51,7 @@ class SketchRender {
 //		var color: UIColor = UIColor.blackColor()
 
 		// Cleaner lines
-		var lineDensity: CGFloat = 4 // lower numbers are more dense
+		var lineDensity: CGFloat = 10 // lower numbers are more dense
 		var minSegmentLength: CGFloat = 5
 		var maxSegmentLength: CGFloat = 15
 		var pixJitterDistance: CGFloat = 4
@@ -129,6 +129,7 @@ class SketchRender {
 					//
 					// Get the vectorized path for our bitmap
 					if let pathArray = ImageTools.vectorizeImage(name: name, image: img) {
+						
 						for i in 0 ..< MaxAnimationSprites {
 							// We'll need our image size (in pixels)
 							let imageWidthPix = CGFloat(CGImageGetWidth(img.CGImage))
@@ -140,9 +141,9 @@ class SketchRender {
 								// Ensure we draw in front of our parent
 								sketchSprite.zPosition = 1
 								
-								// We get our sketch color from our parent's color
-								sketchSprite.color = sprite.color
-
+								//sketchSprite.position = sprite.position
+								//sketchSprite.size = sketchParent.size
+								
 								// Set our size to that of our parent, taking it's scale into account
 								sketchSprite.size = CGSize(width: sprite.size.width / sprite.xScale, height: sprite.size.height / sprite.yScale)
 

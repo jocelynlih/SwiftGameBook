@@ -33,7 +33,9 @@ public class PaperScene : SKScene {
     private let SketchAnimationFPS = 8.0
     private var sketchAnimationTimer: NSTimer?
     
-    public override func didMoveToView(view: SKView) {
+    public override func didMoveToView(view: SKView!) {
+		super.didMoveToView(view)
+		
 		// Calculate our viewable area (in points)
 		let viewToFrameScale = frame.width / view.frame.size.width
 		viewableArea = CGRect()

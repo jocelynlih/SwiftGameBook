@@ -17,6 +17,9 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="paper" translatesAutoresizingMaskIntoConstraints="NO" id="qhX-Hi-gf1">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                            </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yAY-Eb-tKI">
                                 <rect key="frame" x="229" y="283" width="142" height="34"/>
                                 <constraints>
@@ -50,9 +53,13 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="IhP-oE-pRy" firstAttribute="top" secondItem="ubL-yK-d3C" secondAttribute="bottom" id="FSh-41-re2"/>
+                            <constraint firstAttribute="centerY" secondItem="qhX-Hi-gf1" secondAttribute="centerY" id="Gqz-ir-HTg"/>
+                            <constraint firstItem="qhX-Hi-gf1" firstAttribute="width" secondItem="bdc-N1-crn" secondAttribute="width" id="L5A-40-mH0"/>
                             <constraint firstItem="IhP-oE-pRy" firstAttribute="leading" secondItem="bdc-N1-crn" secondAttribute="leadingMargin" id="MGz-ny-MZP"/>
+                            <constraint firstAttribute="centerX" secondItem="qhX-Hi-gf1" secondAttribute="centerX" id="Puu-fU-ZZl"/>
                             <constraint firstItem="7mm-Rp-UuW" firstAttribute="top" secondItem="ubL-yK-d3C" secondAttribute="bottom" id="Qay-do-pPt"/>
                             <constraint firstAttribute="centerY" secondItem="yAY-Eb-tKI" secondAttribute="centerY" id="SXF-jN-se3"/>
+                            <constraint firstItem="qhX-Hi-gf1" firstAttribute="height" secondItem="bdc-N1-crn" secondAttribute="height" id="Wsb-fi-UkA"/>
                             <constraint firstItem="7mm-Rp-UuW" firstAttribute="trailing" secondItem="bdc-N1-crn" secondAttribute="trailingMargin" id="X7t-iV-p9t"/>
                             <constraint firstAttribute="centerX" secondItem="yAY-Eb-tKI" secondAttribute="centerX" id="tCm-2Y-Frt"/>
                         </constraints>
@@ -69,5 +76,6 @@
     <resources>
         <image name="babyPicture" width="85" height="101"/>
         <image name="girlPicture" width="80" height="95"/>
+        <image name="paper" width="213" height="160"/>
     </resources>
 </document>

@@ -32,7 +32,7 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
 	// Star Count
 	private var starCountNode: StarCountNode!
 	
-    public override func didMoveToView(view: SKView) {
+    public override func didMoveToView(view: SKView!) {
 		super.didMoveToView(view)
 		
 		setupBackground(true)
@@ -78,7 +78,6 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
 			
 			// First, try to create a physicsBody from the texture alpha
 			if useTextureAlpha && sprite.texture != .None {
-				NSLog("Creating physics body for \(sprite.name)")
 				sprite.physicsBody = SKPhysicsBody(texture: sprite.texture, alphaThreshold: 0.9, size: sprite.size)
 			}
 			
