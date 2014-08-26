@@ -50,7 +50,7 @@ public class LifeLineNode: SKCropNode {
         if lifeLine > 0 {
             callbackAfter(0.1, subtractLifeLine)
         } else {
-            gameScene?.onGameOver()
+            gameScene?.gameEnd(false)
         }
     }
     
