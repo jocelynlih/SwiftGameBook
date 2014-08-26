@@ -8,10 +8,6 @@
 
 import SpriteKit
 
-public protocol GameOverProtocol {
-    func onGameOver()
-}
-
 public class LifeLineNode: SKCropNode {
     
     private var lifeLine: CGFloat = 1.0
@@ -54,7 +50,7 @@ public class LifeLineNode: SKCropNode {
         if lifeLine > 0 {
             callbackAfter(0.1, subtractLifeLine)
         } else {
-            gameScene?.onGameOver()
+            gameScene?.gameEnd(false)
         }
     }
     

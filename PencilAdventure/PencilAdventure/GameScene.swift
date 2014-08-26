@@ -31,7 +31,7 @@ let powerupCategory: UInt32 = 1 << 3
 let deathtrapCategory: UInt32 = 1 << 4
 let finishCategory: UInt32 = 1 << 5
 
-class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
+public class GameScene : SKScene, SKPhysicsContactDelegate, GameProtocol {
     // Background layer
     private let BackgroundScrollSpeedUnitsPerSecond: CGFloat = 200
     private var background:SKTexture!
@@ -40,7 +40,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
 	private let ScrollSpeedInUnitsPerSecond: CGFloat = 200
     
     // Our viewable area. This originates at the bottom/left corner and extends up/right in scene points.
-    internal var viewableArea: CGRect!
+    public var viewableArea: CGRect!
     
     // Sketch lines animation
     private let SketchAnimationFPS = 8.0
@@ -55,7 +55,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
     // Star Count
     private var starCountNode: StarCountNode!
     
-    override func didMoveToView(view: SKView) {
+    public override func didMoveToView(view: SKView) {
         // Setup physics
         physicsWorld.gravity = CGVector(dx: 0.0, dy: -9.8)
         physicsWorld.contactDelegate = self
@@ -295,12 +295,12 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
         }
     }
     
-    override func update(currentTime: CFTimeInterval) {
+    public override func update(currentTime: CFTimeInterval) {
         
     }
     
     //TODO: we can add more action later, to keep the demo simple, we use touch to jump for now
-    override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
+    public override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         // only jump when steve is running
         if (steveTheSprite.heroState == HeroState.Run) {
             // touch to jump
@@ -375,7 +375,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
         }
     }
 	
-    func didBeginContact(contact: SKPhysicsContact) {
+    public func didBeginContact(contact: SKPhysicsContact) {
         if let steve = contact.bodyA.node as? HeroNode {
             steveDidColliadeWith(contact.bodyB)
         }
@@ -424,9 +424,8 @@ class GameScene : SKScene, SKPhysicsContactDelegate, GameOverProtocol {
         }
     }
     //TODO: need game end scene for logic here
-    func gameEnd(didWin:Bool) {
+    public func gameEnd(didWin:Bool) {
 		SKNode.cleanupScene(self)
-		
         if (didWin) {
             self.view.presentScene(LevelFinishedScene())
         } else {
