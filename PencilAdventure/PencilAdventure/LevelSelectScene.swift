@@ -115,10 +115,6 @@ class LevelSelectScene : SKScene {
         var scene: GameScene? = nil
         var work: [Void -> Any?] = []
 
-        // Restart the music as to play while the
-        // scene is loading.
-        SoundManager.restartBackgroundMusic()
-        
         // Add our progress to the scene
 		addProgressLoaderNode()
         
@@ -144,6 +140,10 @@ class LevelSelectScene : SKScene {
 				if let newScene = scene {
 					SKNode.cleanupScene(self)
 					self.view.presentScene(newScene)
+                    
+                    // Restart the music as to play while the
+                    // scene is loading.
+                    SoundManager.restartBackgroundMusic()
 				}
 				else {
 					NSLog("The scene is nil!")
