@@ -30,7 +30,7 @@ public class ScoreManager {
         for (level, score) in leaderboard {
             stringBuilder.append("\(level) - \(score) Points")
         }
-        if stringBuilder.count > 0 {
+        if stringBuilder.count > 1 {
             return Swift.join("\n", stringBuilder)
         } else {
             return .None
