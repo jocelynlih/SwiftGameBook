@@ -9,7 +9,7 @@
 import SpriteKit
 
 // Note that these would normally be class properties, but Swift doesn't currently support class properties.
-let SteveMaxFrames = 12
+let SteveMaxFrames = 8
 let SteveTextureNameBase = "steve"
 var steveWalkingFrames = [SKTexture]()
 //currently Steve can run, jump and Die
@@ -46,7 +46,7 @@ public class HeroNode: SKSpriteNode {
             physicsBody = SKPhysicsBody(rectangleOfSize: self.size)
             physicsBody.dynamic = true
             physicsBody.allowsRotation = false
-            physicsBody.mass = 0.6 // TODO - Need to decide on a standard for this - maybe we just change this to a constant?
+            physicsBody.mass = 0.56 // TODO - Need to decide on a standard for this - maybe we just change this to a constant?
             physicsBody.categoryBitMask = heroCategory
             physicsBody.collisionBitMask = levelItemCategory | deathtrapCategory | groundCategory | finishCategory
             physicsBody.contactTestBitMask = levelItemCategory | powerupCategory | deathtrapCategory | groundCategory | finishCategory
