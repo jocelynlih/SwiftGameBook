@@ -50,9 +50,10 @@ class LevelFinishedScene: SKScene {
     }
     
     // Add a back button button.
-    let backButton = SKSpriteNode(imageNamed: "girlPicture")
+	let spriteAtlas = SKTextureAtlas(named: "Sprites")
+	let backButton = SKSpriteNode(texture: spriteAtlas.textureNamed("ok"))
     backButton.name = "backButton"
-    backButton.position =  CGPoint(x: 0.3, y: 0.3)
+    backButton.position =  CGPoint(x: 0.5, y: 0.3)
     backButton.xScale = getSceneScaleX()
     backButton.yScale = getSceneScaleY()
     addChild(backButton)

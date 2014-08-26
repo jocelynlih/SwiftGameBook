@@ -50,7 +50,8 @@ class GameOverScene: SKScene {
     }
     
     // Add a OK button.
-    let okButton = SKSpriteNode(imageNamed: "girlPicture")
+	let spriteAtlas = SKTextureAtlas(named: "Sprites")
+	let okButton = SKSpriteNode(texture: spriteAtlas.textureNamed("ok"))
     okButton.name = "okButton"
     okButton.position =  CGPoint(x: 0.5, y: 0.3)
     okButton.xScale = getSceneScaleX()
