@@ -352,7 +352,7 @@ class ImageTools {
 
 		let filePath = getPathArrayFilename(name)
 		let pathArrayArr = NSArray(contentsOfFile: filePath)
-		if pathArrayArr == .None {
+		if pathArrayArr == .None || pathArrayArr.count == 0 {
 			return .None
 		}
 
