@@ -24,7 +24,7 @@ class LevelSelectScene : SKScene {
         SoundManager.toggleBackgroundMusic()
         
         // Add a background.
-        let backgroundTexture = SKSpriteNode(color: UIColor(red: 154/255, green: 208/255, blue: 217/255, alpha: 1.0), size: frame.size)
+        let backgroundTexture = SKSpriteNode(color: GAME_BLUE_COLOR, size: frame.size)
         backgroundTexture.position = CGPointMake(frame.width / 2, frame.height / 2)
         addChild(backgroundTexture)
         

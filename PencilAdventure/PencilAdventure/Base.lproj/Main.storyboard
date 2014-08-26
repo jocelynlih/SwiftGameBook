@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6205" systemVersion="14A314h" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="LVB-YS-i5n">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6206.8" systemVersion="14A329f" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="LVB-YS-i5n">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6198"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7026.1"/>
+        <capability name="Constraints with attributes relative to the layout margin" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Game View Controller-->
@@ -19,8 +20,8 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yAY-Eb-tKI">
                                 <rect key="frame" x="229" y="283" width="142" height="34"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="34" id="4ms-C0-5D8"/>
-                                    <constraint firstAttribute="width" constant="142" id="yzH-61-d7L"/>
+                                    <constraint firstAttribute="height" constant="34" id="0cU-Rj-qUJ"/>
+                                    <constraint firstAttribute="width" constant="142" id="Sx8-fn-aM1"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" name="Noteworthy-Light" family="Noteworthy" pointSize="26"/>
                                 <state key="normal" title="Start Game">
@@ -31,11 +32,29 @@
                                     <action selector="startGame:" destination="LVB-YS-i5n" eventType="touchUpInside" id="3Bx-wv-Qta"/>
                                 </connections>
                             </button>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="babyPicture" translatesAutoresizingMaskIntoConstraints="NO" id="7mm-Rp-UuW">
+                                <rect key="frame" x="424" y="20" width="160" height="190"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="160" id="6Fy-ka-BSC"/>
+                                    <constraint firstAttribute="height" constant="190" id="TZv-Q4-8pw"/>
+                                </constraints>
+                            </imageView>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="girlPicture" translatesAutoresizingMaskIntoConstraints="NO" id="IhP-oE-pRy">
+                                <rect key="frame" x="16" y="20" width="160" height="190"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="160" id="Jor-hU-k0r"/>
+                                    <constraint firstAttribute="height" constant="190" id="nBh-Io-IX4"/>
+                                </constraints>
+                            </imageView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="centerY" secondItem="yAY-Eb-tKI" secondAttribute="centerY" id="CTc-PJ-DwM"/>
-                            <constraint firstAttribute="centerX" secondItem="yAY-Eb-tKI" secondAttribute="centerX" id="gL7-Dz-m1G"/>
+                            <constraint firstItem="IhP-oE-pRy" firstAttribute="top" secondItem="ubL-yK-d3C" secondAttribute="bottom" id="FSh-41-re2"/>
+                            <constraint firstItem="IhP-oE-pRy" firstAttribute="leading" secondItem="bdc-N1-crn" secondAttribute="leadingMargin" id="MGz-ny-MZP"/>
+                            <constraint firstItem="7mm-Rp-UuW" firstAttribute="top" secondItem="ubL-yK-d3C" secondAttribute="bottom" id="Qay-do-pPt"/>
+                            <constraint firstAttribute="centerY" secondItem="yAY-Eb-tKI" secondAttribute="centerY" id="SXF-jN-se3"/>
+                            <constraint firstItem="7mm-Rp-UuW" firstAttribute="trailing" secondItem="bdc-N1-crn" secondAttribute="trailingMargin" id="X7t-iV-p9t"/>
+                            <constraint firstAttribute="centerX" secondItem="yAY-Eb-tKI" secondAttribute="centerX" id="tCm-2Y-Frt"/>
                         </constraints>
                     </view>
                     <connections>
@@ -44,6 +63,11 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="btX-cZ-eVz" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="6" y="379"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="babyPicture" width="85" height="101"/>
+        <image name="girlPicture" width="80" height="95"/>
+    </resources>
 </document>
