@@ -48,7 +48,7 @@ public class LifeLineNode: SKCropNode {
         lifeLine -= 0.01
         maskNode.yScale = lifeLine
         if lifeLine > 0 {
-            callbackAfter(0.1, subtractLifeLine)
+            callbackAfter(0.5, subtractLifeLine)
         } else {
             gameScene?.gameEnd(false)
         }

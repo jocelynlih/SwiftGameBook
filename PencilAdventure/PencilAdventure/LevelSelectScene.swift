@@ -9,14 +9,14 @@
 import SpriteKit
 
 class LevelSelectScene : SKScene {
-
+    
     // Constants
     let MaxLevels = 4
     
     // Variables
     var progressLoader: ProgressLoaderNode!
     var isLoading = false
-
+    
     override func didMoveToView(view: SKView) {
         super.didMoveToView(view)
         
@@ -24,7 +24,7 @@ class LevelSelectScene : SKScene {
         SoundManager.toggleBackgroundMusic()
         
         // Add a background.
-        let backgroundTexture = SKSpriteNode(color: UIColor(red: 154/255, green: 208/255, blue: 217/255, alpha: 1.0), size: frame.size)
+        let backgroundTexture = SKSpriteNode(color: GAME_BLUE_COLOR, size: frame.size)
         backgroundTexture.position = CGPointMake(frame.width / 2, frame.height / 2)
         addChild(backgroundTexture)
         
@@ -45,20 +45,20 @@ class LevelSelectScene : SKScene {
         // Load our our required resources.
         let atlas = SKTextureAtlas(named: "Levels")
         let levelTile = atlas.textureNamed("L1-enabled")
-
+        
         // In order to create a grid for the level buttons,
         // we a tile width, height and a value for the gap
         // in between them.
         var tileWidth = levelTile.size().width
         var tileHeight = levelTile.size().height
         var gap = tileWidth
-
+        
         // We also need a selector width and an initial x
         // and y coordinate set.
         var selectorWidth = tileWidth * CGFloat(MaxLevels) + gap * CGFloat(MaxLevels - 2)
         var x = (view.frame.width - selectorWidth) / 2
         var y = view.frame.height / 2
-
+        
         // For every level, add a level selector.
         for i in 1...MaxLevels {
             // The first two levels we statically enable,
@@ -67,7 +67,7 @@ class LevelSelectScene : SKScene {
             if i == 1 || i == 2 {
                 suffix = "enabled"
             }
-
+            
             // Create a level selector node and add it to
             // the scene.
             let level = SKSpriteNode(texture: atlas.textureNamed("L\(i)-\(suffix)"))
@@ -76,12 +76,12 @@ class LevelSelectScene : SKScene {
             level.xScale = getSceneScaleX()
             level.yScale = getSceneScaleY()
             addChild(level)
-
+            
             // Move the x value over, as to not render two
             // nodes on top of each other.
             x += tileWidth + gap
         }
-
+        
         // If high scores are available, display them
         // as a label node.
         if let highestScores = ScoreManager.getAllHighScores() {
@@ -95,7 +95,7 @@ class LevelSelectScene : SKScene {
             addChild(highScoreLabel)
         }
     }
-
+    
     internal func addProgressLoaderNode () {
         progressLoader = ProgressLoaderNode(scene: self)
         progressLoader.position = CGPoint(x: view.frame.width / 2, y: view.frame.height / 2 + 100)
@@ -107,20 +107,16 @@ class LevelSelectScene : SKScene {
         // If we're already loading a level, disallow
         // other levels being loaded.
         if isLoading {
-			NSLog("Avoiding interruptive load")
+            NSLog("Avoiding interruptive load")
             return
         }
         isLoading = true
         
         var scene: GameScene? = nil
         var work: [Void -> Any?] = []
-
-        // Restart the music as to play while the
-        // scene is loading.
-        SoundManager.restartBackgroundMusic()
         
         // Add our progress to the scene
-		addProgressLoaderNode()
+        addProgressLoaderNode()
         
         // Unarchive scene.
         work.append {
@@ -136,24 +132,28 @@ class LevelSelectScene : SKScene {
             for job in work {
                 done++
                 job()
-				self.progressLoader.setProgress(CGFloat(done) / CGFloat(work.count))
+                self.progressLoader.setProgress(CGFloat(done) / CGFloat(work.count))
             }
-			
-			// Present our new scene
-			dispatch_async(dispatch_get_main_queue()) {
-				if let newScene = scene {
-					SKNode.cleanupScene(self)
-					self.view.presentScene(newScene)
-				}
-				else {
-					NSLog("The scene is nil!")
-				}
-				
-				self.isLoading = false
-			}
+            
+            // Present our new scene
+            dispatch_async(dispatch_get_main_queue()) {
+                if let newScene = scene {
+                    SKNode.cleanupScene(self)
+                    self.view.presentScene(newScene)
+                    
+                    // Restart the music as to play while the
+                    // scene is loading.
+                    SoundManager.restartBackgroundMusic()
+                }
+                else {
+                    NSLog("The scene is nil!")
+                }
+                
+                self.isLoading = false
+            }
         }
     }
-
+    
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         for touch: AnyObject in touches {
             let node = self.nodeAtPoint(touch.locationInNode(self))
