@@ -10,7 +10,7 @@ import SpriteKit
 // Force re-vectorization of these sprite names (ignoring any existing cache files)
 //
 // Example: [ "cloud1", "platform1" ]
-let forceRevectorization = [String]()
+let forceRevectorization: [String] = []
 let disableCache = false
 
 // Constants
@@ -18,19 +18,23 @@ let LeftNeighborMask = 0x01
 let RightNeighborMask = 0x02
 let TopNeighborMask = 0x04
 let BottomNeighborMask = 0x08
-let SelfAlphaMask = 0x10
+let SelfEdgeMask = 0x10
 let VisitedMask = 0x20
 
 let AllNeighborMasks = LeftNeighborMask | RightNeighborMask | TopNeighborMask | BottomNeighborMask
 
 // Constants
+let BlueComponentOffset = 0
+let GreenComponentOffset = 1
+let RedComponentOffset = 2
 let AlphaComponentOffset = 3
 let BytesPerPixel = 4
 
 // While tracing edges, we use this tolerance to determine when to break the segment into multiple pieces
 // Larger number means more error allowed, so there will be fewer segments making up the path
-let EdgeAngleTolerance: CGFloat = 1.5
+let EdgeAngleTolerance: CGFloat = 5
 let AlphaThreshold: UInt8 = 128
+let ColorThreshold: Int32 = 50
 
 var vectorizedShapes = [String :[[CGPoint]]]()
 
@@ -66,28 +70,28 @@ class ImageTools {
 		let g = Int(imgMap[idx     + stride])
 		let h = Int(imgMap[idx + 1 + stride])
 		
-		if (e & SelfAlphaMask) != 0 && (e & AllNeighborMasks) != 0 && (e & AllNeighborMasks) != AllNeighborMasks && (e & VisitedMask) == 0 {
+		if (e & SelfEdgeMask) != 0 && (e & AllNeighborMasks) != 0 && (e & AllNeighborMasks) != AllNeighborMasks && (e & VisitedMask) == 0 {
 			return Point2D(x: x+1, y: y)
 		}
-		if (h & SelfAlphaMask) != 0 && (h & AllNeighborMasks) != 0 && (h & AllNeighborMasks) != AllNeighborMasks && (h & VisitedMask) == 0 {
+		if (h & SelfEdgeMask) != 0 && (h & AllNeighborMasks) != 0 && (h & AllNeighborMasks) != AllNeighborMasks && (h & VisitedMask) == 0 {
 			return Point2D(x: x+1, y: y+1)
 		}
-		if (g & SelfAlphaMask) != 0 && (g & AllNeighborMasks) != 0 && (g & AllNeighborMasks) != AllNeighborMasks && (g & VisitedMask) == 0 {
+		if (g & SelfEdgeMask) != 0 && (g & AllNeighborMasks) != 0 && (g & AllNeighborMasks) != AllNeighborMasks && (g & VisitedMask) == 0 {
 			return Point2D(x: x, y: y+1)
 		}
-		if (f & SelfAlphaMask) != 0 && (f & AllNeighborMasks) != 0 && (f & AllNeighborMasks) != AllNeighborMasks && (f & VisitedMask) == 0 {
+		if (f & SelfEdgeMask) != 0 && (f & AllNeighborMasks) != 0 && (f & AllNeighborMasks) != AllNeighborMasks && (f & VisitedMask) == 0 {
 			return Point2D(x: x-1, y: y+1)
 		}
-		if (d & SelfAlphaMask) != 0 && (d & AllNeighborMasks) != 0 && (d & AllNeighborMasks) != AllNeighborMasks && (d & VisitedMask) == 0 {
+		if (d & SelfEdgeMask) != 0 && (d & AllNeighborMasks) != 0 && (d & AllNeighborMasks) != AllNeighborMasks && (d & VisitedMask) == 0 {
 			return Point2D(x: x-1, y: y)
 		}
-		if (a & SelfAlphaMask) != 0 && (a & AllNeighborMasks) != 0 && (a & AllNeighborMasks) != AllNeighborMasks && (a & VisitedMask) == 0 {
+		if (a & SelfEdgeMask) != 0 && (a & AllNeighborMasks) != 0 && (a & AllNeighborMasks) != AllNeighborMasks && (a & VisitedMask) == 0 {
 			return Point2D(x: x-1, y: y-1)
 		}
-		if (b & SelfAlphaMask) != 0 && (b & AllNeighborMasks) != 0 && (b & AllNeighborMasks) != AllNeighborMasks && (b & VisitedMask) == 0 {
+		if (b & SelfEdgeMask) != 0 && (b & AllNeighborMasks) != 0 && (b & AllNeighborMasks) != AllNeighborMasks && (b & VisitedMask) == 0 {
 			return Point2D(x: x, y: y-1)
 		}
-		if (c & SelfAlphaMask) != 0 && (c & AllNeighborMasks) != 0 && (c & AllNeighborMasks) != AllNeighborMasks && (c & VisitedMask) == 0 {
+		if (c & SelfEdgeMask) != 0 && (c & AllNeighborMasks) != 0 && (c & AllNeighborMasks) != AllNeighborMasks && (c & VisitedMask) == 0 {
 			return Point2D(x: x+1, y: y-1)
 		}
 		
@@ -126,6 +130,10 @@ class ImageTools {
 		// We'll store our image map here
 		var imgMap = [UInt8](count: widthPix * heightPix, repeatedValue: 0)
 		
+		// We're going to be comparing the distance of pixel colors in the RGB color space with a thredhold value.
+		// Distance calculations require square roots. To avoid the square root, we'll just square our threshold.
+		let colorThresholdSquared = ColorThreshold * ColorThreshold
+		
 		// Scan the image and build our map
 		//
 		// Note that this process requires comparing pixels against their neighbors, edge pixels don't have neighbors, we
@@ -135,8 +143,48 @@ class ImageTools {
 			for x in 1 ..< widthPix-1 {
 				var pixIndex = lineIndex + x
 				
-				if image[pixIndex * BytesPerPixel + AlphaComponentOffset] >= AlphaThreshold {
-					imgMap[pixIndex] |= UInt8(SelfAlphaMask)
+				// If our alpha doesn't meet our threshold, then we're outside of any object in the image
+				let a = image[pixIndex * BytesPerPixel + AlphaComponentOffset]
+				if a < AlphaThreshold {
+					continue
+				}
+				
+				// Get our RGB component so we can compare it against each of our neighbors
+				let r = Int32(image[pixIndex * BytesPerPixel + RedComponentOffset])
+				let g = Int32(image[pixIndex * BytesPerPixel + GreenComponentOffset])
+				let b = Int32(image[pixIndex * BytesPerPixel + BlueComponentOffset])
+
+				// Check our neighbors for an edge condition (either no alpha for an alpha edge or
+				// a large enough difference in the color)
+				var onEdge = false
+				
+				for offset in [-1, 1, -widthPix, widthPix, -widthPix-1, -widthPix+1, widthPix-1, widthPix-1] {
+					let neighborIndex = (pixIndex + offset) * BytesPerPixel
+					let na = image[neighborIndex + AlphaComponentOffset]
+					if na < AlphaThreshold {
+						onEdge = true
+						break
+					}
+					
+					// Extract the color of this neighbor
+					let nr = Int32(image[neighborIndex + RedComponentOffset])
+					let ng = Int32(image[neighborIndex + GreenComponentOffset])
+					let nb = Int32(image[neighborIndex + BlueComponentOffset])
+					
+					// Calculate the color difference between the neighbor's RGB and the current pixel's RGB
+					// using the 3D distance equation:
+					let dr = nr - r
+					let dg = ng - g
+					let db = nb - b
+					let distSquared = dr * dr + dg * dg + db * db
+					if distSquared > colorThresholdSquared {
+						onEdge = true
+						break
+					}
+				}
+				
+				if onEdge {
+					imgMap[pixIndex] |= UInt8(SelfEdgeMask)
 					imgMap[pixIndex - 1] |= UInt8(RightNeighborMask)
 					imgMap[pixIndex + 1] |= UInt8(LeftNeighborMask)
 					imgMap[pixIndex - widthPix] |= UInt8(BottomNeighborMask)
@@ -222,7 +270,7 @@ class ImageTools {
 				for x in 0 ..< widthPix {
 					var pix = Int(imgMap[lineIndex + x])
 					
-					if (pix & SelfAlphaMask) != 0 && (pix & AllNeighborMasks) != 0 && (pix & AllNeighborMasks) != AllNeighborMasks && (pix & VisitedMask) == 0 {
+					if (pix & SelfEdgeMask) != 0 && (pix & AllNeighborMasks) != 0 && (pix & AllNeighborMasks) != AllNeighborMasks && (pix & VisitedMask) == 0 {
 						// Keep track of the first one we find, this is where we'll start tracing the image
 						if pixCur == nil {
 							pixCur = Point2D(x: x, y: y)
@@ -250,6 +298,7 @@ class ImageTools {
 			//
 			// We start with our first pixel point
 			var path: [CGPoint] = [pixCur.toCGPoint()]
+			totalPoints += 1
 			
 			while true {
 				// Find the next pixel on the perimeter
@@ -258,13 +307,9 @@ class ImageTools {
 				
 				// Did we reach the end of our edge?
 				if pixCur == nil {
-					// We should have more than one point in the path, otherwise, we're just going to add another
-					// copy of our first point to this path (this would be a degenerate path)
-					if path.count > 1 {
-						// Finish out the edge
-						path.append(pixPrev.toCGPoint())
-						totalPoints += 1
-					}
+					// Finish out the edge
+					path.append(pixPrev.toCGPoint())
+					totalPoints += 1
 					break
 				}
 				
@@ -330,7 +375,7 @@ class ImageTools {
 		var paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
 		var documentsDirectoryPath = paths[0] as String
 		var filePath = documentsDirectoryPath.stringByAppendingPathComponent(filename)
-
+		
 		if !pathArrayArr._bridgeToObjectiveC().writeToFile(filePath, atomically: true) {
 			NSLog("Error writing plist file: " + filePath)
 		}
@@ -355,7 +400,7 @@ class ImageTools {
 		if pathArrayArr == .None || pathArrayArr.count == 0 {
 			return .None
 		}
-
+		
 		var pathArray: [[CGPoint]] = []
 		for arr in pathArrayArr as [ [ [NSNumber] ] ] {
 			var path: [CGPoint] = []

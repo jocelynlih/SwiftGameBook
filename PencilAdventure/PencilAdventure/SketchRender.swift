@@ -20,16 +20,15 @@ class SketchRender {
 	internal struct SketchMaterial {
 		let SketchTuneHeight: CGFloat = 1536.0
 		
-		
-		var lineDensity: CGFloat = 1 // lower numbers are more dense
-		var minSegmentLength: CGFloat = 1
-		var maxSegmentLength: CGFloat = 35
-		var pixJitterDistance: CGFloat = 4
-		var lineInteriorOverlapJitterDistance: CGFloat = 35
-		var lineEndpointOverlapJitterDistance: CGFloat = 5
-		var lineOffsetJitterDistance: CGFloat = 4
-		var color: UIColor = UIColor.blackColor()
-		var strokeWidth: CGFloat = 2
+//		var lineDensity: CGFloat = 1 // lower numbers are more dense
+//		var minSegmentLength: CGFloat = 1
+//		var maxSegmentLength: CGFloat = 35
+//		var pixJitterDistance: CGFloat = 4
+//		var lineInteriorOverlapJitterDistance: CGFloat = 35
+//		var lineEndpointOverlapJitterDistance: CGFloat = 5
+//		var lineOffsetJitterDistance: CGFloat = 4
+//		var color: UIColor = UIColor.blackColor()
+//		var strokeWidth: CGFloat = 2
 		
 		// Straight lines
 //		var lineDensity: CGFloat = 10000 // lower numbers are more dense
@@ -50,7 +49,18 @@ class SketchRender {
 //		var lineEndpointOverlapJitterDistance: CGFloat = 5
 //		var lineOffsetJitterDistance: CGFloat = 0
 //		var color: UIColor = UIColor.blackColor()
-		
+
+		// Cleaner lines
+		var lineDensity: CGFloat = 10 // lower numbers are more dense
+		var minSegmentLength: CGFloat = 5
+		var maxSegmentLength: CGFloat = 15
+		var pixJitterDistance: CGFloat = 4
+		var lineInteriorOverlapJitterDistance: CGFloat = 5
+		var lineEndpointOverlapJitterDistance: CGFloat = 0
+		var lineOffsetJitterDistance: CGFloat = 0
+		var color: UIColor = UIColor.blackColor()
+		var strokeWidth: CGFloat = 1
+
 		init(scaled: Bool = true) {
 			// Some of our material properties work on a per-pixel level. And since pixels are different sizes
 			// on different devices, we need to take that into account. Normally, we would just use the screen's
@@ -79,6 +89,9 @@ class SketchRender {
 			return
 		}
 		
+		let atlas = SKTextureAtlas(named: "Sprites")
+		let transparentTexture = atlas.textureNamed("transparent")
+				
 		for child in node.children as [SKNode] {
 			// Let's do depth-first traversal so that we don't end up traversing the children we're about to add
 			attachSketchNodes(child)
@@ -116,6 +129,7 @@ class SketchRender {
 					//
 					// Get the vectorized path for our bitmap
 					if let pathArray = ImageTools.vectorizeImage(name: name, image: img) {
+						
 						for i in 0 ..< MaxAnimationSprites {
 							// We'll need our image size (in pixels)
 							let imageWidthPix = CGFloat(CGImageGetWidth(img.CGImage))
@@ -127,9 +141,9 @@ class SketchRender {
 								// Ensure we draw in front of our parent
 								sketchSprite.zPosition = 1
 								
-								// We get our sketch color from our parent's color
-								sketchSprite.color = sprite.color
-
+								//sketchSprite.position = sprite.position
+								//sketchSprite.size = sketchParent.size
+								
 								// Set our size to that of our parent, taking it's scale into account
 								sketchSprite.size = CGSize(width: sprite.size.width / sprite.xScale, height: sprite.size.height / sprite.yScale)
 
@@ -138,6 +152,7 @@ class SketchRender {
 								
 								// Finally, make our sketch sprite a child of our parent sprite
 								sprite.addChild(sketchSprite)
+								sprite.texture = transparentTexture
 							}
 						}
 					}

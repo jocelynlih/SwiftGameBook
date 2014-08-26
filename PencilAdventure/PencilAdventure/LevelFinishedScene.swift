@@ -8,25 +8,22 @@
 
 import SpriteKit
 
-class LevelFinishedScene: SKScene {
+class LevelFinishedScene: PaperScene {
   
   var level: Int?
   
   override func didMoveToView(view: SKView!) {
-    super.didMoveToView(view)
-    
+	super.didMoveToView(view)
+		
+	// Static paper background
+	setupBackground(false)
+		
     // Stop background music.
     SoundManager.stopBackgroundMusic()
     
-    // Add a background.
-    let backgroundColor = UIColor(red: 117/255, green: 233/255, blue: 94/255, alpha: 1.0)
-    let backgroundTexture = SKSpriteNode(color: backgroundColor, size: frame.size)
-    backgroundTexture.position = CGPointMake(0.5, 0.5)
-    addChild(backgroundTexture)
-    
     // Add a title.
     let titleLabel = SKLabelNode(text: "Level Finished!")
-    titleLabel.fontColor = SKColor.whiteColor()
+	titleLabel.fontColor = UIColor(red: 0.5, green: 0, blue: 0, alpha: 1)
     titleLabel.fontName = "Noteworthy"
     titleLabel.fontSize = 24
     titleLabel.position = CGPoint(x: 0.5, y: 0.7)
@@ -39,7 +36,7 @@ class LevelFinishedScene: SKScene {
         if points != .None {
             // Add a score.
             let scoreLabel = SKLabelNode(text: "You scored \(points) points!")
-            scoreLabel.fontColor = SKColor.whiteColor()
+			scoreLabel.fontColor = UIColor(red: 0, green: 0, blue: 0.5, alpha: 1)
             scoreLabel.fontName = "Noteworthy"
             scoreLabel.fontSize = 18
             scoreLabel.position = CGPoint(x: 0.5, y: 0.5)
@@ -50,9 +47,10 @@ class LevelFinishedScene: SKScene {
     }
     
     // Add a back button button.
-    let backButton = SKSpriteNode(imageNamed: "girlPicture")
-    backButton.name = "backButton"
-    backButton.position =  CGPoint(x: 0.3, y: 0.3)
+	let spriteAtlas = SKTextureAtlas(named: "Sprites")
+	let backButton = SKSpriteNode(texture: spriteAtlas.textureNamed("ok"))
+    backButton.name = "ok"
+    backButton.position =  CGPoint(x: 0.5, y: 0.3)
     backButton.xScale = getSceneScaleX()
     backButton.yScale = getSceneScaleY()
     addChild(backButton)
@@ -63,7 +61,7 @@ class LevelFinishedScene: SKScene {
       let node = self.nodeAtPoint(touch.locationInNode(self))
       if let buttonName = node.name {
         switch buttonName {
-        case "backButton":
+        case "ok":
 		  SKNode.cleanupScene(self)
           view.presentScene(LevelSelectScene(size: CGSize(width: view.frame.width, height: view.frame.height)))
           break

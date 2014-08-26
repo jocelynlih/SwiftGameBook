@@ -47,6 +47,7 @@
 		AE5468441988D80000C55823 /* CGFloat+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE5468421988D80000C55823 /* CGFloat+Extensions.swift */; };
 		AE7B1909199284580043071B /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 018BAE3819877F090067C10C /* SpriteKit.framework */; };
 		AE7B19151992DBE80043071B /* SKScene+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE7B19141992DBE80043071B /* SKScene+Extensions.swift */; };
+		AEA92FEE19AD160900009303 /* PaperScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEA92FED19AD160900009303 /* PaperScene.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -104,6 +105,7 @@
 		AE5468411988D80000C55823 /* CGVector+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGVector+Extensions.swift"; sourceTree = "<group>"; };
 		AE5468421988D80000C55823 /* CGFloat+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGFloat+Extensions.swift"; sourceTree = "<group>"; };
 		AE7B19141992DBE80043071B /* SKScene+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKScene+Extensions.swift"; sourceTree = "<group>"; };
+		AEA92FED19AD160900009303 /* PaperScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaperScene.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -146,6 +148,7 @@
 		018BAE12198779330067C10C /* PencilAdventure */ = {
 			isa = PBXGroup;
 			children = (
+				AEA92FEF19AD1E8500009303 /* Rendering */,
 				9286612619AC06B4008BDDE9 /* Protocols */,
 				9274A9AC19946B85004BA541 /* Controller */,
 				9274A9AA19946B43004BA541 /* Helper */,
@@ -198,10 +201,11 @@
 			isa = PBXGroup;
 			children = (
 				9274A9AB19946B65004BA541 /* sks */,
-				0155FA20198EBDC80098CE69 /* LevelSelectScene.swift */,
-				018BAE3619877EDE0067C10C /* GameScene.swift */,
 				8A9B09F719A434C700E93587 /* GameOverScene.swift */,
+				018BAE3619877EDE0067C10C /* GameScene.swift */,
 				8A9B09F919A4353300E93587 /* LevelFinishedScene.swift */,
+				0155FA20198EBDC80098CE69 /* LevelSelectScene.swift */,
+				AEA92FED19AD160900009303 /* PaperScene.swift */,
 			);
 			name = Scenes;
 			sourceTree = "<group>";
@@ -209,8 +213,6 @@
 		9274A9AA19946B43004BA541 /* Helper */ = {
 			isa = PBXGroup;
 			children = (
-				AE2056D6198B66D300E7E302 /* ImageTools.swift */,
-				AE36099A198F1CCA00441B49 /* SketchRender.swift */,
 				9284FC291991A4D300B348CF /* SoundManager.swift */,
 				92E3DAC6199486600089DAEE /* Macros.swift */,
 				9245C25F1996C259003EF53B /* ScoreManager.swift */,
@@ -285,6 +287,15 @@
 				AE2056D4198B62B500E7E302 /* Point2D.swift */,
 			);
 			name = Vector;
+			sourceTree = "<group>";
+		};
+		AEA92FEF19AD1E8500009303 /* Rendering */ = {
+			isa = PBXGroup;
+			children = (
+				AE2056D6198B66D300E7E302 /* ImageTools.swift */,
+				AE36099A198F1CCA00441B49 /* SketchRender.swift */,
+			);
+			name = Rendering;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -431,6 +442,7 @@
 				92E3DAC7199486600089DAEE /* Macros.swift in Sources */,
 				AE5468441988D80000C55823 /* CGFloat+Extensions.swift in Sources */,
 				018BAE3719877EDE0067C10C /* GameScene.swift in Sources */,
+				AEA92FEE19AD160900009303 /* PaperScene.swift in Sources */,
 				9284FC361993000600B348CF /* HeroNode.swift in Sources */,
 				AE7B19151992DBE80043071B /* SKScene+Extensions.swift in Sources */,
 				018BAE18198779330067C10C /* GameViewController.swift in Sources */,

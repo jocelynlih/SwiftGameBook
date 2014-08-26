@@ -24,7 +24,8 @@ class ProgressLoaderNode: SKCropNode {
 		yScale = scene.getSceneScaleY()
 		
 		// Add our progress background
-		progressBarSprite = SKSpriteNode(imageNamed: "progress")
+		let spriteAtlas = SKTextureAtlas(named: "Sprites")
+		progressBarSprite = SKSpriteNode(texture: spriteAtlas.textureNamed("progress"))
 		self.addChild(progressBarSprite)
 		
 		// Add our moving marker

@@ -21,8 +21,9 @@ public class LifeLineNode: SKCropNode {
         
         // Start reducing led from the pencil
         callbackAfter(0.10, subtractLifeLine)
-        
-        let healthSprite = SKSpriteNode(imageNamed: "health")
+		
+		let spriteAtlas = SKTextureAtlas(named: "Sprites")
+        let healthSprite = SKSpriteNode(texture: spriteAtlas.textureNamed("health"))
         healthSprite.xScale = scene.getSceneScaleX()
         healthSprite.yScale = scene.getSceneScaleY()
         addChild(healthSprite)

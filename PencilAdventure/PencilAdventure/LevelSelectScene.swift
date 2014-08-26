@@ -8,7 +8,7 @@
 
 import SpriteKit
 
-class LevelSelectScene : SKScene {
+class LevelSelectScene : PaperScene {
     
     // Constants
     let MaxLevels = 4
@@ -17,16 +17,14 @@ class LevelSelectScene : SKScene {
     var progressLoader: ProgressLoaderNode!
     var isLoading = false
     
-    override func didMoveToView(view: SKView) {
-        super.didMoveToView(view)
-        
+	override func didMoveToView(view: SKView!) {
+		super.didMoveToView(view)
+		
+		// Static paper background
+		setupBackground(false)
+
         // Setup background music.
         SoundManager.toggleBackgroundMusic()
-        
-        // Add a background.
-        let backgroundTexture = SKSpriteNode(color: GAME_BLUE_COLOR, size: frame.size)
-        backgroundTexture.position = CGPointMake(frame.width / 2, frame.height / 2)
-        addChild(backgroundTexture)
         
         // Add a title.
         let levelLabel = SKLabelNode(text: "Please choose a level")
