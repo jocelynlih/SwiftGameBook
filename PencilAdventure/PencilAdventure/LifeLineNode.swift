@@ -8,10 +8,6 @@
 
 import SpriteKit
 
-public protocol GameOverProtocol {
-    func onGameOver()
-}
-
 public class LifeLineNode: SKCropNode {
     
     private var lifeLine: CGFloat = 1.0
