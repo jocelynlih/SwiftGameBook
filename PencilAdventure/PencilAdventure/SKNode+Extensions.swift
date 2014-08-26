@@ -45,4 +45,11 @@ extension SKNode {
         xform = CGAffineTransformScale(xform, xScale, yScale)
         return xform
     }
+
+	class func cleanupScene(node: SKNode) {
+		for child in node.children as [SKNode] {
+			cleanupScene(child)
+		}
+		node.removeFromParent()
+	}
 }
