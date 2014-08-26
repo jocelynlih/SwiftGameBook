@@ -10,7 +10,7 @@ import SpriteKit
 // Force re-vectorization of these sprite names (ignoring any existing cache files)
 //
 // Example: [ "cloud1", "platform1" ]
-let forceRevectorization: [String] = [ ]
+let forceRevectorization = [String]()
 let disableCache = false
 
 // Constants
@@ -32,25 +32,22 @@ let BytesPerPixel = 4
 let EdgeAngleTolerance: CGFloat = 1.5
 let AlphaThreshold: UInt8 = 128
 
-var vectorizedShapes: [ String : [[CGPoint]] ] = [:]
+var vectorizedShapes = [String :[[CGPoint]]]()
 
-class WritableCoordinate
-{
-	var x: CGFloat = 0
-	var y: CGFloat = 0
-	
-	init(x: CGFloat, y: CGFloat)
-	{
-		self.x = x
-		self.y = y
-	}
+class WritableCoordinate {
+    var x: CGFloat = 0
+    var y: CGFloat = 0
+    
+    init(x: CGFloat, y: CGFloat) {
+        self.x = x
+        self.y = y
+    }
 }
 
-class ImageTools
-{
+class ImageTools {
+	
 	// Find a "vertex neighbor" that is an "edge pixel"
-	class func neighboringEdgePixel(imgMap: [UInt8], stride: Int, x: Int, y: Int) -> Point2D?
-	{
+	class func neighboringEdgePixel(imgMap: [UInt8], stride: Int, x: Int, y: Int) -> Point2D? {
 		// These are our neighbors
 		//
 		// a b c
@@ -69,36 +66,28 @@ class ImageTools
 		let g = Int(imgMap[idx     + stride])
 		let h = Int(imgMap[idx + 1 + stride])
 		
-		if (e & SelfAlphaMask) != 0 && (e & AllNeighborMasks) != 0 && (e & AllNeighborMasks) != AllNeighborMasks && (e & VisitedMask) == 0
-		{
+		if (e & SelfAlphaMask) != 0 && (e & AllNeighborMasks) != 0 && (e & AllNeighborMasks) != AllNeighborMasks && (e & VisitedMask) == 0 {
 			return Point2D(x: x+1, y: y)
 		}
-		if (h & SelfAlphaMask) != 0 && (h & AllNeighborMasks) != 0 && (h & AllNeighborMasks) != AllNeighborMasks && (h & VisitedMask) == 0
-		{
+		if (h & SelfAlphaMask) != 0 && (h & AllNeighborMasks) != 0 && (h & AllNeighborMasks) != AllNeighborMasks && (h & VisitedMask) == 0 {
 			return Point2D(x: x+1, y: y+1)
 		}
-		if (g & SelfAlphaMask) != 0 && (g & AllNeighborMasks) != 0 && (g & AllNeighborMasks) != AllNeighborMasks && (g & VisitedMask) == 0
-		{
+		if (g & SelfAlphaMask) != 0 && (g & AllNeighborMasks) != 0 && (g & AllNeighborMasks) != AllNeighborMasks && (g & VisitedMask) == 0 {
 			return Point2D(x: x, y: y+1)
 		}
-		if (f & SelfAlphaMask) != 0 && (f & AllNeighborMasks) != 0 && (f & AllNeighborMasks) != AllNeighborMasks && (f & VisitedMask) == 0
-		{
+		if (f & SelfAlphaMask) != 0 && (f & AllNeighborMasks) != 0 && (f & AllNeighborMasks) != AllNeighborMasks && (f & VisitedMask) == 0 {
 			return Point2D(x: x-1, y: y+1)
 		}
-		if (d & SelfAlphaMask) != 0 && (d & AllNeighborMasks) != 0 && (d & AllNeighborMasks) != AllNeighborMasks && (d & VisitedMask) == 0
-		{
+		if (d & SelfAlphaMask) != 0 && (d & AllNeighborMasks) != 0 && (d & AllNeighborMasks) != AllNeighborMasks && (d & VisitedMask) == 0 {
 			return Point2D(x: x-1, y: y)
 		}
-		if (a & SelfAlphaMask) != 0 && (a & AllNeighborMasks) != 0 && (a & AllNeighborMasks) != AllNeighborMasks && (a & VisitedMask) == 0
-		{
+		if (a & SelfAlphaMask) != 0 && (a & AllNeighborMasks) != 0 && (a & AllNeighborMasks) != AllNeighborMasks && (a & VisitedMask) == 0 {
 			return Point2D(x: x-1, y: y-1)
 		}
-		if (b & SelfAlphaMask) != 0 && (b & AllNeighborMasks) != 0 && (b & AllNeighborMasks) != AllNeighborMasks && (b & VisitedMask) == 0
-		{
+		if (b & SelfAlphaMask) != 0 && (b & AllNeighborMasks) != 0 && (b & AllNeighborMasks) != AllNeighborMasks && (b & VisitedMask) == 0 {
 			return Point2D(x: x, y: y-1)
 		}
-		if (c & SelfAlphaMask) != 0 && (c & AllNeighborMasks) != 0 && (c & AllNeighborMasks) != AllNeighborMasks && (c & VisitedMask) == 0
-		{
+		if (c & SelfAlphaMask) != 0 && (c & AllNeighborMasks) != 0 && (c & AllNeighborMasks) != AllNeighborMasks && (c & VisitedMask) == 0 {
 			return Point2D(x: x+1, y: y-1)
 		}
 		
@@ -109,8 +98,7 @@ class ImageTools
 	// Each pixel is 4 bytes with one byte per color component.
 	// Color components appear in [r, g, b, a] order
 	// Each component is 8 bits (0-255)
-	class func getBitmapBitsForImage(image: UIImage) -> [UInt8]
-	{
+	class func getBitmapBitsForImage(image: UIImage) -> [UInt8] {
 		// Our image width/height. We use CGImageGet* to get the actual pixel dimensions)
 		let widthPix = Int(CGImageGetWidth(image.CGImage))
 		let heightPix = Int(CGImageGetHeight(image.CGImage))
@@ -134,8 +122,7 @@ class ImageTools
 	}
 
 	// Build a neighbor map
-	class func getImageMap(image: [UInt8], widthPix: Int, heightPix: Int) -> [UInt8]
-	{
+	class func getImageMap(image: [UInt8], widthPix: Int, heightPix: Int) -> [UInt8] {
 		// We'll store our image map here
 		var imgMap = [UInt8](count: widthPix * heightPix, repeatedValue: 0)
 		
@@ -143,15 +130,12 @@ class ImageTools
 		//
 		// Note that this process requires comparing pixels against their neighbors, edge pixels don't have neighbors, we
 		// limit our range to [1 ..< n-1] for X and Y.
-		for y in 1 ..< heightPix-1
-		{
+		for y in 1 ..< heightPix-1 {
 			var lineIndex = y * widthPix
-			for x in 1 ..< widthPix-1
-			{
+			for x in 1 ..< widthPix-1 {
 				var pixIndex = lineIndex + x
 				
-				if image[pixIndex * BytesPerPixel + AlphaComponentOffset] >= AlphaThreshold
-				{
+				if image[pixIndex * BytesPerPixel + AlphaComponentOffset] >= AlphaThreshold {
 					imgMap[pixIndex] |= UInt8(SelfAlphaMask)
 					imgMap[pixIndex - 1] |= UInt8(RightNeighborMask)
 					imgMap[pixIndex + 1] |= UInt8(LeftNeighborMask)
@@ -171,33 +155,54 @@ class ImageTools
 	// "Edge pixel"      = Any pixel that has an empty "Edge neighbor"
 	// "Vertex neighbor" = Neighbor that shares a vertex. These are any of the eight neighbors (including corner
 	//                     neighbors)
-	class func vectorizeImage(name: String? = nil, var image: UIImage? = nil) -> ([[CGPoint]])?
-	{
-		if name != .None
-		{
+	class func vectorizeImage(name: String? = nil, var image: UIImage? = nil) -> ([[CGPoint]])? {
+		if name != .None {
 			// Get it from the local cache in memory
-			if let pathArray = vectorizedShapes[name!]
-			{
+			if let pathArray = vectorizedShapes[name!] {
 				return pathArray
 			}
 			
-			// Not in the cache? Load it from a file
-			if let pathArray = readPathArray(name!)
-			{
+			// We're going to check to see if we need to bother updating our vectorized path file.
+			//
+			// Our default is set to the disableCache flag (if we're disabling the cache, then we'll assume
+			// that the file is automatically out-of-date.)
+			var outOfDate = disableCache
+
+			// If we haven't yet determined if it's out of date, check the actual timestamps now
+			let fileManager = NSFileManager()
+			let pathFilename = getPathArrayFilename(name!)
+			if !outOfDate {
+				if let pathFileCreationDate = fileManager.attributesOfItemAtPath(pathFilename, error: nil)?["NSFileModificationDate"] as? NSDate {
+					let assetFilename = "\(NSBundle.mainBundle().bundlePath)/Assets.car"
+					if let imageFolderCreationDate = fileManager.attributesOfItemAtPath(assetFilename, error: nil)?["NSFileModificationDate"] as? NSDate {
+						// Is our path file older than the asset file?
+						if imageFolderCreationDate.compare(pathFileCreationDate) == NSComparisonResult.OrderedDescending {
+							// Our path file is out of date
+							NSLog("Image determined to be out of date: \(name!)")
+							outOfDate = true
+						}
+					}
+				}
+			}
+			
+			// If it's out of date, delete the vector path file so it can be regenerated
+			if outOfDate {
+				fileManager.removeItemAtPath(pathFilename, error: nil)
+			}
+			// Try to load the path file if it exists
+			else if let pathArray = readPathArray(name!) {
 				vectorizedShapes[name!] = pathArray
 				return pathArray
 			}
 			
 			// We'll need to generate one from the named image, so load the image if it wasn't provided
-			if image == .None
-			{
+			if image == .None {
 				image = UIImage(named: name)
 			}
 		}
 
 		// If we don't have an image at this point, we can't continue
-		if image == .None
-		{
+		if image == .None {
 			return nil
 		}
 		
@@ -208,23 +213,18 @@ class ImageTools
 		var totalPoints = 1
 		var pathArray: [[CGPoint]] = []
 		
-		while true
-		{
+		while true {
 			var pixCur: Point2D!
 			
 			pixSearchLoop:
-			for y in 0 ..< heightPix
-			{
+			for y in 0 ..< heightPix {
 				var lineIndex = y * widthPix
-				for x in 0 ..< widthPix
-				{
+				for x in 0 ..< widthPix {
 					var pix = Int(imgMap[lineIndex + x])
 					
-					if (pix & SelfAlphaMask) != 0 && (pix & AllNeighborMasks) != 0 && (pix & AllNeighborMasks) != AllNeighborMasks && (pix & VisitedMask) == 0
-					{
+					if (pix & SelfAlphaMask) != 0 && (pix & AllNeighborMasks) != 0 && (pix & AllNeighborMasks) != AllNeighborMasks && (pix & VisitedMask) == 0 {
 						// Keep track of the first one we find, this is where we'll start tracing the image
-						if !pixCur
-						{
+						if pixCur == nil {
 							pixCur = Point2D(x: x, y: y)
 							break pixSearchLoop
 						}
@@ -233,8 +233,7 @@ class ImageTools
 			}
 			
 			// if we didn't find an edge pixel, there's no alpha in the entire image that's above our threshold
-			if !pixCur
-			{
+			if pixCur == nil {
 				break
 			}
 			
@@ -252,19 +251,16 @@ class ImageTools
 			// We start with our first pixel point
 			var path: [CGPoint] = [pixCur.toCGPoint()]
 			
-			while true
-			{
+			while true {
 				// Find the next pixel on the perimeter
 				var pixPrev = pixCur
 				pixCur = neighboringEdgePixel(imgMap, stride: widthPix, x: pixCur.x, y: pixCur.y)
 				
 				// Did we reach the end of our edge?
-				if !pixCur
-				{
+				if pixCur == nil {
 					// We should have more than one point in the path, otherwise, we're just going to add another
 					// copy of our first point to this path (this would be a degenerate path)
-					if path.count > 1
-					{
+					if path.count > 1 {
 						// Finish out the edge
 						path.append(pixPrev.toCGPoint())
 						totalPoints += 1
@@ -276,8 +272,7 @@ class ImageTools
 				imgMap[pixCur.y * widthPix + pixCur.x] |= UInt8(VisitedMask)
 				
 				// If this is our first neighbor along a new segment, start a new direction vector
-				if vectorDir == .None
-				{
+				if vectorDir == .None {
 					vectorDir = (pixCur.toCGVector() - vectorStart).normal
 					continue
 				}
@@ -285,8 +280,7 @@ class ImageTools
 				// Is the new pixel still on the current path segment (within tolerance?)
 				var runningVector = (pixCur.toCGVector() - pixPrev.toCGVector()).normal
 				totalError += 1 - runningVector.dot(vectorDir!)
-				if totalError < EdgeAngleTolerance
-				{
+				if totalError < EdgeAngleTolerance {
 					// Nothing to do, keep looking for the end of the current segment
 					continue
 				}
@@ -301,22 +295,19 @@ class ImageTools
 			}
 
 			// Add our path to the array
-			if path.count > 1
-			{
+			if path.count > 1 {
 				pathArray.append(path)
 			}
 		}
 		
-		if totalPoints == 0
-		{
+		if totalPoints == 0 {
 			NSLog("vectorizedImage found no paths for [" + (name ?? "unnamed") + "]")
 			return .None
 		}
 		
-		//NSLog("vectorized %d points for [" + (name ?? "unnamed") + "]", totalPoints)
+		NSLog("vectorized %d points for [" + (name ?? "unnamed") + "]", totalPoints)
 		
-		if name != .None
-		{
+		if name != .None {
 			vectorizedShapes[name!] = pathArray
 			writePathArray(pathArray, name: name!)
 		}
@@ -324,14 +315,11 @@ class ImageTools
 		return pathArray
 	}
 	
-	class func writePathArray(pathArray: [[CGPoint]], name: String)
-	{
+	class func writePathArray(pathArray: [[CGPoint]], name: String) {
 		var pathArrayArr: [ [ [NSNumber] ] ] = []
-		for path in pathArray
-		{
+		for path in pathArray {
 			var pathArr: [ [NSNumber] ] = []
-			for point in path
-			{
+			for point in path {
 				pathArr.append([ NSNumber(float: Float(point.x)), NSNumber(float: Float(point.y)) ])
 			}
 			
@@ -343,44 +331,35 @@ class ImageTools
 		var documentsDirectoryPath = paths[0] as String
 		var filePath = documentsDirectoryPath.stringByAppendingPathComponent(filename)
 
-		if !pathArrayArr._bridgeToObjectiveC().writeToFile(filePath, atomically: true)
-		{
+		if !pathArrayArr._bridgeToObjectiveC().writeToFile(filePath, atomically: true) {
 			NSLog("Error writing plist file: " + filePath)
 		}
 	}
 	
-	class func readPathArray(name: String) -> ([[CGPoint]])?
-	{
-		// Disable the cache?
-		if disableCache
-		{
-			return .None
-		}
-		
-		for forceEntry in forceRevectorization
-		{
-			if forceEntry == name
-			{
-				return .None
-			}
-		}
-		
+	class func getPathArrayFilename(name: String) -> String {
 		let filename = name + ".vcache.plist"
 		var paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
 		var documentsDirectoryPath = paths[0] as String
-		var filePath = documentsDirectoryPath.stringByAppendingPathComponent(filename)
+		return documentsDirectoryPath.stringByAppendingPathComponent(filename)
+	}
+	
+	class func readPathArray(name: String) -> ([[CGPoint]])? {
+		for forceEntry in forceRevectorization {
+			if forceEntry == name {
+				return .None
+			}
+		}
+
+		let filePath = getPathArrayFilename(name)
 		let pathArrayArr = NSArray(contentsOfFile: filePath)
-		if pathArrayArr == .None
-		{
+		if pathArrayArr == .None {
 			return .None
 		}
 
 		var pathArray: [[CGPoint]] = []
-		for arr in pathArrayArr as [ [ [NSNumber] ] ]
-		{
+		for arr in pathArrayArr as [ [ [NSNumber] ] ] {
 			var path: [CGPoint] = []
-			for value in arr as [ [NSNumber] ]
-			{
+			for value in arr as [ [NSNumber] ] {
 				var x = CGFloat(value[0].floatValue)
 				var y = CGFloat(value[1].floatValue)
 				path.append(CGPoint(x: x, y: y))

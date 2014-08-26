@@ -8,43 +8,74 @@
 
 import SpriteKit
 
-public class HeroNode: SKSpriteNode {
+// Note that these would normally be class properties, but Swift doesn't currently support class properties.
+let SteveMaxFrames = 12
+let SteveTextureNameBase = "steve"
+var steveWalkingFrames = [SKTexture]()
+//currently Steve can run, jump and Die
+public enum HeroState {
+    case Run, Jump, PowerUp, Death
+}
 
+public class HeroNode: SKSpriteNode {
+    
     private let SteveAnimationFPS = 25.0
     private var powerUpParticle = SKEmitterNode(fileNamed: "PowerUpParticle")
-    
-    convenience init(textures: [SKTexture]!, xScale: CGFloat, yScale: CGFloat, postition: CGRect, zPosition: CGFloat) {
+    public var heroState: HeroState = .Run
+    convenience init(scene: SKScene, withPhysicsBody: Bool) {
         
-        self.init(texture: textures[0])
+        let atlas = SKTextureAtlas(named: "Steve")
+        for i in 1 ... SteveMaxFrames {
+            let texName = "\(SteveTextureNameBase)\(i)"
+            if let texture = atlas.textureNamed(texName) {
+                steveWalkingFrames.append(texture)
+            }
+        }
+        self.init(texture: steveWalkingFrames[0])
         
-        self.name = "steve"
-        self.xScale = xScale
-        self.yScale = yScale
-        self.physicsBody = SKPhysicsBody(rectangleOfSize: self.size)
-        self.physicsBody.dynamic = true
-        self.physicsBody.allowsRotation = false
-        self.physicsBody.mass = 0.3 // TODO - what to do about this?
-        self.position = CGPoint(x: postition.size.width/4, y: postition.size.height/2)
-        self.zPosition = zPosition
-
+        name = "steve"
+        xScale = scene.getSceneScaleX()
+        yScale = scene.getSceneScaleY()
+        zPosition = HeroZPosition
+        speed = 1
         powerUpParticle.paused = true
+		powerUpParticle.hidden = true
+
+		
+        if withPhysicsBody {
+            physicsBody = SKPhysicsBody(rectangleOfSize: self.size)
+            physicsBody.dynamic = true
+            physicsBody.allowsRotation = false
+            physicsBody.mass = 0.6 // TODO - Need to decide on a standard for this - maybe we just change this to a constant?
+            physicsBody.categoryBitMask = heroCategory
+            physicsBody.collisionBitMask = levelItemCategory | deathtrapCategory | groundCategory | finishCategory
+            physicsBody.contactTestBitMask = levelItemCategory | powerupCategory | deathtrapCategory | groundCategory | finishCategory
+        }
         
         self.addChild(powerUpParticle)
         
         self.runAction(
             SKAction.repeatActionForever(
-                SKAction.animateWithTextures(textures, timePerFrame:1.0 / SteveAnimationFPS, resize:false, restore:false)
+                SKAction.animateWithTextures(steveWalkingFrames, timePerFrame:1.0 / SteveAnimationFPS, resize:false, restore:false)
             ), withKey:"steveRun"
         )
     }
     
     public func didGetPowerUp() {
+        heroState = .PowerUp
         powerUpParticle.paused = false
         powerUpParticle.hidden = false
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(NSEC_PER_SEC / 2)), dispatch_get_main_queue()) {
+        callbackAfter(0.5) {
             self.powerUpParticle.paused = true
             self.powerUpParticle.hidden = true
+            self.heroState = .Run
         }
+        self.runAction(SKAction.playSoundFileNamed("collision.mp3", waitForCompletion: false))
+    }
+    
+    public func die() {
+        heroState = .Death
+        //TODO run animation of death
         self.runAction(SKAction.playSoundFileNamed("collision.mp3", waitForCompletion: false))
     }
 }

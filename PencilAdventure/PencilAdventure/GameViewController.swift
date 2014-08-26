@@ -8,32 +8,33 @@
 
 import SpriteKit
 
+class GameViewController: UIViewController {
 
-class GameViewController: UIViewController
-{
-	@IBOutlet weak var startGameButton: UIButton!
+  @IBOutlet var startGameButton: UIButton!
+
+  override func viewDidLoad() {
+    super.viewDidLoad()
+
+    // Setup our SpriteKit view.
+		let view = self.view as SKView
+//		view.showsFPS = true
+//		view.showsNodeCount = true
+//		view.ignoresSiblingOrder = true
+
+    // Start the background music.
+    SoundManager.playBackgroundMusic()
+  }
 	
-    var levelScene : LevelSelectScene!
-    override func viewDidLoad() {
-        super.viewDidLoad()
+  @IBAction func startGame (sender: AnyObject) {
+    let view = self.view as SKView
+
+    // Create and present our level scene.
+    let levelScene = LevelSelectScene(size: CGSize(width: view.frame.width, height: view.frame.height))
+    view.presentScene(levelScene)
 		
-		// PDN - (07/30/2014) - Set up our SKView
-		let skView = self.view as SKView
-		skView.showsFPS = true
-		skView.showsNodeCount = true
-		skView.ignoresSiblingOrder = true
-        
-        SoundManager.playBackgroundMusic()
-    }
-	
-    @IBAction func startGame(sender : AnyObject) {
-        //load level select scene
-			levelScene = LevelSelectScene(size: CGSizeMake(self.view.frame.width, self.view.frame.height))
-			let skView = self.view as SKView
-			skView.presentScene(levelScene)
-			
-			// Hide the start button
-			startGameButton.hidden = true
-		}
-    }
+    // We started the game, so hide the start game button.
+    startGameButton.hidden = true
+  }
+
+}
 

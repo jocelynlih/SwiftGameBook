@@ -15,25 +15,55 @@ let SketchName = "- SketchSprite -"
 // will produce a noticeable repeating pattern. Four seems like a good starting point.
 let MaxAnimationSprites = 4
 
-class SketchRender
-{
+class SketchRender {
 	// Material properties for sketch rendering
-	internal struct SketchMaterial
-	{
-		var lineDensity: CGFloat = 2 // lower numbers are more dense
-		var minSegmentLength: CGFloat = 1
-		var maxSegmentLength: CGFloat = 15
-		var pixJitterDistance: CGFloat = 2
-		var lineInteriorOverlapJitterDistance: CGFloat = 5
-		var lineEndpointOverlapJitterDistance: CGFloat = 5
-		var lineOffsetJitterDistance: CGFloat = 0
-		var color: UIColor = UIColor.blackColor()
+	internal struct SketchMaterial {
+		let SketchTuneHeight: CGFloat = 1536.0
 		
-		init(scaled: Bool = true)
-		{
-			// Some properties need to take into account the backing scale (i.e. *2 for retina displays)
-			// TODO: I'm not sure this is entirely correct. The iPhone looks pretty different from the retina ipad
-			let scale = UIScreen.mainScreen().scale
+		
+		var lineDensity: CGFloat = 1 // lower numbers are more dense
+		var minSegmentLength: CGFloat = 1
+		var maxSegmentLength: CGFloat = 35
+		var pixJitterDistance: CGFloat = 4
+		var lineInteriorOverlapJitterDistance: CGFloat = 35
+		var lineEndpointOverlapJitterDistance: CGFloat = 5
+		var lineOffsetJitterDistance: CGFloat = 4
+		var color: UIColor = UIColor.blackColor()
+		var strokeWidth: CGFloat = 2
+		
+		// Straight lines
+//		var lineDensity: CGFloat = 10000 // lower numbers are more dense
+//		var minSegmentLength: CGFloat = 10000
+//		var maxSegmentLength: CGFloat = 35000
+//		var pixJitterDistance: CGFloat = 0
+//		var lineInteriorOverlapJitterDistance: CGFloat = 0
+//		var lineEndpointOverlapJitterDistance: CGFloat = 0
+//		var lineOffsetJitterDistance: CGFloat = 0
+//		var color: UIColor = UIColor.greenColor()
+//		var strokeWidth: CGFloat = 3
+		
+//		var lineDensity: CGFloat = 2 // lower numbers are more dense
+//		var minSegmentLength: CGFloat = 1
+//		var maxSegmentLength: CGFloat = 15
+//		var pixJitterDistance: CGFloat = 2
+//		var lineInteriorOverlapJitterDistance: CGFloat = 5
+//		var lineEndpointOverlapJitterDistance: CGFloat = 5
+//		var lineOffsetJitterDistance: CGFloat = 0
+//		var color: UIColor = UIColor.blackColor()
+		
+		init(scaled: Bool = true) {
+			// Some of our material properties work on a per-pixel level. And since pixels are different sizes
+			// on different devices, we need to take that into account. Normally, we would just use the screen's
+			// scale factor (UIScreen.mainScreen().scale) but that doesn't actually give us all the information
+			// we need to properly scale across all devices. Consider retina iPhone devices and retina iPad devices
+			// will have the same scale factor, which means that we'll scale the material properties the same, but
+			// the artwork for each will be different sizes because the retina iPhone's screen isn't the same
+			// resolution as the iPad's screen. This would result in larger sketch renders on top of the retina
+			// iPhone's screen.
+			//
+			// The solution is to tune our material for a specific device (in this case, retina iPads) and then
+			// scale the other devices based on that constant, which we'll call "SketchTuneHeight".
+			let scale = UIScreen.mainScreen().currentMode.size.height / SketchTuneHeight
 			
 			minSegmentLength *= scale
 			maxSegmentLength *= scale
@@ -44,29 +74,23 @@ class SketchRender
 		}
 	}
 	
-	internal class func attachSketchNodes(node: SKNode)
-	{
-		if !node.children
-		{
+	internal class func attachSketchNodes(node: SKNode) {
+		if node.children == nil {
 			return
 		}
 		
-		for child in node.children as [SKNode]
-		{
+		for child in node.children as [SKNode] {
 			// Let's do depth-first traversal so that we don't end up traversing the children we're about to add
 			attachSketchNodes(child)
 			
 			// We are only concerned with SKSpriteNodes
-			if let sprite = child as? SKSpriteNode
-			{
-				if let name = sprite.name
-				{
+			if let sprite = child as? SKSpriteNode {
+				if let name = sprite.name {
 					// Don't sketch our sketches
 					//
 					// Since we're doing a depth-first traversal, this shouldn't be necessary, but it doesn't hurt
 					// to be safe!
-					if name == SketchName
-					{
+					if name == SketchName {
 						continue
 					}
 					
@@ -74,35 +98,32 @@ class SketchRender
 					// for sprites, rather than specifying a generic name which is used to dynamically select the proper resolution/
 					// density at run time. So we'll do that here...
 					var img = UIImage(named: name)
-					if img == .None
-					{
+					if img == .None {
 						continue
 					}
 					sprite.texture = SKTexture(image: img)
-					if sprite.texture == .None
-					{
+					if sprite.texture == .None {
 						NSLog("Unable to create texture from image for sprite named \(name)")
 						continue
 					}
 					
-					// TODO: We should cache sketches of similar sprites rather than create fresh copies for each.
-					//       Example: three instances of "cloud1" will each create 4 brand new sketch sprites for a
-					//       total of 12 new sprites. Ideally, each instance of "cloud1" should use the same four
-					//       sketch sprites.
+					// For better performance & memory usage, we should cache sketches of similar sprites rather
+					// than create fresh copies for each.
+					//
+					// Example: three instances of "cloud1" will each create 4 brand new sketch sprites for a
+					// total of 12 new sprites. Ideally, each instance of "cloud1" should use the same four
+					// sketch sprites.
 					//
 					// Get the vectorized path for our bitmap
-					if let pathArray = ImageTools.vectorizeImage(name: name, image: img)
-					{
-						for i in 0 ..< MaxAnimationSprites
-						{
+					if let pathArray = ImageTools.vectorizeImage(name: name, image: img) {
+						for i in 0 ..< MaxAnimationSprites {
 							// We'll need our image size (in pixels)
 							let imageWidthPix = CGFloat(CGImageGetWidth(img.CGImage))
 							let imageHeightPix = CGFloat(CGImageGetHeight(img.CGImage))
 							var imageSize = CGSize(width: imageWidthPix, height: imageHeightPix)
 							
 							// Create a new shape from the path and attach it to this sprite node
-							if let sketchSprite = renderSketchSprite(pathArray, size: imageSize, parent: sprite)
-							{
+							if let sketchSprite = renderSketchSprite(pathArray, size: imageSize, parent: sprite) {
 								// Ensure we draw in front of our parent
 								sketchSprite.zPosition = 1
 								
@@ -125,10 +146,8 @@ class SketchRender
 		}
 	}
 	
-	private class func renderSketchSprite(pathArray: [[CGPoint]], size: CGSize, parent: SKSpriteNode ) -> SKSpriteNode?
-	{
-		if !parent.texture
-		{
+	private class func renderSketchSprite(pathArray: [[CGPoint]], size: CGSize, parent: SKSpriteNode ) -> SKSpriteNode? {
+		if parent.texture == nil {
 			return .None
 		}
 		
@@ -138,28 +157,23 @@ class SketchRender
 		
 		var drawPath = UIBezierPath()
 		
-		for path in pathArray
-		{
+		for path in pathArray {
 			var startPoint: CGVector?
 			var endPoint: CGVector?
 			
-			for point in path
-			{
+			for point in path {
 				// Starting a new batch of lines?
-				if endPoint == .None
-				{
+				if endPoint == .None {
 					endPoint = point.toCGVector()
 					continue
 				}
-				else
-				{
+				else {
 					startPoint = endPoint
 					endPoint = point.toCGVector()
 				}
 				
 				// Make sure we have something to work with
-				if startPoint == .None || endPoint == .None
-				{
+				if startPoint == .None || endPoint == .None {
 					continue
 				}
 				
@@ -182,14 +196,12 @@ class SketchRender
 				var lengthSoFar: CGFloat = 0
 				var done = false
 				var firstPoint = true
-				while lengthSoFar < lineLength && !done
-				{
+				while lengthSoFar < lineLength && !done {
 					// How far to draw for this segment?
 					var segmentLength = material.minSegmentLength + CGFloat.randomValue(material.maxSegmentLength - material.minSegmentLength)
 					
 					// Don't go past the end of our line
-					if segmentLength + lengthSoFar > lineLength
-					{
+					if segmentLength + lengthSoFar > lineLength {
 						segmentLength = lineLength - lengthSoFar
 						done = true
 					}
@@ -199,17 +211,14 @@ class SketchRender
 					var segP1 = segP0 + lineDir * segmentLength
 					
 					// Add the segment
-					if firstPoint
-					{
+					if firstPoint {
 						// Add some overlap
-						if lengthSoFar != 0
-						{
+						if lengthSoFar != 0 {
 							var overlap = CGFloat.randomValue(material.lineInteriorOverlapJitterDistance)
 							
 							// Our interior overlap might extend outside of our line, so we can check here to ensure
 							// that doesn't happen
-							if overlap > lengthSoFar
-							{
+							if overlap > lengthSoFar {
 								overlap = lengthSoFar
 							}
 							segP0 -= lineDir * overlap
@@ -242,6 +251,8 @@ class SketchRender
 		
 		// Draw the sketch into our context
 		CGContextSetStrokeColorWithColor(context, material.color.CGColor)
+		
+		drawPath.lineWidth = material.strokeWidth
 		drawPath.stroke()
 		
 		// Create a texture from our sketch context
@@ -258,27 +269,31 @@ class SketchRender
 		return newSprite
 	}
 	
-	private class func addPencilLineToPath(path: UIBezierPath, startPoint: CGVector, endPoint: CGVector, material: SketchMaterial)
-	{
+	private class func addPencilLineToPath(path: UIBezierPath, startPoint: CGVector, endPoint: CGVector, material: SketchMaterial) {
 		var lineVector = endPoint - startPoint
 		var lineDir = lineVector.normal
 		var lineLength = lineVector.length
 		
 		var p0 = startPoint
-		while(true)
-		{
+		var done = false
+		while !done {
 			var p1 = p0 + lineDir * material.lineDensity
 			
-			path.moveToPoint(p0.randomOffset(material.pixJitterDistance).toCGPoint())
-			path.addLineToPoint(p1.randomOffset(material.pixJitterDistance).toCGPoint())
+			// Check our length so we don't overshoot our bounds
+			if (p1 - startPoint).length >= lineLength {
+				p1 = p0 + lineDir * lineLength
+				done = true
+			}
+			
+			// Randomized points
+			let rp0 = p0.randomOffset(material.pixJitterDistance).toCGPoint()
+			let rp1 = p1.randomOffset(material.pixJitterDistance).toCGPoint()
+			
+			// Add to the path
+			path.moveToPoint(rp0)
+			path.addLineToPoint(rp1)
 			
 			p0 = p1
-			
-			// Check our length
-			if (p1 - startPoint).length >= lineLength
-			{
-				break
-			}
 		}
 	}
 }

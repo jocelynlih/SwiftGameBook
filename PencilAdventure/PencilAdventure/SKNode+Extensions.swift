@@ -8,35 +8,32 @@
 
 import SpriteKit
 
-extension SKNode
-{
-
-    class func unarchiveFromFile(file : String) -> SKNode?
-    {
+extension SKNode {
+    
+    class func unarchiveFromFile(file : String) -> SKNode? {
         let path = NSBundle.mainBundle().pathForResource(file, ofType: "sks")
         
-        var sceneData = NSData.dataWithContentsOfFile(path, options: .DataReadingMappedIfSafe, error: nil)
+        var sceneData = NSData.dataWithContentsOfFile(path!, options: .DataReadingMappedIfSafe, error: nil)
         var archiver = NSKeyedUnarchiver(forReadingWithData: sceneData)
         
         archiver.setClass(self.classForKeyedUnarchiver(), forClassName: "SKScene")
         let scene = archiver.decodeObjectForKey(NSKeyedArchiveRootObjectKey) as GameScene
         archiver.finishDecoding()
-
-		// Set the scene's scale mode to maintain aspect, but fill inside the screen (AspectFill)
-		//
-		// Since we're a landscape-only game the screen will always be wider than it is tall. AspectFill
-		// will always end up filling the screen horizontally and cipping some graphics off the top/bottom
-		// of the screen. We'll need to be careful not to put important stuff in those regions.
-		scene.scaleMode = .AspectFill
-		
-		// Give it a modest background
-		scene.backgroundColor = UIColor(red:0.2353, green:0.2353, blue:0.2353, alpha:1)
-
+        
+        // Set the scene's scale mode to maintain aspect, but fill the screen (AspectFill)
+        //
+        // Since we're a landscape-only game the screen will always be wider than it is tall. AspectFill
+        // will always end up filling the screen horizontally and cipping some graphics off the top/bottom
+        // of the screen. We'll need to be careful not to put important stuff in those regions.
+        scene.scaleMode = .AspectFill
+        
+        // Give it a modest background
+        scene.backgroundColor = UIColor(red:0.2353, green:0.2353, blue:0.2353, alpha:1)
+        
         return scene
     }
-
-    func getTransform() -> CGAffineTransform
-    {
+    
+    func getTransform() -> CGAffineTransform {
         // Transform the path as specified by the sprite
         //
         // Note the order of operations we want to happen are specified in reverse. We want to scale first,
@@ -48,4 +45,11 @@ extension SKNode
         xform = CGAffineTransformScale(xform, xScale, yScale)
         return xform
     }
+
+	class func cleanupScene(node: SKNode) {
+		for child in node.children as [SKNode] {
+			cleanupScene(child)
+		}
+		node.removeFromParent()
+	}
 }
