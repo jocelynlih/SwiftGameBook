@@ -162,8 +162,35 @@ class ImageTools {
 				return pathArray
 			}
 			
-			// Not in the cache? Load it from a file
-			if let pathArray = readPathArray(name!) {
+			// We're going to check to see if we need to bother updating our vectorized path file.
+			//
+			// Our default is set to the disableCache flag (if we're disabling the cache, then we'll assume
+			// that the file is automatically out-of-date.)
+			var outOfDate = disableCache
+
+			// If we haven't yet determined if it's out of date, check the actual timestamps now
+			let fileManager = NSFileManager()
+			let pathFilename = getPathArrayFilename(name!)
+			if !outOfDate {
+				if let pathFileCreationDate = fileManager.attributesOfItemAtPath(pathFilename, error: nil)?["NSFileModificationDate"] as? NSDate {
+					let assetFilename = "\(NSBundle.mainBundle().bundlePath)/Assets.car"
+					if let imageFolderCreationDate = fileManager.attributesOfItemAtPath(assetFilename, error: nil)?["NSFileModificationDate"] as? NSDate {
+						// Is our path file older than the asset file?
+						if imageFolderCreationDate.compare(pathFileCreationDate) == NSComparisonResult.OrderedDescending {
+							// Our path file is out of date
+							NSLog("Image determined to be out of date: \(name!)")
+							outOfDate = true
+						}
+					}
+				}
+			}
+			
+			// If it's out of date, delete the vector path file so it can be regenerated
+			if outOfDate {
+				fileManager.removeItemAtPath(pathFilename, error: nil)
+			}
+			// Try to load the path file if it exists
+			else if let pathArray = readPathArray(name!) {
 				vectorizedShapes[name!] = pathArray
 				return pathArray
 			}
@@ -309,22 +336,21 @@ class ImageTools {
 		}
 	}
 	
+	class func getPathArrayFilename(name: String) -> String {
+		let filename = name + ".vcache.plist"
+		var paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
+		var documentsDirectoryPath = paths[0] as String
+		return documentsDirectoryPath.stringByAppendingPathComponent(filename)
+	}
+	
 	class func readPathArray(name: String) -> ([[CGPoint]])? {
-		// Disable the cache?
-		if disableCache {
-			return .None
-		}
-		
 		for forceEntry in forceRevectorization {
 			if forceEntry == name {
 				return .None
 			}
 		}
-		
-		let filename = name + ".vcache.plist"
-		var paths = NSSearchPathForDirectoriesInDomains(.DocumentDirectory, NSSearchPathDomainMask.UserDomainMask, true)
-		var documentsDirectoryPath = paths[0] as String
-		var filePath = documentsDirectoryPath.stringByAppendingPathComponent(filename)
+
+		let filePath = getPathArrayFilename(name)
 		let pathArrayArr = NSArray(contentsOfFile: filePath)
 		if pathArrayArr == .None {
 			return .None
