@@ -164,11 +164,13 @@ public class GameScene : SKScene, SKPhysicsContactDelegate, GameProtocol {
 			// Next, try to create a physicsBody from the sprite's smallest
 			// bounding rectangle
 			if sprite.physicsBody == .None {
+				NSLog("*** Falling back to rectangle for sprite: \(sprite.name)")
 				sprite.physicsBody = SKPhysicsBody(rectangleOfSize: sprite.frame.size)
 			}
 			
 			// If we still don't have a physicsBody, just move on to the next one
 			if sprite.physicsBody == nil {
+				NSLog("*** Falling back to no physicsBody for sprite: \(sprite.name)")
 				return false
 			}
 			
@@ -349,6 +351,7 @@ public class GameScene : SKScene, SKPhysicsContactDelegate, GameProtocol {
 			}
 			steveTheSprite.die()
 			gameEnd(false)
+			return
 		}
 		if (body.categoryBitMask & groundCategory) == groundCategory {
 			if body.node == nil {
@@ -356,6 +359,7 @@ public class GameScene : SKScene, SKPhysicsContactDelegate, GameProtocol {
 			}
 			steveTheSprite.die()
 			gameEnd(false)
+			return
 		}
         if (body.categoryBitMask & levelItemCategory) == levelItemCategory {
 			if body.node == nil {
@@ -370,6 +374,7 @@ public class GameScene : SKScene, SKPhysicsContactDelegate, GameProtocol {
 			}
             gameEnd(true)
             steveTheSprite.heroState = .Run
+			return
         }
     }
 	
@@ -423,6 +428,12 @@ public class GameScene : SKScene, SKPhysicsContactDelegate, GameProtocol {
     }
     //TODO: need game end scene for logic here
     public func gameEnd(didWin:Bool) {
+		// If we don't have a view, then a different scene has been presented.
+		// This could be problematic, so we'll trap that condition here.
+		if self.view == .None {
+			return
+		}
+
 		SKNode.cleanupScene(self)
         if (didWin) {
             self.view.presentScene(LevelFinishedScene())

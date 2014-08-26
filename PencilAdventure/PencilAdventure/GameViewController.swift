@@ -8,8 +8,7 @@
 
 import SpriteKit
 
-class GameViewController: UIViewController {
-    
+class GameViewController: UIViewController {    
     @IBOutlet var startGameButton: UIButton!
     
     override func viewDidLoad() {
@@ -19,7 +18,7 @@ class GameViewController: UIViewController {
         let view = self.view as SKView
         //		view.showsFPS = true
         //		view.showsNodeCount = true
-        view.ignoresSiblingOrder = true
+        //      view.ignoresSiblingOrder = true
 
         
         let startScene = SKScene()
@@ -43,6 +42,5 @@ class GameViewController: UIViewController {
             }
         }
     }
-    
 }
 

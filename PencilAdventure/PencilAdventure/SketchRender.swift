@@ -19,14 +19,29 @@ class SketchRender {
 	// Material properties for sketch rendering
 	internal struct SketchMaterial {
 		let SketchTuneHeight: CGFloat = 1536.0
+		
+		
 		var lineDensity: CGFloat = 1 // lower numbers are more dense
-		var minSegmentLength: CGFloat = 10
+		var minSegmentLength: CGFloat = 1
 		var maxSegmentLength: CGFloat = 35
-		var pixJitterDistance: CGFloat = 3
+		var pixJitterDistance: CGFloat = 4
 		var lineInteriorOverlapJitterDistance: CGFloat = 35
 		var lineEndpointOverlapJitterDistance: CGFloat = 5
 		var lineOffsetJitterDistance: CGFloat = 4
 		var color: UIColor = UIColor.blackColor()
+		var strokeWidth: CGFloat = 2
+		
+		// Straight lines
+//		var lineDensity: CGFloat = 10000 // lower numbers are more dense
+//		var minSegmentLength: CGFloat = 10000
+//		var maxSegmentLength: CGFloat = 35000
+//		var pixJitterDistance: CGFloat = 0
+//		var lineInteriorOverlapJitterDistance: CGFloat = 0
+//		var lineEndpointOverlapJitterDistance: CGFloat = 0
+//		var lineOffsetJitterDistance: CGFloat = 0
+//		var color: UIColor = UIColor.greenColor()
+//		var strokeWidth: CGFloat = 3
+		
 //		var lineDensity: CGFloat = 2 // lower numbers are more dense
 //		var minSegmentLength: CGFloat = 1
 //		var maxSegmentLength: CGFloat = 15
@@ -236,6 +251,8 @@ class SketchRender {
 		
 		// Draw the sketch into our context
 		CGContextSetStrokeColorWithColor(context, material.color.CGColor)
+		
+		drawPath.lineWidth = material.strokeWidth
 		drawPath.stroke()
 		
 		// Create a texture from our sketch context
@@ -258,18 +275,25 @@ class SketchRender {
 		var lineLength = lineVector.length
 		
 		var p0 = startPoint
-		while(true) {
+		var done = false
+		while !done {
 			var p1 = p0 + lineDir * material.lineDensity
 			
-			path.moveToPoint(p0.randomOffset(material.pixJitterDistance).toCGPoint())
-			path.addLineToPoint(p1.randomOffset(material.pixJitterDistance).toCGPoint())
+			// Check our length so we don't overshoot our bounds
+			if (p1 - startPoint).length >= lineLength {
+				p1 = p0 + lineDir * lineLength
+				done = true
+			}
+			
+			// Randomized points
+			let rp0 = p0.randomOffset(material.pixJitterDistance).toCGPoint()
+			let rp1 = p1.randomOffset(material.pixJitterDistance).toCGPoint()
+			
+			// Add to the path
+			path.moveToPoint(rp0)
+			path.addLineToPoint(rp1)
 			
 			p0 = p1
-			
-			// Check our length
-			if (p1 - startPoint).length >= lineLength {
-				break
-			}
 		}
 	}
 }
