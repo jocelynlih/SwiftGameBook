@@ -76,7 +76,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate {
     }
     
     func addSteve() {
-        steve = SKSpriteNode(imageNamed: "steve1") //#1
+        steve = SKSpriteNode(imageNamed: "steve") //#1
         steve.name = "Steve"
         steve.physicsBody = SKPhysicsBody(rectangleOfSize: steve.size) //#2
         steve.physicsBody.dynamic = true //#3
