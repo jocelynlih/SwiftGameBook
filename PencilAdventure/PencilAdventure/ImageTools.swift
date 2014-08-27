@@ -13,28 +13,24 @@ import SpriteKit
 let forceRevectorization: [String] = []
 let disableCache = false
 
-// Constants
-let LeftNeighborMask = 0x01
-let RightNeighborMask = 0x02
-let TopNeighborMask = 0x04
-let BottomNeighborMask = 0x08
-let SelfEdgeMask = 0x10
-let VisitedMask = 0x20
+// Constants for our image map's edge flags
+let EdgeMask = 0x1
+let NoEdgeMask = 0x2
+let VisitedMask = 0x4
 
-let AllNeighborMasks = LeftNeighborMask | RightNeighborMask | TopNeighborMask | BottomNeighborMask
-
-// Constants
-let BlueComponentOffset = 0
+// Color component access constants
+let RedComponentOffset = 0
 let GreenComponentOffset = 1
-let RedComponentOffset = 2
+let BlueComponentOffset = 2
 let AlphaComponentOffset = 3
 let BytesPerPixel = 4
 
 // While tracing edges, we use this tolerance to determine when to break the segment into multiple pieces
 // Larger number means more error allowed, so there will be fewer segments making up the path
-let EdgeAngleTolerance: CGFloat = 2
+let EdgeAngleTolerance: CGFloat = 0.01
+let MinPathLength = 5
 let AlphaThreshold: UInt8 = 128
-let ColorThreshold: Int32 = 50
+let ColorThreshold: Int32 = 4
 
 var vectorizedShapes = [String :[[CGPoint]]]()
 
@@ -57,44 +53,15 @@ class ImageTools {
 		// a b c
 		// d   e
 		// f g h
-		
 		let idx = y * stride + x
-		let a = Int(imgMap[idx - 1 - stride])
-		let b = Int(imgMap[idx     - stride])
-		let c = Int(imgMap[idx + 1 - stride])
-		
-		let d = Int(imgMap[idx - 1])
-		let e = Int(imgMap[idx + 1])
-		
-		let f = Int(imgMap[idx - 1 + stride])
-		let g = Int(imgMap[idx     + stride])
-		let h = Int(imgMap[idx + 1 + stride])
-		
-		if (e & SelfEdgeMask) != 0 && (e & AllNeighborMasks) != 0 && (e & AllNeighborMasks) != AllNeighborMasks && (e & VisitedMask) == 0 {
-			return Point2D(x: x+1, y: y)
-		}
-		if (h & SelfEdgeMask) != 0 && (h & AllNeighborMasks) != 0 && (h & AllNeighborMasks) != AllNeighborMasks && (h & VisitedMask) == 0 {
-			return Point2D(x: x+1, y: y+1)
-		}
-		if (g & SelfEdgeMask) != 0 && (g & AllNeighborMasks) != 0 && (g & AllNeighborMasks) != AllNeighborMasks && (g & VisitedMask) == 0 {
-			return Point2D(x: x, y: y+1)
-		}
-		if (f & SelfEdgeMask) != 0 && (f & AllNeighborMasks) != 0 && (f & AllNeighborMasks) != AllNeighborMasks && (f & VisitedMask) == 0 {
-			return Point2D(x: x-1, y: y+1)
-		}
-		if (d & SelfEdgeMask) != 0 && (d & AllNeighborMasks) != 0 && (d & AllNeighborMasks) != AllNeighborMasks && (d & VisitedMask) == 0 {
-			return Point2D(x: x-1, y: y)
-		}
-		if (a & SelfEdgeMask) != 0 && (a & AllNeighborMasks) != 0 && (a & AllNeighborMasks) != AllNeighborMasks && (a & VisitedMask) == 0 {
-			return Point2D(x: x-1, y: y-1)
-		}
-		if (b & SelfEdgeMask) != 0 && (b & AllNeighborMasks) != 0 && (b & AllNeighborMasks) != AllNeighborMasks && (b & VisitedMask) == 0 {
-			return Point2D(x: x, y: y-1)
-		}
-		if (c & SelfEdgeMask) != 0 && (c & AllNeighborMasks) != 0 && (c & AllNeighborMasks) != AllNeighborMasks && (c & VisitedMask) == 0 {
-			return Point2D(x: x+1, y: y-1)
-		}
-		
+		let e = Int(imgMap[idx + 1         ]);  if (e & EdgeMask) != 0 && (e & VisitedMask) == 0 { return Point2D(x: x+1, y: y+0) }
+		let h = Int(imgMap[idx + 1 + stride]);  if (h & EdgeMask) != 0 && (h & VisitedMask) == 0 { return Point2D(x: x+1, y: y+1) }
+		let g = Int(imgMap[idx     + stride]);  if (g & EdgeMask) != 0 && (g & VisitedMask) == 0 { return Point2D(x: x+0, y: y+1) }
+		let f = Int(imgMap[idx - 1 + stride]);  if (f & EdgeMask) != 0 && (f & VisitedMask) == 0 { return Point2D(x: x-1, y: y+1) }
+		let d = Int(imgMap[idx - 1         ]);  if (d & EdgeMask) != 0 && (d & VisitedMask) == 0 { return Point2D(x: x-1, y: y+0) }
+		let a = Int(imgMap[idx - 1 - stride]);  if (a & EdgeMask) != 0 && (a & VisitedMask) == 0 { return Point2D(x: x-1, y: y-1) }
+		let b = Int(imgMap[idx     - stride]);  if (b & EdgeMask) != 0 && (b & VisitedMask) == 0 { return Point2D(x: x+0, y: y-1) }
+		let c = Int(imgMap[idx + 1 - stride]);  if (c & EdgeMask) != 0 && (c & VisitedMask) == 0 { return Point2D(x: x+1, y: y-1) }
 		return nil
 	}
 
@@ -130,46 +97,41 @@ class ImageTools {
 		// We'll store our image map here
 		var imgMap = [UInt8](count: widthPix * heightPix, repeatedValue: 0)
 		
-		// We're going to be comparing the distance of pixel colors in the RGB color space with a thredhold value.
-		// Distance calculations require square roots. To avoid the square root, we'll just square our threshold.
-		let colorThresholdSquared = ColorThreshold * ColorThreshold
-		
 		// Scan the image and build our map
 		//
 		// Note that this process requires comparing pixels against their neighbors, edge pixels don't have neighbors, we
 		// limit our range to [1 ..< n-1] for X and Y.
 		for y in 1 ..< heightPix-1 {
-			var lineIndex = y * widthPix
+			
+			let lineIndex = y * widthPix
 			for x in 1 ..< widthPix-1 {
-				var pixIndex = lineIndex + x
 				
-				// If our alpha doesn't meet our threshold, then we're outside of any object in the image
-				let a = image[pixIndex * BytesPerPixel + AlphaComponentOffset]
-				if a < AlphaThreshold {
+				let pixIndex = lineIndex + x
+				
+				// If this pixel is forced not to be an edge (because a neighbor is) then skip it
+				if (imgMap[pixIndex] & UInt8(NoEdgeMask)) != 0 {
 					continue
 				}
 				
 				// Get our RGB component so we can compare it against each of our neighbors
-				let r = Int32(image[pixIndex * BytesPerPixel + RedComponentOffset])
-				let g = Int32(image[pixIndex * BytesPerPixel + GreenComponentOffset])
-				let b = Int32(image[pixIndex * BytesPerPixel + BlueComponentOffset])
+				let a = Int32(image[pixIndex * BytesPerPixel + AlphaComponentOffset])
+				let r = a == 255 ? Int32(image[pixIndex * BytesPerPixel + RedComponentOffset]) : 0
+				let g = a == 255 ? Int32(image[pixIndex * BytesPerPixel + GreenComponentOffset]) : 0
+				let b = a == 255 ? Int32(image[pixIndex * BytesPerPixel + BlueComponentOffset]) : 0
 
-				// Check our neighbors for an edge condition (either no alpha for an alpha edge or
-				// a large enough difference in the color)
-				var onEdge = false
-				
-				for offset in [-1, 1, -widthPix, widthPix, -widthPix-1, -widthPix+1, widthPix-1, widthPix-1] {
-					let neighborIndex = (pixIndex + offset) * BytesPerPixel
-					let na = image[neighborIndex + AlphaComponentOffset]
-					if na < AlphaThreshold {
-						onEdge = true
-						break
+				// Check our neighbors for an edge condition
+				for offset in [1, widthPix, -1, -widthPix] {
+					let neighborIndex = pixIndex + offset
+					
+					if (imgMap[neighborIndex] & UInt8(NoEdgeMask)) != 0 || (imgMap[neighborIndex] & UInt8(EdgeMask)) != 0 {
+						continue
 					}
 					
-					// Extract the color of this neighbor
-					let nr = Int32(image[neighborIndex + RedComponentOffset])
-					let ng = Int32(image[neighborIndex + GreenComponentOffset])
-					let nb = Int32(image[neighborIndex + BlueComponentOffset])
+					// Extract the color components of this neighbor
+					let na = Int32(image[neighborIndex * BytesPerPixel + AlphaComponentOffset])
+					let nr = na == 255 ? Int32(image[neighborIndex * BytesPerPixel + RedComponentOffset]) : 0
+					let ng = na == 255 ? Int32(image[neighborIndex * BytesPerPixel + GreenComponentOffset]) : 0
+					let nb = na == 255 ? Int32(image[neighborIndex * BytesPerPixel + BlueComponentOffset]) : 0
 					
 					// Calculate the color difference between the neighbor's RGB and the current pixel's RGB
 					// using the 3D distance equation:
@@ -177,18 +139,14 @@ class ImageTools {
 					let dg = ng - g
 					let db = nb - b
 					let distSquared = dr * dr + dg * dg + db * db
-					if distSquared > colorThresholdSquared {
-						onEdge = true
+					
+					// If the distance between the current pixel color and its neighbor's color is large
+					// enough then we consider this an edge pixel
+					if distSquared > ColorThreshold {
+						imgMap[pixIndex] |= UInt8(EdgeMask)
+						imgMap[neighborIndex] |= UInt8(NoEdgeMask)
 						break
 					}
-				}
-				
-				if onEdge {
-					imgMap[pixIndex] |= UInt8(SelfEdgeMask)
-					imgMap[pixIndex - 1] |= UInt8(RightNeighborMask)
-					imgMap[pixIndex + 1] |= UInt8(LeftNeighborMask)
-					imgMap[pixIndex - widthPix] |= UInt8(BottomNeighborMask)
-					imgMap[pixIndex + widthPix] |= UInt8(TopNeighborMask)
 				}
 			}
 		}
@@ -242,7 +200,7 @@ class ImageTools {
 				vectorizedShapes[name!] = pathArray
 				return pathArray
 			}
-			
+		
 			// We'll need to generate one from the named image, so load the image if it wasn't provided
 			if image == .None {
 				image = UIImage(named: name)
@@ -270,12 +228,10 @@ class ImageTools {
 				for x in 0 ..< widthPix {
 					var pix = Int(imgMap[lineIndex + x])
 					
-					if (pix & SelfEdgeMask) != 0 && (pix & AllNeighborMasks) != 0 && (pix & AllNeighborMasks) != AllNeighborMasks && (pix & VisitedMask) == 0 {
+					if (pix & EdgeMask) != 0 && (pix & VisitedMask) == 0 {
 						// Keep track of the first one we find, this is where we'll start tracing the image
-						if pixCur == nil {
-							pixCur = Point2D(x: x, y: y)
-							break pixSearchLoop
-						}
+						pixCur = Point2D(x: x, y: y)
+						break pixSearchLoop
 					}
 				}
 			}
@@ -291,14 +247,16 @@ class ImageTools {
 			// We'll use this vector as we trace around the edge to keep track of how much we bend around corners
 			// so we'll know when it's time to create a new segment
 			var vectorStart = pixCur.toCGVector()
-			var vectorDir: CGVector?
+			var vectorDir = CGVector.zeroVector
 			var totalError: CGFloat = 0
 			
 			// Let's build a path around the perimeter of our image
 			//
-			// We start with our first pixel point
-			var path: [CGPoint] = [pixCur.toCGPoint()]
+			// Initialize our path (just an array of points) with our first pixel point
+			var path = [pixCur.toCGPoint()]
 			totalPoints += 1
+			
+			var visitedCount = 0
 			
 			while true {
 				// Find the next pixel on the perimeter
@@ -307,39 +265,47 @@ class ImageTools {
 				
 				// Did we reach the end of our edge?
 				if pixCur == nil {
-					// Finish out the edge
-					path.append(pixPrev.toCGPoint())
-					totalPoints += 1
+					// If we visited any pixels at all, then add the last point
+					if visitedCount != 0 {
+						path.append(pixPrev.toCGPoint())
+						totalPoints += 1
+					}
 					break
 				}
 				
 				// Set this pixel as visited
 				imgMap[pixCur.y * widthPix + pixCur.x] |= UInt8(VisitedMask)
+				visitedCount++
 				
 				// If this is our first neighbor along a new segment, start a new direction vector
-				if vectorDir == .None {
+				if visitedCount == MinPathLength {
 					vectorDir = (pixCur.toCGVector() - vectorStart).normal
+				}
+				// If we haven't traversed a minimum distance, just keep going
+				else if visitedCount < MinPathLength {
 					continue
 				}
 				
 				// Is the new pixel still on the current path segment (within tolerance?)
-				var runningVector = (pixCur.toCGVector() - pixPrev.toCGVector()).normal
-				totalError += 1 - runningVector.dot(vectorDir!)
+				var runningVector = (pixCur.toCGVector() - vectorStart).normal
+				totalError += 1 - runningVector.dot(vectorDir)
 				if totalError < EdgeAngleTolerance {
 					// Nothing to do, keep looking for the end of the current segment
 					continue
 				}
 				
 				// Finish the current segment and start a new one
-				totalPoints += 1
 				path.append(pixPrev.toCGPoint())
+				totalPoints += 1
 				
 				vectorStart = pixCur.toCGVector()
-				vectorDir = .None
+				// We set the visited count to 1 because we terminated the current segment with pixPrev, which
+				// means we've visited at least one pixel (pixCur) so far
+				visitedCount = 1
 				totalError = 0
 			}
 
-			// Add our path to the array
+			// If our path has more than a single point, add it to the path array
 			if path.count > 1 {
 				pathArray.append(path)
 			}
@@ -350,7 +316,7 @@ class ImageTools {
 			return .None
 		}
 		
-		NSLog("vectorized %d points for [" + (name ?? "unnamed") + "]", totalPoints)
+		NSLog("vectorized %d points in %d paths for [" + (name ?? "unnamed") + "]", totalPoints, pathArray.count)
 		
 		if name != .None {
 			vectorizedShapes[name!] = pathArray
