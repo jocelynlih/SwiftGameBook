@@ -31,7 +31,7 @@ class SketchRender {
 //		var strokeWidth: CGFloat = 2
 		
 		// Straight lines
-//		var lineDensity: CGFloat = 10000 // lower numbers are more dense
+//		var lineDensity: CGFloat = 10 // lower numbers are more dense
 //		var minSegmentLength: CGFloat = 10000
 //		var maxSegmentLength: CGFloat = 35000
 //		var pixJitterDistance: CGFloat = 0
@@ -39,7 +39,7 @@ class SketchRender {
 //		var lineEndpointOverlapJitterDistance: CGFloat = 0
 //		var lineOffsetJitterDistance: CGFloat = 0
 //		var color: UIColor = UIColor.greenColor()
-//		var strokeWidth: CGFloat = 3
+//		var strokeWidth: CGFloat = 1
 		
 //		var lineDensity: CGFloat = 2 // lower numbers are more dense
 //		var minSegmentLength: CGFloat = 1
@@ -51,15 +51,15 @@ class SketchRender {
 //		var color: UIColor = UIColor.blackColor()
 
 		// Cleaner lines
-		var lineDensity: CGFloat = 10 // lower numbers are more dense
+		var lineDensity: CGFloat = 3 // lower numbers are more dense
 		var minSegmentLength: CGFloat = 5
-		var maxSegmentLength: CGFloat = 15
+		var maxSegmentLength: CGFloat = 550
 		var pixJitterDistance: CGFloat = 4
-		var lineInteriorOverlapJitterDistance: CGFloat = 5
+		var lineInteriorOverlapJitterDistance: CGFloat = 45
 		var lineEndpointOverlapJitterDistance: CGFloat = 0
-		var lineOffsetJitterDistance: CGFloat = 0
+		var lineOffsetJitterDistance: CGFloat = 4
 		var color: UIColor = UIColor.blackColor()
-		var strokeWidth: CGFloat = 1
+		var strokeWidth: CGFloat = 0.8
 
 		init(scaled: Bool = true) {
 			// Some of our material properties work on a per-pixel level. And since pixels are different sizes
@@ -141,9 +141,6 @@ class SketchRender {
 								// Ensure we draw in front of our parent
 								sketchSprite.zPosition = 1
 								
-								//sketchSprite.position = sprite.position
-								//sketchSprite.size = sketchParent.size
-								
 								// Set our size to that of our parent, taking it's scale into account
 								sketchSprite.size = CGSize(width: sprite.size.width / sprite.xScale, height: sprite.size.height / sprite.yScale)
 
@@ -152,9 +149,9 @@ class SketchRender {
 								
 								// Finally, make our sketch sprite a child of our parent sprite
 								sprite.addChild(sketchSprite)
-								sprite.texture = transparentTexture
 							}
 						}
+						sprite.texture = transparentTexture
 					}
 				}
 			}
@@ -296,7 +293,7 @@ class SketchRender {
 			
 			// Check our length so we don't overshoot our bounds
 			if (p1 - startPoint).length >= lineLength {
-				p1 = p0 + lineDir * lineLength
+				p1 = startPoint + lineDir * lineLength
 				done = true
 			}
 			
