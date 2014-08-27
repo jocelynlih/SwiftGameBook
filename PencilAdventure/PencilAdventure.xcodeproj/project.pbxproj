@@ -36,6 +36,7 @@
 		92E2E745198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E2E744198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift */; };
 		92E2E747198DB72300BABDB5 /* SKSpriteNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E2E746198DB72300BABDB5 /* SKSpriteNode+Extensions.swift */; };
 		92E3DAC7199486600089DAEE /* Macros.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92E3DAC6199486600089DAEE /* Macros.swift */; };
+		AE03620219AD6EBF000A6B4C /* Levels.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AE03620119AD6EBF000A6B4C /* Levels.xcassets */; };
 		AE2056D3198B58CF00E7E302 /* CGPoint+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2056D2198B58CF00E7E302 /* CGPoint+Extensions.swift */; };
 		AE2056D5198B62B500E7E302 /* Point2D.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2056D4198B62B500E7E302 /* Point2D.swift */; };
 		AE2056D7198B66D300E7E302 /* ImageTools.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE2056D6198B66D300E7E302 /* ImageTools.swift */; };
@@ -95,6 +96,7 @@
 		92E2E744198DB6DF00BABDB5 /* SKShapeNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKShapeNode+Extensions.swift"; sourceTree = "<group>"; };
 		92E2E746198DB72300BABDB5 /* SKSpriteNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKSpriteNode+Extensions.swift"; sourceTree = "<group>"; };
 		92E3DAC6199486600089DAEE /* Macros.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Macros.swift; sourceTree = "<group>"; };
+		AE03620119AD6EBF000A6B4C /* Levels.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Levels.xcassets; sourceTree = "<group>"; };
 		AE2056D2198B58CF00E7E302 /* CGPoint+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extensions.swift"; sourceTree = "<group>"; };
 		AE2056D4198B62B500E7E302 /* Point2D.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Point2D.swift; sourceTree = "<group>"; };
 		AE2056D6198B66D300E7E302 /* ImageTools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageTools.swift; sourceTree = "<group>"; };
@@ -161,6 +163,7 @@
 				018BAE19198779330067C10C /* Main.storyboard */,
 				018BAE1C198779330067C10C /* Images.xcassets */,
 				AE23C73E199187420036E447 /* Sprites.xcassets */,
+				AE03620119AD6EBF000A6B4C /* Levels.xcassets */,
 				6FADF2F4199ABCF000A73D79 /* Levels.atlas */,
 				AE52D5321992112C00FCC6E3 /* Steve.atlas */,
 				AE2D47A8199180ED00C95756 /* Sprites.atlas */,
@@ -383,6 +386,7 @@
 				019A5CBF19996F6400C4DC4B /* 4.sks in Resources */,
 				6FADF2F5199ABCF000A73D79 /* Levels.atlas in Resources */,
 				AE23C73F199187420036E447 /* Sprites.xcassets in Resources */,
+				AE03620219AD6EBF000A6B4C /* Levels.xcassets in Resources */,
 				922E4D7A199318F10018EF7B /* collision.mp3 in Resources */,
 				013FFBE019996E5C006D68CB /* 3.sks in Resources */,
 				AE2D47A9199180ED00C95756 /* Sprites.atlas in Resources */,
@@ -575,7 +579,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_OPTIMIZATION_LEVEL = "-Ounchecked";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;

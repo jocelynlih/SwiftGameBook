@@ -6,3 +6,4 @@
 
 # Here we generate a set of sprites NOT in a texture atlas so we can access them as UIImage files
 ./artgen -a -n Sprites Staging/Staging-Sprites.atlas ../PencilAdventure
+./artgen -a -n Levels Staging/Staging-Levels.atlas ../PencilAdventure

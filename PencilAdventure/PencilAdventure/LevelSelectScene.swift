@@ -12,7 +12,7 @@ class LevelSelectScene : PaperScene {
     
     // Constants
     let MaxLevels = 4
-    
+	
     // Variables
     var progressLoader: ProgressLoaderNode!
     var isLoading = false
@@ -37,6 +37,9 @@ class LevelSelectScene : PaperScene {
         
         // Add level select and high score nodes.
         addLevelSelectAndHighScoreNodes()
+		
+		// Let's draw our scene as a sketch
+		convertToSketch()
     }
     
     internal func addLevelSelectAndHighScoreNodes () {
@@ -49,12 +52,12 @@ class LevelSelectScene : PaperScene {
         // in between them.
         var tileWidth = levelTile.size().width
         var tileHeight = levelTile.size().height
-        var gap = tileWidth
+        var gap = tileWidth / 2
         
         // We also need a selector width and an initial x
         // and y coordinate set.
-        var selectorWidth = tileWidth * CGFloat(MaxLevels) + gap * CGFloat(MaxLevels - 2)
-        var x = (view.frame.width - selectorWidth) / 2
+        var selectorWidth = tileWidth * CGFloat(MaxLevels) + gap * CGFloat(MaxLevels - 1)
+        var x = (view.frame.width - selectorWidth) / 2 + tileWidth / 2
         var y = view.frame.height / 2
         
         // For every level, add a level selector.
@@ -68,9 +71,11 @@ class LevelSelectScene : PaperScene {
             
             // Create a level selector node and add it to
             // the scene.
-            let level = SKSpriteNode(texture: atlas.textureNamed("L\(i)-\(suffix)"))
-            level.name = "\(i)"
-            level.position =  CGPoint(x: x, y: y)
+			let levelTileName = "L\(i)-\(suffix)"
+            let level = SKSpriteNode(texture: atlas.textureNamed(levelTileName))
+            level.name = levelTileName
+			level.color = UIColor.blackColor()
+            level.position =  CGPoint(x: x, y: frame.height / 4)
             level.xScale = getSceneScaleX()
             level.yScale = getSceneScaleY()
             addChild(level)
@@ -155,20 +160,18 @@ class LevelSelectScene : PaperScene {
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         for touch: AnyObject in touches {
             let node = self.nodeAtPoint(touch.locationInNode(self))
-            if let buttonName = node.name {
-                if buttonName == "1" {
-                    loadLevel("1")
-                }
-                if buttonName == "2" {
-                    loadLevel("2")
-                }
-                if buttonName == "3" {
-                    loadLevel("3")
-                }
-                if buttonName == "4" {
-                    loadLevel("4")
-                }
-            }
+			if node.name == "L1-enabled" || node.parent?.name == "L1-enabled" {
+				loadLevel("1")
+			}
+			if node.name == "L2-enabled" || node.parent?.name == "L2-enabled" {
+				loadLevel("2")
+			}
+			if node.name == "L3-enabled" || node.parent?.name == "L3-enabled" {
+				loadLevel("3")
+			}
+			if node.name == "L4-enabled" || node.parent?.name == "L4-enabled" {
+				loadLevel("4")
+			}
         }
     }
 }

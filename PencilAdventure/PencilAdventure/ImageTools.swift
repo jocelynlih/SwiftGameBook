@@ -32,7 +32,7 @@ let BytesPerPixel = 4
 
 // While tracing edges, we use this tolerance to determine when to break the segment into multiple pieces
 // Larger number means more error allowed, so there will be fewer segments making up the path
-let EdgeAngleTolerance: CGFloat = 5
+let EdgeAngleTolerance: CGFloat = 2
 let AlphaThreshold: UInt8 = 128
 let ColorThreshold: Int32 = 50
 
