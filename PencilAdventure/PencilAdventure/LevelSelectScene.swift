@@ -65,7 +65,7 @@ class LevelSelectScene : PaperScene {
             // The first two levels we statically enable,
             // while we leave the last two disabled.
             var suffix = "disabled"
-            if i == 1 || i == 2 {
+            if i == 1 {
                 suffix = "enabled"
             }
             
@@ -75,6 +75,9 @@ class LevelSelectScene : PaperScene {
             let level = SKSpriteNode(texture: atlas.textureNamed(levelTileName))
             level.name = levelTileName
 			level.color = UIColor.blackColor()
+			if suffix == "disabled" {
+				level.alpha = 0.3
+			}
             level.position =  CGPoint(x: x, y: frame.height / 4)
             level.xScale = getSceneScaleX()
             level.yScale = getSceneScaleY()
