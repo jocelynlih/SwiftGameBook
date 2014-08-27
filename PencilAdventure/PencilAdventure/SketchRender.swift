@@ -59,7 +59,7 @@ class SketchRender {
 		var lineEndpointOverlapJitterDistance: CGFloat = 0
 		var lineOffsetJitterDistance: CGFloat = 4
 		var color: UIColor = UIColor.blackColor()
-		var strokeWidth: CGFloat = 0.8
+		var strokeWidth: CGFloat = 0.65
 
 		init(scaled: Bool = true) {
 			// Some of our material properties work on a per-pixel level. And since pixels are different sizes
