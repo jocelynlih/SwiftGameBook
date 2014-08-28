@@ -254,6 +254,12 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
         self.addChild(wall)
     }
     
+    func gameOverAction() {
+        callbackAfter(0.5, {
+            self.gameEnd(false)
+        })
+    }
+    
     func steveDidColliadeWith(body: SKPhysicsBody) {
 		if (body.categoryBitMask & powerupCategory) == powerupCategory {
 			if body.node == nil {
@@ -269,7 +275,7 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
 				return
 			}
 			steveTheSprite.die()
-			gameEnd(false)
+            gameOverAction()
 			return
 		}
 		if (body.categoryBitMask & groundCategory) == groundCategory {
@@ -277,7 +283,8 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
 				return
 			}
 			steveTheSprite.die()
-			gameEnd(false)
+            gameOverAction()
+			
 			return
 		}
         if (body.categoryBitMask & levelItemCategory) == levelItemCategory {
