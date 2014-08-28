@@ -30,8 +30,13 @@ public class ScoreManager {
         for (level, score) in leaderboard as NSDictionary {
             stringBuilder.append("\(level) - \(score) Points")
         }
+
         if stringBuilder.count > 0 {
-            return Swift.join("\n", stringBuilder)
+            var scoreStr = ""
+            for str in stringBuilder {
+                scoreStr += str
+            }
+            return scoreStr
         } else {
             return .None
         }

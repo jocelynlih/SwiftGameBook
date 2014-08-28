@@ -36,3 +36,6 @@ ScoreManager.getAllHighScores()!
 
 ScoreManager.getScoreForLevel(1)!
 
+ScoreManager.saveScore(20, forLevel: 2)
+
+ScoreManager.getAllHighScores()!

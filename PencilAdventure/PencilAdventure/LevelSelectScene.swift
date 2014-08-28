@@ -95,7 +95,7 @@ class LevelSelectScene : PaperScene {
             highScoreLabel.fontColor = SKColor.darkGrayColor()
             highScoreLabel.fontName = "Noteworthy"
             highScoreLabel.fontSize = 14
-            highScoreLabel.position = CGPoint(x: view.frame.width / 2, y: y - highScoreLabel.frame.height - 35)
+            highScoreLabel.position = CGPoint(x: view.frame.width / 2, y: y - highScoreLabel.frame.height)
             highScoreLabel.xScale = getSceneScaleX()
             highScoreLabel.yScale = getSceneScaleY()
             addChild(highScoreLabel)
