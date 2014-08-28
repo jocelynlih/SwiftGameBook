@@ -43,7 +43,7 @@ public class HeroNode: SKSpriteNode {
 		powerUpParticle.hidden = true
         smokeParticle.paused = true
         smokeParticle.hidden = true
-		
+		self.addChild(smokeParticle)
         if withPhysicsBody {
             physicsBody = SKPhysicsBody(rectangleOfSize: self.size)
             physicsBody.dynamic = true
