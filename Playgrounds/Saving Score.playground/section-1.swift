@@ -1,11 +1,3 @@
-//
-//  ScoreManager.swift
-//  PencilAdventure
-//
-//  Created by Ankur Patel on 8/9/14.
-//  Copyright (c) 2014 backstopmedia. All rights reserved.
-//
-
 import UIKit
 
 public class ScoreManager {
@@ -37,3 +29,10 @@ public class ScoreManager {
         }
     }
 }
+
+ScoreManager.saveScore(10, forLevel: 1)
+
+ScoreManager.getAllHighScores()!
+
+ScoreManager.getScoreForLevel(1)!
+
