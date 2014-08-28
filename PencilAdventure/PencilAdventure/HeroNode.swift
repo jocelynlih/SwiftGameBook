@@ -21,6 +21,7 @@ public class HeroNode: SKSpriteNode {
     
     private let SteveAnimationFPS = 25.0
     private var powerUpParticle = SKEmitterNode(fileNamed: "PowerUpParticle")
+    private var smokeParticle = SKEmitterNode(fileNamed: "SteveDieParticle")
     public var heroState: HeroState = .Run
     convenience init(scene: SKScene, withPhysicsBody: Bool) {
         
@@ -31,7 +32,7 @@ public class HeroNode: SKSpriteNode {
                 steveWalkingFrames.append(texture)
             }
         }
-        self.init(texture: steveWalkingFrames[0])
+        self.init(texture: steveWalkingFrames[2])
         
         name = "steve"
         xScale = scene.getSceneScaleX()
@@ -40,7 +41,8 @@ public class HeroNode: SKSpriteNode {
         speed = 1
         powerUpParticle.paused = true
 		powerUpParticle.hidden = true
-
+        smokeParticle.paused = true
+        smokeParticle.hidden = true
 		
         if withPhysicsBody {
             physicsBody = SKPhysicsBody(rectangleOfSize: self.size)
@@ -75,7 +77,22 @@ public class HeroNode: SKSpriteNode {
     
     public func die() {
         heroState = .Death
-        //TODO run animation of death
+        //remove action
+        speed = 0
+        self.removeActionForKey("steveRun")
+        //TODO: add die animation
+        
+        //remove the physics collsions detect
+        physicsBody.collisionBitMask = 0
+        physicsBody.contactTestBitMask = heroCategory
+        //add smoke
+        smokeParticle.paused = false
+        smokeParticle.hidden = false
+        //move up and down
+        let moveUp = SKAction.moveBy(CGVector(dx: 0.0, dy: 100.0), duration: 0.1)
+        let moveDown = SKAction.moveBy(CGVector(dx: 0.0, dy: -100.0), duration: 0.1)
+        let moveUpDown = SKAction.sequence([moveUp, moveDown])
+        self.runAction(moveUpDown)
         self.runAction(SKAction.playSoundFileNamed("collision.mp3", waitForCompletion: false))
     }
 }

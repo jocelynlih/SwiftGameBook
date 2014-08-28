@@ -17,6 +17,8 @@
 		018BAE29198779330067C10C /* PencilAdventureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018BAE28198779330067C10C /* PencilAdventureTests.swift */; };
 		018BAE3719877EDE0067C10C /* GameScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018BAE3619877EDE0067C10C /* GameScene.swift */; };
 		019A5CBF19996F6400C4DC4B /* 4.sks in Resources */ = {isa = PBXBuildFile; fileRef = 019A5CBE19996F6400C4DC4B /* 4.sks */; };
+		01A211C119ADC0BA00AD3758 /* SteveDieParticle.sks in Resources */ = {isa = PBXBuildFile; fileRef = 01A211BF19ADC0BA00AD3758 /* SteveDieParticle.sks */; };
+		01A211C219ADC0BA00AD3758 /* spark.png in Resources */ = {isa = PBXBuildFile; fileRef = 01A211C019ADC0BA00AD3758 /* spark.png */; };
 		6FADF2F5199ABCF000A73D79 /* Levels.atlas in Resources */ = {isa = PBXBuildFile; fileRef = 6FADF2F4199ABCF000A73D79 /* Levels.atlas */; };
 		8A0D4A6A1992E527009D020B /* ProgressLoaderNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A0D4A691992E527009D020B /* ProgressLoaderNode.swift */; };
 		8A9B09F819A434C700E93587 /* GameOverScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9B09F719A434C700E93587 /* GameOverScene.swift */; };
@@ -77,6 +79,8 @@
 		018BAE3619877EDE0067C10C /* GameScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameScene.swift; sourceTree = "<group>"; };
 		018BAE3819877F090067C10C /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
 		019A5CBE19996F6400C4DC4B /* 4.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = 4.sks; sourceTree = "<group>"; };
+		01A211BF19ADC0BA00AD3758 /* SteveDieParticle.sks */ = {isa = PBXFileReference; lastKnownFileType = file.sks; path = SteveDieParticle.sks; sourceTree = "<group>"; };
+		01A211C019ADC0BA00AD3758 /* spark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = spark.png; sourceTree = "<group>"; };
 		6FADF2F4199ABCF000A73D79 /* Levels.atlas */ = {isa = PBXFileReference; lastKnownFileType = folder.skatlas; path = Levels.atlas; sourceTree = "<group>"; };
 		8A0D4A691992E527009D020B /* ProgressLoaderNode.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressLoaderNode.swift; sourceTree = "<group>"; };
 		8A9B09F719A434C700E93587 /* GameOverScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameOverScene.swift; sourceTree = "<group>"; };
@@ -247,6 +251,8 @@
 			isa = PBXGroup;
 			children = (
 				9284FC301992F67B00B348CF /* PowerUpParticle.sks */,
+				01A211BF19ADC0BA00AD3758 /* SteveDieParticle.sks */,
+				01A211C019ADC0BA00AD3758 /* spark.png */,
 			);
 			name = Particles;
 			sourceTree = "<group>";
@@ -394,6 +400,8 @@
 				92E1CA321995D23E00BFA007 /* 2.sks in Resources */,
 				018A322C198F6696009CDA21 /* 1.sks in Resources */,
 				9284FC2C1991A81F00B348CF /* background.mp3 in Resources */,
+				01A211C119ADC0BA00AD3758 /* SteveDieParticle.sks in Resources */,
+				01A211C219ADC0BA00AD3758 /* spark.png in Resources */,
 				018BAE1D198779330067C10C /* Images.xcassets in Resources */,
 				AE52D5331992112C00FCC6E3 /* Steve.atlas in Resources */,
 			);
