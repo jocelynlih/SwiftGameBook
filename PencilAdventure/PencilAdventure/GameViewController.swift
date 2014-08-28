@@ -21,8 +21,7 @@ class GameViewController: UIViewController {
 //      view.ignoresSiblingOrder = true
 
         
-        let startScene = SKScene()
-        startScene.backgroundColor = GAME_BLUE_COLOR
+        let startScene = HomeScene()
         view.presentScene(startScene)
         
         // Start the background music.
