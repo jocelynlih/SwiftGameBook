@@ -51,7 +51,7 @@ class SketchRender {
 //		var color: UIColor = UIColor.blackColor()
 
 		// Cleaner lines
-		var lineDensity: CGFloat = 3 // lower numbers are more dense
+		var lineDensity: CGFloat = 4 // lower numbers are more dense
 		var minSegmentLength: CGFloat = 5
 		var maxSegmentLength: CGFloat = 550
 		var pixJitterDistance: CGFloat = 4
@@ -59,7 +59,7 @@ class SketchRender {
 		var lineEndpointOverlapJitterDistance: CGFloat = 0
 		var lineOffsetJitterDistance: CGFloat = 4
 		var color: UIColor = UIColor.blackColor()
-		var strokeWidth: CGFloat = 0.65
+		var strokeWidth: CGFloat = 0.8
 
 		init(scaled: Bool = true) {
 			// Some of our material properties work on a per-pixel level. And since pixels are different sizes
@@ -75,6 +75,7 @@ class SketchRender {
 			// scale the other devices based on that constant, which we'll call "SketchTuneHeight".
 			let scale = UIScreen.mainScreen().currentMode.size.height / SketchTuneHeight
 			
+			lineDensity /= scale
 			minSegmentLength *= scale
 			maxSegmentLength *= scale
 			pixJitterDistance *= scale
@@ -172,17 +173,17 @@ class SketchRender {
 		for path in pathArray {
 			var startPoint: CGVector?
 			var endPoint: CGVector?
-			
+
 			for point in path {
-				// Starting a new batch of lines?
+				// We need two points to draw our lines, so if this is our first time through the
+				// loop, just track this point and continue on to the next
 				if endPoint == .None {
 					endPoint = point.toCGVector()
 					continue
 				}
-				else {
-					startPoint = endPoint
-					endPoint = point.toCGVector()
-				}
+
+				startPoint = endPoint
+				endPoint = point.toCGVector()
 				
 				// Make sure we have something to work with
 				if startPoint == .None || endPoint == .None {
@@ -246,14 +247,11 @@ class SketchRender {
 					// Offset a little, perpendicular to the direction of the line
 					segP1 += lineDirPerp * CGFloat.randomValueSigned(material.lineOffsetJitterDistance)
 					
-					// Draw the segment
 					addPencilLineToPath(drawPath, startPoint: segP0, endPoint: segP1, material: material)
-					
+
 					// Track how much we've drawn so far
 					lengthSoFar += segmentLength
 				}
-				
-				startPoint = endPoint
 			}
 		}
 		
@@ -276,7 +274,7 @@ class SketchRender {
 		
 		// Set the name to something distinct so that we can recognize them in the chain
 		newSprite.name = SketchName
-		
+
 		// Voila! Our new sketch sprite
 		return newSprite
 	}

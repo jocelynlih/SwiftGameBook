@@ -6,7 +6,7 @@
 //  Copyright (c) 2014 backstopmedia. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 public class ScoreManager {
     class func saveScore(score: Int, forLevel level: Int) {
@@ -21,17 +21,22 @@ public class ScoreManager {
     
     class func getScoreForLevel(level: Int) -> Int? {
         var leaderboard = NSUserDefaults.standardUserDefaults().objectForKey("LeaderBoard") as? NSMutableDictionary ?? NSMutableDictionary()
-        return leaderboard[level] as? Int
+        return leaderboard["Level \(level)"] as? Int
     }
     
     class func getAllHighScores() -> String? {
         var leaderboard = NSUserDefaults.standardUserDefaults().objectForKey("LeaderBoard") as? NSMutableDictionary ?? NSMutableDictionary()
         var stringBuilder = [String]()
-        for (level, score) in leaderboard {
+        for (level, score) in leaderboard as NSDictionary {
             stringBuilder.append("\(level) - \(score) Points")
         }
-        if stringBuilder.count > 1 {
-            return Swift.join("\n", stringBuilder)
+
+        if stringBuilder.count > 0 {
+            var scoreStr = ""
+            for str in stringBuilder {
+                scoreStr += str
+            }
+            return scoreStr
         } else {
             return .None
         }
