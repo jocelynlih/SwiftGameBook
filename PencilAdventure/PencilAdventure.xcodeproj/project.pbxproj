@@ -321,6 +321,7 @@
 				018BAE0C198779330067C10C /* Sources */,
 				018BAE0D198779330067C10C /* Frameworks */,
 				018BAE0E198779330067C10C /* Resources */,
+				AE5E05D019B17F160093FC15 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -420,6 +421,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		AE5E05D019B17F160093FC15 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "";
+		};
 		AEF6AE801996D71200E58C03 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -432,6 +446,7 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "cd \"$SOURCE_ROOT\"/Art\npwd\n./update_art";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
