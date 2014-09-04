@@ -39,10 +39,10 @@ class GameScene : SKScene, SKPhysicsContactDelegate {
         let platform = SKSpriteNode(imageNamed: "wall")
         platform.name = "Wall"
         platform.physicsBody = SKPhysicsBody(rectangleOfSize: platform.size)
-        platform.physicsBody.dynamic = false
-        platform.physicsBody.allowsRotation = false
-        platform.physicsBody.categoryBitMask = levelCategory
-        platform.physicsBody.collisionBitMask = steveCategory
+        platform.physicsBody?.dynamic = false
+        platform.physicsBody?.allowsRotation = false
+        platform.physicsBody?.categoryBitMask = levelCategory
+        platform.physicsBody?.collisionBitMask = steveCategory
         platform.position = CGPoint(x:380.0, y:200.0)
         platform.zPosition = 0
         addChild(platform)
@@ -51,10 +51,10 @@ class GameScene : SKScene, SKPhysicsContactDelegate {
         let sharpener = SKSpriteNode(imageNamed: "sharpener")
         sharpener.name = "Sharpener"
         sharpener.physicsBody = SKPhysicsBody(circleOfRadius: sharpener.size.width/2)
-        sharpener.physicsBody.dynamic = false
-        sharpener.physicsBody.allowsRotation = false
-        sharpener.physicsBody.categoryBitMask = sharpenerCategory
-        sharpener.physicsBody.collisionBitMask = steveCategory
+        sharpener.physicsBody?.dynamic = false
+        sharpener.physicsBody?.allowsRotation = false
+        sharpener.physicsBody?.categoryBitMask = sharpenerCategory
+        sharpener.physicsBody?.collisionBitMask = steveCategory
         sharpener.position = CGPoint(x:380.0, y:240.0)
         sharpener.zPosition = 0
         addChild(sharpener)
@@ -70,7 +70,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate {
         let background = SKTexture(imageNamed: "background")
         let bgSprite = SKSpriteNode(texture: background)
         bgSprite.size = frame.size
-        bgSprite.position = CGPoint(x: frame.size.width/2.0, y: frame.size.height/2.0)
+        bgSprite.position = CGPoint(x: frame.size.width * 0.5, y: frame.size.height * 0.5)
         bgSprite.zPosition = -10
         addChild(bgSprite)
     }
@@ -79,12 +79,12 @@ class GameScene : SKScene, SKPhysicsContactDelegate {
         steve = SKSpriteNode(imageNamed: "steve") //#1
         steve.name = "Steve"
         steve.physicsBody = SKPhysicsBody(rectangleOfSize: steve.size) //#2
-        steve.physicsBody.dynamic = true //#3
-        steve.physicsBody.allowsRotation = false //#4
-        steve.physicsBody.mass = 0.6 //#5
-        steve.physicsBody.categoryBitMask = steveCategory
-        steve.physicsBody.collisionBitMask = levelCategory | sharpenerCategory | groundCategory
-        steve.physicsBody.contactTestBitMask = levelCategory | sharpenerCategory | groundCategory
+        steve.physicsBody?.dynamic = true //#3
+        steve.physicsBody?.allowsRotation = false //#4
+        steve.physicsBody?.mass = 0.6 //#5
+        steve.physicsBody?.categoryBitMask = steveCategory
+        steve.physicsBody?.collisionBitMask = levelCategory | sharpenerCategory | groundCategory
+        steve.physicsBody?.contactTestBitMask = levelCategory | sharpenerCategory | groundCategory
         steve.position = CGPoint(x:frame.size.width/4, y:frame.size.height/2)
         steve.zPosition = 1
         addChild(steve)
@@ -118,8 +118,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate {
     override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         // touch to jump
         for touch: AnyObject in touches {
-            steve.physicsBody.velocity = CGVector(dx: 0, dy: 50)
-            steve.physicsBody.applyImpulse(CGVector(dx: 0, dy: 400))
+            steve.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 400))
         }
     }
     
@@ -128,9 +127,9 @@ class GameScene : SKScene, SKPhysicsContactDelegate {
         let ground = SKSpriteNode(color: UIColor(white: 1.0, alpha: 0), size:CGSize(width: frame.size.width, height: 5))
         ground.position = CGPoint(x: frame.size.width/2, y: 0)
         ground.physicsBody = SKPhysicsBody(rectangleOfSize: ground.size)
-        ground.physicsBody.dynamic = false
-        ground.physicsBody.categoryBitMask = groundCategory
-        ground.physicsBody.collisionBitMask = steveCategory
+        ground.physicsBody?.dynamic = false
+        ground.physicsBody?.categoryBitMask = groundCategory
+        ground.physicsBody?.collisionBitMask = steveCategory
         self.addChild(ground)
     }
         
