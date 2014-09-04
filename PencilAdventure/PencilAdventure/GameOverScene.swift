@@ -14,7 +14,7 @@ public class GameOverScene: PaperScene {
 	
 	let OKButtonName = "ok"
 	
-	public override func didMoveToView(view: SKView!) {
+	public override func didMoveToView(view: SKView) {
 		super.didMoveToView(view)
 
 		// Static paper background
@@ -62,12 +62,14 @@ public class GameOverScene: PaperScene {
 		convertToSketch()
 	}
 	
-	public override func touchesBegan(touches: NSSet!, withEvent event: UIEvent!) {
+	public override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
 		for touch: AnyObject in touches {
 			let node = self.nodeAtPoint(touch.locationInNode(self))
 			if node.name == OKButtonName || node.parent?.name == OKButtonName {
 				SKNode.cleanupScene(self)
-				view.presentScene(LevelSelectScene(size: CGSize(width: view.frame.width, height: view.frame.height)))
+                if let view = view {
+                    view.presentScene(LevelSelectScene(size: CGSize(width: view.frame.width, height: view.frame.height)))
+                }
 			}
 		}
 	}

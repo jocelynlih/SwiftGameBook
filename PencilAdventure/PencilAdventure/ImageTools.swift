@@ -203,7 +203,7 @@ class ImageTools {
 		
 			// We'll need to generate one from the named image, so load the image if it wasn't provided
 			if image == .None {
-				image = UIImage(named: name)
+				image = UIImage(named: name!)
 			}
 		}
 

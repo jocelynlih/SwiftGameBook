@@ -46,12 +46,12 @@ public class HeroNode: SKSpriteNode {
 		self.addChild(smokeParticle)
         if withPhysicsBody {
             physicsBody = SKPhysicsBody(rectangleOfSize: self.size)
-            physicsBody.dynamic = true
-            physicsBody.allowsRotation = false
-            physicsBody.mass = 0.56 // TODO - Need to decide on a standard for this - maybe we just change this to a constant?
-            physicsBody.categoryBitMask = heroCategory
-            physicsBody.collisionBitMask = levelItemCategory | deathtrapCategory | groundCategory | finishCategory
-            physicsBody.contactTestBitMask = levelItemCategory | powerupCategory | deathtrapCategory | groundCategory | finishCategory
+            physicsBody?.dynamic = true
+            physicsBody?.allowsRotation = false
+            physicsBody?.mass = 0.56 // TODO - Need to decide on a standard for this - maybe we just change this to a constant?
+            physicsBody?.categoryBitMask = heroCategory
+            physicsBody?.collisionBitMask = levelItemCategory | deathtrapCategory | groundCategory | finishCategory
+            physicsBody?.contactTestBitMask = levelItemCategory | powerupCategory | deathtrapCategory | groundCategory | finishCategory
         }
         
         self.addChild(powerUpParticle)
@@ -67,7 +67,7 @@ public class HeroNode: SKSpriteNode {
         heroState = .PowerUp
         powerUpParticle.paused = false
         powerUpParticle.hidden = false
-        callbackAfter(0.5) {
+        callbackAfter(0.5 as Float) {
             self.powerUpParticle.paused = true
             self.powerUpParticle.hidden = true
             self.heroState = .Run
@@ -83,8 +83,8 @@ public class HeroNode: SKSpriteNode {
         //TODO: add die animation
         
         //remove the physics collsions detect
-        physicsBody.collisionBitMask = 0
-        physicsBody.contactTestBitMask = heroCategory
+        physicsBody?.collisionBitMask = 0
+        physicsBody?.contactTestBitMask = heroCategory
         //add smoke
         smokeParticle.paused = false
         smokeParticle.hidden = false
