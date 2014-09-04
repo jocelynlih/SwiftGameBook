@@ -32,6 +32,7 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
 	// Star Count
 	private var starCountNode: StarCountNode!
 	
+    public var currentLevel = 1
     public override func didMoveToView(view: SKView) {
 		super.didMoveToView(view)
 		
@@ -56,7 +57,7 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
 		
         // Create our hero
         steveTheSprite = HeroNode(scene: self, withPhysicsBody: true)
-        steveTheSprite.position = CGPoint(x: scene!.frame.size.width / 4, y: scene!.frame.size.height / 2)
+        steveTheSprite.position = CGPoint(x: scene!.frame.size.width * 0.25, y: scene!.frame.size.height * 0.5)
         
         lifeLineNode = LifeLineNode(forScene: self)
         starCountNode = StarCountNode(forScene: self)
@@ -218,13 +219,11 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
         
     }
     
-    //TODO: we can add more action later, to keep the demo simple, we use touch to jump for now
     public override func touchesBegan(touches: NSSet, withEvent event: UIEvent) {
         // only jump when steve is running
         if (steveTheSprite.heroState == HeroState.Run) {
             // touch to jump
             for touch: AnyObject in touches {
-                let location = touch.locationInNode(self)
                 steveTheSprite.physicsBody?.velocity = CGVector(dx: 0, dy: 50)
                 steveTheSprite.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 400))
                 steveTheSprite.heroState = HeroState.Jump
@@ -237,7 +236,7 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
         let ground = SKSpriteNode(color: UIColor(white: 1.0, alpha: 0), size:CGSize(width: frame.size.width, height: 5))
         
         // The ground is at the bottom of our viewable area
-        ground.position = CGPoint(x: self.frame.size.width/2, y: self.viewableArea.origin.y)
+        ground.position = CGPoint(x: frame.size.width * 0.5, y: self.viewableArea.origin.y)
         ground.physicsBody = SKPhysicsBody(rectangleOfSize: ground.size)
         ground.physicsBody?.dynamic = false
         //TODO: need to have this comment out for building the game level.
@@ -333,6 +332,6 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
     }
     
     func onGameOver() {
-        ScoreManager.saveScore(starCountNode.getPoints(), forLevel: 1)
+        ScoreManager.saveScore(starCountNode.getPoints(), forLevel: currentLevel)
     }
 }

@@ -143,6 +143,9 @@ class LevelSelectScene : PaperScene {
             // Present our new scene
             dispatch_async(dispatch_get_main_queue()) {
                 if let newScene = scene {
+                    if let currentLevel = level.toInt() {
+                        newScene.currentLevel = currentLevel
+                    }
                     SKNode.cleanupScene(self)
                     self.view?.presentScene(newScene)
                     
