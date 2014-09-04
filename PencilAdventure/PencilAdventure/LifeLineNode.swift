@@ -8,6 +8,8 @@
 
 import SpriteKit
 
+let REFRESH_RATE: CGFloat = 0.1
+
 public class LifeLineNode: SKCropNode {
     
     private var lifeLine: CGFloat = 1.0
@@ -20,7 +22,7 @@ public class LifeLineNode: SKCropNode {
         zPosition = HUDZPosition
         
         // Start reducing led from the pencil
-        callbackAfter(0.10, subtractLifeLine)
+        callbackAfter(REFRESH_RATE, subtractLifeLine)
 		
 		let spriteAtlas = SKTextureAtlas(named: "Sprites")
         let healthSprite = SKSpriteNode(texture: spriteAtlas.textureNamed("health"))
@@ -46,10 +48,10 @@ public class LifeLineNode: SKCropNode {
     }
     
     private func subtractLifeLine() {
-        lifeLine -= 0.01
-        maskNode.yScale = lifeLine
+        lifeLine -= DEPLETE_HEALTH_PER_SEC * REFRESH_RATE
+        maskNode?.yScale = lifeLine
         if lifeLine > 0 {
-            callbackAfter(0.5, subtractLifeLine)
+            callbackAfter(REFRESH_RATE, subtractLifeLine)
         } else {
             gameScene?.gameEnd(false)
         }
@@ -60,7 +62,7 @@ public class LifeLineNode: SKCropNode {
         if lifeLine < 1 {
             lifeLine += life
         }
-        maskNode.yScale = lifeLine
+        maskNode?.yScale = lifeLine
     }
     
 }

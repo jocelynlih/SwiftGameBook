@@ -73,23 +73,21 @@ class SketchRender {
 			//
 			// The solution is to tune our material for a specific device (in this case, retina iPads) and then
 			// scale the other devices based on that constant, which we'll call "SketchTuneHeight".
-			let scale = UIScreen.mainScreen().currentMode.size.height / SketchTuneHeight
-			
-			lineDensity /= scale
-			minSegmentLength *= scale
-			maxSegmentLength *= scale
-			pixJitterDistance *= scale
-			lineInteriorOverlapJitterDistance *= scale
-			lineEndpointOverlapJitterDistance *= scale
-			lineOffsetJitterDistance *= scale
+            if let screenMode = UIScreen.mainScreen().currentMode {
+                let scale = screenMode.size.height / SketchTuneHeight
+                
+                lineDensity /= scale
+                minSegmentLength *= scale
+                maxSegmentLength *= scale
+                pixJitterDistance *= scale
+                lineInteriorOverlapJitterDistance *= scale
+                lineEndpointOverlapJitterDistance *= scale
+                lineOffsetJitterDistance *= scale
+            }
 		}
 	}
 	
 	internal class func attachSketchNodes(node: SKNode) {
-		if node.children == nil {
-			return
-		}
-		
 		let atlas = SKTextureAtlas(named: "Sprites")
 		let transparentTexture = atlas.textureNamed("transparent")
 				

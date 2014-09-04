@@ -17,7 +17,7 @@ class LevelSelectScene : PaperScene {
     var progressLoader: ProgressLoaderNode!
     var isLoading = false
     
-	override func didMoveToView(view: SKView!) {
+	override func didMoveToView(view: SKView) {
 		super.didMoveToView(view)
 		
 		// Static paper background
@@ -57,8 +57,8 @@ class LevelSelectScene : PaperScene {
         // We also need a selector width and an initial x
         // and y coordinate set.
         var selectorWidth = tileWidth * CGFloat(MaxLevels) + gap * CGFloat(MaxLevels - 1)
-        var x = (view.frame.width - selectorWidth) / 2 + tileWidth / 2
-        var y = view.frame.height / 2
+        var x = (view!.frame.width - selectorWidth) / 2 + tileWidth / 2
+        var y = view!.frame.height / 2
         
         // For every level, add a level selector.
         for i in 1...MaxLevels {
@@ -94,8 +94,7 @@ class LevelSelectScene : PaperScene {
             let highScoreLabel = SKLabelNode(text: "High Score\n\(highestScores)")
             highScoreLabel.fontColor = SKColor.darkGrayColor()
             highScoreLabel.fontName = "Noteworthy"
-            highScoreLabel.fontSize = 14
-            highScoreLabel.position = CGPoint(x: view.frame.width / 2, y: y - highScoreLabel.frame.height)
+            highScoreLabel.position = CGPoint(x: view!.frame.width / 2, y: y - highScoreLabel.frame.height)
             highScoreLabel.xScale = getSceneScaleX()
             highScoreLabel.yScale = getSceneScaleY()
             addChild(highScoreLabel)
@@ -104,7 +103,7 @@ class LevelSelectScene : PaperScene {
     
     internal func addProgressLoaderNode () {
         progressLoader = ProgressLoaderNode(scene: self)
-        progressLoader.position = CGPoint(x: view.frame.width / 2, y: view.frame.height / 2 + 100)
+        progressLoader.position = CGPoint(x: view!.frame.width / 2, y: view!.frame.height / 2 + 100)
         progressLoader.setProgress(0)
         addChild(progressLoader)
     }
@@ -145,7 +144,7 @@ class LevelSelectScene : PaperScene {
             dispatch_async(dispatch_get_main_queue()) {
                 if let newScene = scene {
                     SKNode.cleanupScene(self)
-                    self.view.presentScene(newScene)
+                    self.view?.presentScene(newScene)
                     
                     // Restart the music as to play while the
                     // scene is loading.

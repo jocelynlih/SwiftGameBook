@@ -32,7 +32,7 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
 	// Star Count
 	private var starCountNode: StarCountNode!
 	
-    public override func didMoveToView(view: SKView!) {
+    public override func didMoveToView(view: SKView) {
 		super.didMoveToView(view)
 		
 		setupBackground(true)
@@ -56,7 +56,7 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
 		
         // Create our hero
         steveTheSprite = HeroNode(scene: self, withPhysicsBody: true)
-        steveTheSprite.position = CGPoint(x: scene.frame.size.width/4, y: scene.frame.size.height/2)
+        steveTheSprite.position = CGPoint(x: scene!.frame.size.width / 4, y: scene!.frame.size.height / 2)
         
         lifeLineNode = LifeLineNode(forScene: self)
         starCountNode = StarCountNode(forScene: self)
@@ -95,13 +95,13 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
 			}
 			
 			// Default these to no collisions/contacts
-			sprite.physicsBody.categoryBitMask = 0
-			sprite.physicsBody.collisionBitMask = 0
-			sprite.physicsBody.contactTestBitMask = 0
+			sprite.physicsBody?.categoryBitMask = 0
+			sprite.physicsBody?.collisionBitMask = 0
+			sprite.physicsBody?.contactTestBitMask = 0
 		}
 		
 		// Defaults for the physics body
-		sprite.physicsBody.dynamic = false
+		sprite.physicsBody?.dynamic = false
 		
 		return true
 	}
@@ -139,8 +139,8 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
 					// a normal level item
 					if (components.count <= 1) {
 						if ensurePhysicsBody(sprite) {
-							sprite.physicsBody.categoryBitMask |= levelItemCategory
-							sprite.physicsBody.collisionBitMask |= heroCategory
+							sprite.physicsBody?.categoryBitMask |= levelItemCategory
+							sprite.physicsBody?.collisionBitMask |= heroCategory
 						}
 						continue
 					}
@@ -164,8 +164,8 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
 							
 						case "finish":
 							if ensurePhysicsBody(sprite, useTextureAlpha: false) {
-								sprite.physicsBody.categoryBitMask |= finishCategory
-								sprite.physicsBody.collisionBitMask |= heroCategory
+								sprite.physicsBody?.categoryBitMask |= finishCategory
+								sprite.physicsBody?.collisionBitMask |= heroCategory
 							}
 							
 							// We don't want to see the finish line
@@ -173,21 +173,21 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
 							
 						case "powerup":
 							if ensurePhysicsBody(sprite) {
-								sprite.physicsBody.categoryBitMask |= powerupCategory
-								sprite.physicsBody.contactTestBitMask |= heroCategory
+								sprite.physicsBody?.categoryBitMask |= powerupCategory
+								sprite.physicsBody?.contactTestBitMask |= heroCategory
 							}
 
 						case "death":
 							if ensurePhysicsBody(sprite) {
-								sprite.physicsBody.categoryBitMask |= deathtrapCategory
-								sprite.physicsBody.collisionBitMask |= heroCategory
+								sprite.physicsBody?.categoryBitMask |= deathtrapCategory
+								sprite.physicsBody?.collisionBitMask |= heroCategory
 							}
 							
 						default:
 							NSLog("Treating unknown accessory in sprite specifier as normal level item: \(accessory)")
 							if ensurePhysicsBody(sprite) {
-								sprite.physicsBody.categoryBitMask |= levelItemCategory
-								sprite.physicsBody.collisionBitMask |= heroCategory
+								sprite.physicsBody?.categoryBitMask |= levelItemCategory
+								sprite.physicsBody?.collisionBitMask |= heroCategory
 							}
 						}
 					}
@@ -225,8 +225,8 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
             // touch to jump
             for touch: AnyObject in touches {
                 let location = touch.locationInNode(self)
-                steveTheSprite.physicsBody.velocity = CGVector(dx: 0, dy: 50)
-                steveTheSprite.physicsBody.applyImpulse(CGVector(dx: 0, dy: 400))
+                steveTheSprite.physicsBody?.velocity = CGVector(dx: 0, dy: 50)
+                steveTheSprite.physicsBody?.applyImpulse(CGVector(dx: 0, dy: 400))
                 steveTheSprite.heroState = HeroState.Jump
             }
         }
@@ -239,25 +239,25 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
         // The ground is at the bottom of our viewable area
         ground.position = CGPoint(x: self.frame.size.width/2, y: self.viewableArea.origin.y)
         ground.physicsBody = SKPhysicsBody(rectangleOfSize: ground.size)
-        ground.physicsBody.dynamic = false
+        ground.physicsBody?.dynamic = false
         //TODO: need to have this comment out for building the game level.
-        ground.physicsBody.categoryBitMask = groundCategory
-        ground.physicsBody.collisionBitMask = heroCategory
+        ground.physicsBody?.categoryBitMask = groundCategory
+        ground.physicsBody?.collisionBitMask = heroCategory
         self.addChild(ground)
         // add a wall to the left edge of view and detect if character runs into it
         let wall = SKSpriteNode(color: UIColor(white: 1.0, alpha: 0), size: CGSize(width: 5, height: frame.size.height))
         wall.position = CGPoint(x: self.viewableArea.origin.x, y: self.viewableArea.size.height/2)
         wall.physicsBody = SKPhysicsBody(rectangleOfSize: wall.size)
-        wall.physicsBody.dynamic = false
-        wall.physicsBody.categoryBitMask = groundCategory
-        wall.physicsBody.collisionBitMask = heroCategory
+        wall.physicsBody?.dynamic = false
+        wall.physicsBody?.categoryBitMask = groundCategory
+        wall.physicsBody?.collisionBitMask = heroCategory
         self.addChild(wall)
     }
     
     func gameOverAction() {
-        callbackAfter(0.5, {
+        callbackAfter(0.5 as Float) {
             self.gameEnd(false)
-        })
+        }
     }
     
     func steveDidColliadeWith(body: SKPhysicsBody) {
@@ -266,7 +266,7 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
 				return
 			}
             steveTheSprite.didGetPowerUp()
-			body.node.removeFromParent()
+			body.node?.removeFromParent()
             starCountNode.addPoint()
             lifeLineNode.addLifeLine(0.1)
         }
@@ -323,11 +323,11 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
 
 		SKNode.cleanupScene(self)
         if (didWin) {
-            self.view.presentScene(LevelFinishedScene())
+            self.view?.presentScene(LevelFinishedScene())
         } else {
             let gameOverScene = GameOverScene()
             gameOverScene.level = 2
-            self.view.presentScene(gameOverScene)
+            self.view?.presentScene(gameOverScene)
         }
         onGameOver()
     }
