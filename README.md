@@ -10,7 +10,7 @@ Learning Swift: build an iOS game
 This book is intended for beginners to intermediate developers who might already know a programming language like Javascript, Objective-C or Ruby and are interested in learning how to build a game in Apple's new programming lanaguage called Swift.
 
 # Build Environment
-The project requires iOS 8.0 or higher with Xcode 6.
+The project requires iOS 8.0 or higher with Xcode 6 Beta 7.
 
 # Programing Language 
 Swift
