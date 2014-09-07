@@ -18,7 +18,7 @@ public class GameOverScene: PaperScene {
 		super.didMoveToView(view)
 
 		// Static paper background
-		setupBackground(false)
+		showGameOver()
 
 		// Stop background music.
 		SoundManager.stopBackgroundMusic()
@@ -33,16 +33,6 @@ public class GameOverScene: PaperScene {
 		okButton.yScale = getSceneScaleY()
 		okButton.zPosition = HeroZPosition
 		addChild(okButton)
-
-		// Add a title.
-		let titleLabel = SKLabelNode(text: "Game Over!")
-		titleLabel.fontColor = UIColor(red: 0.5, green: 0, blue: 0, alpha: 1)
-		titleLabel.fontName = "Noteworthy"
-		titleLabel.fontSize = 24
-		titleLabel.position = CGPoint(x: 0.5, y: 0.7)
-		titleLabel.xScale = getSceneScaleX()
-		titleLabel.yScale = getSceneScaleY()
-		addChild(titleLabel)
 
 		let points = ScoreManager.getScoreForLevel(level!)
 
@@ -74,4 +64,18 @@ public class GameOverScene: PaperScene {
 		}
 	}
 	
+    func showGameOver() {
+        // Our texture for the outdoor background
+        let background = SKTexture(imageNamed: "GameOver")
+        
+        // Make it cheap to draw
+        background.filteringMode = SKTextureFilteringMode.Nearest
+        
+        let frameCenter = CGPoint(x: frame.width / 2.0, y: frame.height / 2.0)
+        let bgSprite = SKSpriteNode(texture: background)
+        bgSprite.size = frame.size
+        bgSprite.position = CGPoint(x: frame.size.width/2.0, y: frame.size.height/2.0)
+        bgSprite.zPosition = SceneBackgroundZPosition
+        addChild(bgSprite)
+    }
 }
