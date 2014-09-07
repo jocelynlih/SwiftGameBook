@@ -97,6 +97,22 @@ public class PaperScene : SKScene {
 		}
     }
 	
+    public func setupOutdoorBackground() {
+        // Our texture for the outdoor background
+        let background = SKTexture(imageNamed: "outdoorbackdrop")
+        
+        // Make it cheap to draw
+        background.filteringMode = SKTextureFilteringMode.Nearest
+
+        let frameCenter = CGPoint(x: frame.width / 2.0, y: frame.height / 2.0)
+        let bgSprite = SKSpriteNode(texture: background)
+        bgSprite.size = frame.size
+        bgSprite.position = CGPoint(x: frame.size.width/2.0, y: frame.size.height/2.0)
+        bgSprite.zPosition = SceneBackgroundZPosition
+        addChild(bgSprite)
+    }
+
+    
 	public func convertToSketch()
 	{
 		// Attach our sketch nodes to all sprites
