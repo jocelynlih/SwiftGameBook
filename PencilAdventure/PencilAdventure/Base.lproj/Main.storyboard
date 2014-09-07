@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6206.9" systemVersion="14A343f" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="LVB-YS-i5n">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="6206.9" systemVersion="13E28" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="LVB-YS-i5n">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="7026.1"/>
         <capability name="Constraints with attributes relative to the layout margin" minToolsVersion="6.0"/>
@@ -17,14 +17,13 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yAY-Eb-tKI">
-                                <rect key="frame" x="229" y="283" width="142" height="34"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="yAY-Eb-tKI">
+                                <rect key="frame" x="23" y="234" width="553" height="140"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="34" id="0cU-Rj-qUJ"/>
-                                    <constraint firstAttribute="width" constant="142" id="Sx8-fn-aM1"/>
+                                    <constraint firstAttribute="height" constant="140" id="0cU-Rj-qUJ"/>
+                                    <constraint firstAttribute="width" constant="553" id="Sx8-fn-aM1"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" name="Noteworthy-Light" family="Noteworthy" pointSize="26"/>
-                                <state key="normal" title="Start Game">
+                                <state key="normal" image="startGameButton">
                                     <color key="titleColor" cocoaTouchSystemColor="viewFlipsideBackgroundColor"/>
                                     <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
@@ -52,7 +51,7 @@
                             <constraint firstItem="IhP-oE-pRy" firstAttribute="top" secondItem="ubL-yK-d3C" secondAttribute="bottom" id="FSh-41-re2"/>
                             <constraint firstItem="IhP-oE-pRy" firstAttribute="leading" secondItem="bdc-N1-crn" secondAttribute="leadingMargin" id="MGz-ny-MZP"/>
                             <constraint firstItem="7mm-Rp-UuW" firstAttribute="top" secondItem="ubL-yK-d3C" secondAttribute="bottom" id="Qay-do-pPt"/>
-                            <constraint firstAttribute="centerY" secondItem="yAY-Eb-tKI" secondAttribute="centerY" id="SXF-jN-se3"/>
+                            <constraint firstAttribute="centerY" secondItem="yAY-Eb-tKI" secondAttribute="centerY" constant="-4" id="SXF-jN-se3"/>
                             <constraint firstItem="7mm-Rp-UuW" firstAttribute="trailing" secondItem="bdc-N1-crn" secondAttribute="trailingMargin" id="X7t-iV-p9t"/>
                             <constraint firstAttribute="centerX" secondItem="yAY-Eb-tKI" secondAttribute="centerX" id="tCm-2Y-Frt"/>
                         </constraints>
@@ -69,5 +68,6 @@
     <resources>
         <image name="babyPicture" width="85" height="101"/>
         <image name="girlPicture" width="80" height="95"/>
+        <image name="startGameButton" width="553" height="140"/>
     </resources>
 </document>

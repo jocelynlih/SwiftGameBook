@@ -65,7 +65,7 @@ class LevelSelectScene : PaperScene {
             // The first two levels we statically enable,
             // while we leave the last two disabled.
             var suffix = "disabled"
-            if i == 1 {
+            if !(i == 4) {
                 suffix = "enabled"
             }
             
