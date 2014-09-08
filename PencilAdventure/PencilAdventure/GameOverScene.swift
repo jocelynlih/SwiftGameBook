@@ -28,7 +28,7 @@ public class GameOverScene: PaperScene {
 		let okButton = SKSpriteNode(texture: spriteAtlas.textureNamed(OKButtonName))
 		okButton.name = OKButtonName
 		okButton.color = UIColor(red: 0, green: 0, blue: 0, alpha: 1)
-		okButton.position =  CGPoint(x: 0.5, y: 0.3)
+		okButton.position =  CGPoint(x: 0.8, y: 0.3)
 		okButton.xScale = getSceneScaleX()
 		okButton.yScale = getSceneScaleY()
 		okButton.zPosition = HeroZPosition

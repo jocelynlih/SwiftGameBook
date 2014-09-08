@@ -26,14 +26,16 @@ class LevelSelectScene : PaperScene {
         // Setup background music.
         SoundManager.toggleBackgroundMusic()
         
-        // Add a title.
-        let levelLabel = SKLabelNode(text: "Please choose a level")
-        levelLabel.fontColor = SKColor.darkGrayColor()
-        levelLabel.fontName = "Noteworthy"
-        levelLabel.position = CGPoint(x: view.frame.width / 2, y: (view.frame.height / 2) + 50)
-        levelLabel.xScale = getSceneScaleX()
-        levelLabel.yScale = getSceneScaleY()
-        addChild(levelLabel)
+        // Add a middle layer.
+        let chooseLevelImage = SKTexture(imageNamed: "ChooseLevel_HighScore_noPaper")
+        
+        chooseLevelImage.filteringMode = SKTextureFilteringMode.Nearest
+        
+        let levelSprite = SKSpriteNode(texture: chooseLevelImage)
+        levelSprite.size = frame.size
+        levelSprite.position = CGPoint(x: frame.size.width/2.0, y: frame.size.height/2.0)
+        levelSprite.zPosition = -1
+        addChild(levelSprite)
         
         // Add level select and high score nodes.
         addLevelSelectAndHighScoreNodes()
@@ -78,7 +80,7 @@ class LevelSelectScene : PaperScene {
 			if suffix == "disabled" {
 				level.alpha = 0.3
 			}
-            level.position =  CGPoint(x: x, y: frame.height / 4)
+            level.position =  CGPoint(x: x, y: frame.height / 2)
             level.xScale = getSceneScaleX()
             level.yScale = getSceneScaleY()
             addChild(level)
@@ -91,10 +93,11 @@ class LevelSelectScene : PaperScene {
         // If high scores are available, display them
         // as a label node.
         if let highestScores = ScoreManager.getAllHighScores() {
-            let highScoreLabel = SKLabelNode(text: "High Score\n\(highestScores)")
+            let highScoreLabel = SKLabelNode(text: "\(highestScores)")
             highScoreLabel.fontColor = SKColor.darkGrayColor()
             highScoreLabel.fontName = "Noteworthy"
-            highScoreLabel.position = CGPoint(x: view!.frame.width / 2, y: y - highScoreLabel.frame.height)
+            highScoreLabel.fontSize = 14
+            highScoreLabel.position = CGPoint(x: view!.frame.width / 2, y: frame.height * 0.8 - highScoreLabel.frame.height)
             highScoreLabel.xScale = getSceneScaleX()
             highScoreLabel.yScale = getSceneScaleY()
             addChild(highScoreLabel)
