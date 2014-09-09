@@ -92,12 +92,11 @@ class GameScene : SKScene, SKPhysicsContactDelegate {
     
     func movingPlatformFromLevel(sprite: SKSpriteNode) {
         //move the objects horizontally
-        let platform = sprite
         let distanceToMove = CGFloat(self.frame.size.width + sprite.size.width)
         let movePlatform = SKAction.moveByX(-distanceToMove, y:0.0, duration:NSTimeInterval(0.01 * distanceToMove))
         let removePlatform = SKAction.removeFromParent()
         let movePlatformAndRemove = SKAction.sequence([movePlatform, removePlatform])
-        platform.runAction(movePlatformAndRemove)
+        sprite.runAction(movePlatformAndRemove)
     }
     
     private func movingSprites() {
