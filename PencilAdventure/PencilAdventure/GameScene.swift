@@ -10,10 +10,11 @@ import SpriteKit
 
 
 // Category masks
-let steveCategory: UInt32 = 1 << 0
-let levelCategory: UInt32 = 1 << 1
-let sharpenerCategory: UInt32 = 1 << 2
-let groundCategory: UInt32 = 1 << 3
+let heroCategory: UInt32 = 1 << 0
+let groundCategory: UInt32 = 1 << 1
+let levelCategory: UInt32 = 1 << 2
+let powerupCategory: UInt32 = 1 << 3
+let finishCategory: UInt32 = 1 << 5
 class GameScene : SKScene, SKPhysicsContactDelegate {
     
     // We'll place a series of horizontal background tiles into the scene that will get a parallax
@@ -42,7 +43,7 @@ class GameScene : SKScene, SKPhysicsContactDelegate {
         platform.physicsBody?.dynamic = false
         platform.physicsBody?.allowsRotation = false
         platform.physicsBody?.categoryBitMask = levelCategory
-        platform.physicsBody?.collisionBitMask = steveCategory
+        platform.physicsBody?.collisionBitMask = heroCategory
         platform.position = CGPoint(x:380.0, y:200.0)
         platform.zPosition = 0
         addChild(platform)
@@ -53,11 +54,23 @@ class GameScene : SKScene, SKPhysicsContactDelegate {
         sharpener.physicsBody = SKPhysicsBody(circleOfRadius: sharpener.size.width/2)
         sharpener.physicsBody?.dynamic = false
         sharpener.physicsBody?.allowsRotation = false
-        sharpener.physicsBody?.categoryBitMask = sharpenerCategory
-        sharpener.physicsBody?.collisionBitMask = steveCategory
+        sharpener.physicsBody?.categoryBitMask = powerupCategory
+        sharpener.physicsBody?.collisionBitMask = heroCategory
         sharpener.position = CGPoint(x:380.0, y:240.0)
         sharpener.zPosition = 0
         addChild(sharpener)
+        
+        //add finish line
+        let finish = SKSpriteNode(color: UIColor.clearColor(), size: CGSize(width: 5.0, height: frame.height))
+        finish.name = "finish"
+        finish.physicsBody = SKPhysicsBody(rectangleOfSize: finish.size)
+        finish.physicsBody?.dynamic = false
+        finish.physicsBody?.allowsRotation = false
+        finish.physicsBody?.categoryBitMask = finishCategory
+        finish.physicsBody?.collisionBitMask = heroCategory
+        finish.position = CGPoint(x:480.0, y:frame.height*0.5)
+        finish.zPosition = 0
+        addChild(finish)
         
         //scrolling
         movingSprites()
@@ -82,9 +95,9 @@ class GameScene : SKScene, SKPhysicsContactDelegate {
         steve.physicsBody?.dynamic = true //#3
         steve.physicsBody?.allowsRotation = false //#4
         steve.physicsBody?.mass = 0.6 //#5
-        steve.physicsBody?.categoryBitMask = steveCategory
-        steve.physicsBody?.collisionBitMask = levelCategory | sharpenerCategory | groundCategory
-        steve.physicsBody?.contactTestBitMask = levelCategory | sharpenerCategory | groundCategory
+        steve.physicsBody?.categoryBitMask = heroCategory
+        steve.physicsBody?.collisionBitMask = levelCategory | powerupCategory | groundCategory | finishCategory
+        steve.physicsBody?.contactTestBitMask = levelCategory | powerupCategory | groundCategory | finishCategory
         steve.position = CGPoint(x:frame.size.width/4, y:frame.size.height/2)
         steve.zPosition = 1
         addChild(steve)
@@ -128,26 +141,39 @@ class GameScene : SKScene, SKPhysicsContactDelegate {
         ground.physicsBody = SKPhysicsBody(rectangleOfSize: ground.size)
         ground.physicsBody?.dynamic = false
         ground.physicsBody?.categoryBitMask = groundCategory
-        ground.physicsBody?.collisionBitMask = steveCategory
+        ground.physicsBody?.collisionBitMask = heroCategory
         self.addChild(ground)
     }
         
     func didBeginContact(contact: SKPhysicsContact) {
         
-        if (contact.bodyA.categoryBitMask & sharpenerCategory) == sharpenerCategory ||
-            (contact.bodyB.categoryBitMask & sharpenerCategory) == sharpenerCategory {
+        if (contact.bodyA.categoryBitMask & powerupCategory) == powerupCategory ||
+            (contact.bodyB.categoryBitMask & powerupCategory) == powerupCategory {
                 NSLog("get extra life")
-        }
-        
-        if (contact.bodyA.categoryBitMask & groundCategory) == groundCategory ||
-            (contact.bodyB.categoryBitMask & groundCategory) == groundCategory {
-                NSLog("Oh No! Game over")
         }
         
         if (contact.bodyA.categoryBitMask & levelCategory) == levelCategory ||
             (contact.bodyB.categoryBitMask & levelCategory) == levelCategory {
                 NSLog("Steve can Jump")
         }
+        
+        if (contact.bodyA.categoryBitMask & groundCategory) == groundCategory ||
+            (contact.bodyB.categoryBitMask & groundCategory) == groundCategory {
+                gameEnd(false)
+        }
+        
+        if (contact.bodyA.categoryBitMask & finishCategory) == finishCategory ||
+            (contact.bodyB.categoryBitMask & finishCategory) == finishCategory {
+                gameEnd(true)
+        }
     }
     
+    func gameEnd(didWin:Bool) {
+        if didWin {
+            NSLog("Yeah! You won!")
+        } else {
+            NSLog("Oh No! Game over!")
+        }
+        
+    }
 }
