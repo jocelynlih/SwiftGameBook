@@ -2,7 +2,7 @@ SwiftGameBook
 =============
 # About our game
 
-<img src="https://github.com/jocelynlih/SwiftGameBook/blob/master/Game%20Play.png" width=600px>
+<img src="https://github.com/jocelynlih/SwiftGameBook/blob/master/GamePreview.gif" width=600px>
 
 Our game is called Pencil Adventure. It is about our hero, Steve E. Stencil, a happy pencil living in Pencil Adventure. He is in love with Ms. Paperclip. One day she goes missing and our hero embarks on an epic journey to find her. What happened to her?
 
