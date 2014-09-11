@@ -318,14 +318,15 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
         }
     }
     
-    //TODO: need game end scene for logic here
     public func gameEnd(didWin:Bool) {
 		// If we don't have a view, then a different scene has been presented.
 		// This could be problematic, so we'll trap that condition here.
 		if self.view == .None {
 			return
 		}
-
+        
+        onGameOver()
+        
 		SKNode.cleanupScene(self)
         if (didWin) {
             self.view?.presentScene(LevelFinishedScene())
@@ -334,7 +335,7 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
             gameOverScene.level = currentLevel
             self.view?.presentScene(gameOverScene)
         }
-        onGameOver()
+        
     }
     
     func onGameOver() {
