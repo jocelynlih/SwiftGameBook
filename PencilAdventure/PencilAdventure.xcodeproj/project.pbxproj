@@ -26,6 +26,7 @@
 		8A9B09F819A434C700E93587 /* GameOverScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9B09F719A434C700E93587 /* GameOverScene.swift */; };
 		8A9B09FA19A4353300E93587 /* LevelFinishedScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A9B09F919A4353300E93587 /* LevelFinishedScene.swift */; };
 		9204E15819AC175D00C594F8 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9204E15719AC175D00C594F8 /* Constants.swift */; };
+		922BC45819BE92FA00674BDA /* GameKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 922BC45719BE92FA00674BDA /* GameKit.framework */; };
 		922E4D7A199318F10018EF7B /* collision.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 922E4D79199318F10018EF7B /* collision.mp3 */; };
 		9234A3EF198F029C0022246B /* SKNode+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9234A3EE198F029C0022246B /* SKNode+Extensions.swift */; };
 		9245C2601996C259003EF53B /* ScoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9245C25F1996C259003EF53B /* ScoreManager.swift */; };
@@ -90,6 +91,7 @@
 		8A9B09F719A434C700E93587 /* GameOverScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameOverScene.swift; sourceTree = "<group>"; };
 		8A9B09F919A4353300E93587 /* LevelFinishedScene.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LevelFinishedScene.swift; sourceTree = "<group>"; };
 		9204E15719AC175D00C594F8 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		922BC45719BE92FA00674BDA /* GameKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameKit.framework; path = System/Library/Frameworks/GameKit.framework; sourceTree = SDKROOT; };
 		922E4D79199318F10018EF7B /* collision.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = collision.mp3; sourceTree = "<group>"; };
 		9234A3EE198F029C0022246B /* SKNode+Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SKNode+Extensions.swift"; sourceTree = "<group>"; };
 		9245C25F1996C259003EF53B /* ScoreManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ScoreManager.swift; sourceTree = "<group>"; };
@@ -124,6 +126,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AE7B1909199284580043071B /* SpriteKit.framework in Frameworks */,
+				922BC45819BE92FA00674BDA /* GameKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -186,6 +189,7 @@
 			children = (
 				922E4D79199318F10018EF7B /* collision.mp3 */,
 				9284FC2B1991A81F00B348CF /* background.mp3 */,
+				922BC45719BE92FA00674BDA /* GameKit.framework */,
 				018BAE3819877F090067C10C /* SpriteKit.framework */,
 				018BAE14198779330067C10C /* Info.plist */,
 			);
@@ -364,6 +368,12 @@
 				TargetAttributes = {
 					018BAE0F198779330067C10C = {
 						CreatedOnToolsVersion = 6.0;
+						DevelopmentTeam = VZWGRNPC7L;
+						SystemCapabilities = {
+							com.apple.GameCenter = {
+								enabled = 1;
+							};
+						};
 					};
 					018BAE21198779330067C10C = {
 						CreatedOnToolsVersion = 6.0;
@@ -536,7 +546,8 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Ankur Patel (38KBGXJ48U)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Ankur Patel (38KBGXJ48U)";
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -579,7 +590,8 @@
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Ankur Patel (38KBGXJ48U)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Ankur Patel (38KBGXJ48U)";
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -604,10 +616,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = PencilAdventure/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Ounchecked";
@@ -621,10 +636,13 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = PencilAdventure/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				SWIFT_INSTALL_OBJC_HEADER = NO;
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Ounchecked";
