@@ -34,7 +34,7 @@ public class GameOverScene: PaperScene {
 		okButton.zPosition = HeroZPosition
 		addChild(okButton)
 
-		let points = ScoreManager.getScoreForLevel(level!)
+		let points = ScoreManager.getLastScore()
 
 		// Add a score?
 		if level != .None && points != .None {
@@ -42,7 +42,7 @@ public class GameOverScene: PaperScene {
 			scoreLabel.fontColor = UIColor(red: 0, green: 0, blue: 0.5, alpha: 1)
 			scoreLabel.fontName = "Noteworthy"
 			scoreLabel.fontSize = 18
-			scoreLabel.position = CGPoint(x: 0.5, y: 0.5)
+			scoreLabel.position = CGPoint(x: 0.5, y: 0.75)
 			scoreLabel.xScale = getSceneScaleX()
 			scoreLabel.yScale = getSceneScaleY()
 			addChild(scoreLabel)

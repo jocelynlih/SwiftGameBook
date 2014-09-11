@@ -7,9 +7,14 @@
 //
 
 import UIKit
+import GameKit
+
+var lastScore: Int!
 
 public class ScoreManager {
+    
     class func saveScore(score: Int, forLevel level: Int) {
+        lastScore = score
         var leaderboard = NSUserDefaults.standardUserDefaults().objectForKey("LeaderBoard") as? NSMutableDictionary ?? NSMutableDictionary()
         if let highestScore = leaderboard[level] as? Int {
             leaderboard.setValue(highestScore < score ? score : highestScore, forKey: "Level \(level)")
@@ -17,6 +22,20 @@ public class ScoreManager {
             leaderboard.setValue(score, forKey: "Level \(level)")
         }
         NSUserDefaults.standardUserDefaults().setObject(leaderboard, forKey: "LeaderBoard")
+        
+        var localPlayer = GKLocalPlayer.localPlayer()
+        localPlayer.authenticateHandler = {(viewController : UIViewController!, error : NSError!) -> Void in
+            if viewController != nil {
+                let appdelegate = UIApplication.sharedApplication().delegate as AppDelegate
+                appdelegate.window?.rootViewController?.presentViewController(viewController, animated: true, completion: nil)
+            } else {
+                if localPlayer.authenticated {
+                    var scoreToReport = GKScore(leaderboardIdentifier: "Leaderboard\(level)", player: localPlayer)
+                    scoreToReport.value = Int64(score)
+                    GKScore.reportScores([scoreToReport], withCompletionHandler: nil)
+                }
+            }
+        }
     }
     
     class func getScoreForLevel(level: Int) -> Int? {
@@ -27,18 +46,22 @@ public class ScoreManager {
     class func getAllHighScores() -> String? {
         var leaderboard = NSUserDefaults.standardUserDefaults().objectForKey("LeaderBoard") as? NSMutableDictionary ?? NSMutableDictionary()
         var stringBuilder = [String]()
-        for (level, score) in leaderboard as NSDictionary {
-            stringBuilder.append("\(level) - \(score) Points")
+        for i in 1...4 {
+            let level = "Level \(i)"
+            if let score = leaderboard.objectForKey(level) as? Int {
+                stringBuilder.append("\(level) - \(score) Points")
+            }
         }
 
         if stringBuilder.count > 0 {
-            var scoreStr = ""
-            for str in stringBuilder {
-                scoreStr += str
-            }
-            return scoreStr
+            return Swift.join("\n", stringBuilder)
         } else {
             return .None
         }
     }
+    
+    class func getLastScore() -> Int {
+        return lastScore
+    }
 }
+

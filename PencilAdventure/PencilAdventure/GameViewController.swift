@@ -7,13 +7,14 @@
 //
 
 import SpriteKit
+import GameKit
 
 class GameViewController: UIViewController {    
     @IBOutlet var startGameButton: UIButton!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+                
         // Setup our SpriteKit view.
         let view = self.view as SKView
 //		view.showsFPS = true
