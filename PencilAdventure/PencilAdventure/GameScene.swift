@@ -214,8 +214,8 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
     
     func movingMiddleLayerFromLevel(sprite: SKSpriteNode) {
         // Move the middle layer horizontally at a constant rate
-        let movePlatform = SKAction.moveByX(-MiddleLayerScrollSpeed, y:0.0, duration:NSTimeInterval(1))
-        sprite.runAction(SKAction.repeatActionForever(movePlatform))
+        let moveLayer = SKAction.moveByX(-MiddleLayerScrollSpeed, y:0.0, duration:NSTimeInterval(1))
+        sprite.runAction(SKAction.repeatActionForever(moveLayer))
     }
     
     private func setupMovingSprites() {
