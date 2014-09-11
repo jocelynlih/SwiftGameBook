@@ -22,7 +22,7 @@ let finishCategory: UInt32 = 1 << 5
 public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
 	// Scrolling speed
 	private let ScrollSpeedInUnitsPerSecond: CGFloat = 200
-    
+    // Middle layer scrolling speed
     private let MiddleLayerScrollSpeed: CGFloat = 100
     
 	// Steve (our hero)
@@ -219,12 +219,13 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
     }
     
     private func setupMovingSprites() {
-        // Find our sprites at z<=0 (this will be all of our level items)
         for child in self.children as [SKNode] {
             if let sprite = child as? SKSpriteNode {
+                //ascrolling level items
                 if sprite.zPosition > BackgroundZPosition && sprite.zPosition <= levelItemZPosition  {
                     movingPlatformFromLevel(sprite)
                 }
+                //scrolling middlelayer
                 if sprite.zPosition == BackgroundZPosition {
                     movingMiddleLayerFromLevel(sprite)
                 }
