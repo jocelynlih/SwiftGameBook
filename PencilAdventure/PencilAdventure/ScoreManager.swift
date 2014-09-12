@@ -25,7 +25,7 @@ public class ScoreManager {
         
         var localPlayer = GKLocalPlayer.localPlayer()
         localPlayer.authenticateHandler = {(viewController : UIViewController!, error : NSError!) -> Void in
-            if viewController != nil {
+            if viewController != .None {
                 let appdelegate = UIApplication.sharedApplication().delegate as AppDelegate
                 appdelegate.window?.rootViewController?.presentViewController(viewController, animated: true, completion: nil)
             } else {
@@ -33,6 +33,8 @@ public class ScoreManager {
                     var scoreToReport = GKScore(leaderboardIdentifier: "Leaderboard\(level)", player: localPlayer)
                     scoreToReport.value = Int64(score)
                     GKScore.reportScores([scoreToReport], withCompletionHandler: nil)
+                } else {
+                    // User not authenticated
                 }
             }
         }
