@@ -40,13 +40,17 @@ public class ScoreManager {
         }
     }
     
+    class func getScoreDict() -> NSDictionary {
+        return NSUserDefaults.standardUserDefaults().objectForKey("LeaderBoard") as? NSDictionary ?? NSDictionary()
+    }
+    
     class func getScoreForLevel(level: Int) -> Int? {
-        var leaderboard = NSUserDefaults.standardUserDefaults().objectForKey("LeaderBoard") as? NSMutableDictionary ?? NSMutableDictionary()
+        var leaderboard = getScoreDict()
         return leaderboard["Level \(level)"] as? Int
     }
     
     class func getAllHighScores() -> String? {
-        var leaderboard = NSUserDefaults.standardUserDefaults().objectForKey("LeaderBoard") as? NSMutableDictionary ?? NSMutableDictionary()
+        var leaderboard = getScoreDict()
         var stringBuilder = [String]()
         for i in 1...4 {
             let level = "Level \(i)"

@@ -62,12 +62,19 @@ class LevelSelectScene : PaperScene {
         var x = (view!.frame.width - selectorWidth) / 2 + tileWidth / 2
         var y = view!.frame.height / 2
         
+        var levelsToShow = 1
+        for (key, value) in enumerate(ScoreManager.getScoreDict()) {
+            if levelsToShow < MaxLevels {
+                levelsToShow++
+            }
+        }
+        
         // For every level, add a level selector.
-        for i in 1...MaxLevels {
+        for i in 1...levelsToShow {
             // The first two levels we statically enable,
             // while we leave the last two disabled.
             var suffix = "disabled"
-            if !(i == 4) {
+            if i != 4 {
                 suffix = "enabled"
             }
             
