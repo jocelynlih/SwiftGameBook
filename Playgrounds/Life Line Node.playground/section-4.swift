@@ -9,11 +9,11 @@ extension SKScene {
     }
     
     func getSceneScaleX() -> CGFloat {
-        return frame.width / view.frame.width
+        return frame.width / view!.frame.width
     }
     
     func getSceneScaleY() -> CGFloat {
-        return frame.height / view.frame.height
+        return frame.height / view!.frame.height
     }
 }
 

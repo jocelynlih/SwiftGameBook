@@ -25,7 +25,7 @@ public class LifeLineNode: SKCropNode {
     
     private func subtractLifeLine() {
         lifeLine -= 0.01
-        maskNode.yScale = lifeLine
+        maskNode!.yScale = lifeLine
         if lifeLine > 0 {
             callbackAfter(0.1, subtractLifeLine)
         } else {
@@ -40,7 +40,7 @@ public class LifeLineNode: SKCropNode {
         } else {
             lifeLine += life
         }
-        maskNode.yScale = lifeLine
+        maskNode!.yScale = lifeLine
     }
     
 }
