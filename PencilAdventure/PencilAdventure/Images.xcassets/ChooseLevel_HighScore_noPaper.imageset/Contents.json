@@ -10,6 +10,10 @@
       "filename" : "ChooseLevel_HighScore_noPaper@2x.png"
     },
     {
+      "idiom" : "universal",
+      "scale" : "3x"
+    },
+    {
       "idiom" : "ipad",
       "scale" : "1x",
       "filename" : "ChooseLevel_HighScore_noPaper~ipad.png"
