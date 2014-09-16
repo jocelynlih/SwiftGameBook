@@ -7,22 +7,21 @@
     {
       "idiom" : "iphone",
       "scale" : "2x",
-      "filename" : "startGameButton@2x.png"
+      "filename" : "StartGame@2x~iPhone.png"
     },
     {
       "idiom" : "iphone",
-      "subtype" : "retina4",
-      "scale" : "2x"
+      "scale" : "3x"
     },
     {
       "idiom" : "ipad",
       "scale" : "1x",
-      "filename" : "startGameButton~ipad.png"
+      "filename" : "StartGame~iPad.png"
     },
     {
       "idiom" : "ipad",
       "scale" : "2x",
-      "filename" : "startGameButton@2x~ipad.png"
+      "filename" : "StartGame@2x~iPad.png"
     }
   ],
   "info" : {
