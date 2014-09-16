@@ -325,20 +325,15 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
 			return
 		}
         
-        onGameOver()
-        
 		SKNode.cleanupScene(self)
-        if (didWin) {
+        if didWin {
             self.view?.presentScene(LevelFinishedScene())
+            ScoreManager.saveScore(starCountNode.getPoints(), forLevel: currentLevel)
         } else {
             let gameOverScene = GameOverScene()
             gameOverScene.level = currentLevel
             self.view?.presentScene(gameOverScene)
         }
         
-    }
-    
-    func onGameOver() {
-        ScoreManager.saveScore(starCountNode.getPoints(), forLevel: currentLevel)
     }
 }
