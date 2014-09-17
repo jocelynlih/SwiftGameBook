@@ -30,7 +30,7 @@ let BytesPerPixel = 4
 let EdgeAngleTolerance: CGFloat = 0.01
 let MinPathLength = 5
 let AlphaThreshold: UInt8 = 128
-let ColorThreshold: Int32 = 4
+let ColorThreshold: Int32 = 50
 
 var vectorizedShapes = [String :[[CGPoint]]]()
 
@@ -119,6 +119,10 @@ class ImageTools {
 				let g = a == 255 ? Int32(image[pixIndex * BytesPerPixel + GreenComponentOffset]) : 0
 				let b = a == 255 ? Int32(image[pixIndex * BytesPerPixel + BlueComponentOffset]) : 0
 
+				// When comparing color distances, we use this threshold. Note that we avoid the need to
+				// sqrt() the distance because instead, we square our threshold.
+				let colorThresholdSquared = ColorThreshold * ColorThreshold
+				
 				// Check our neighbors for an edge condition
 				for offset in [1, widthPix, -1, -widthPix] {
 					let neighborIndex = pixIndex + offset
@@ -142,7 +146,7 @@ class ImageTools {
 					
 					// If the distance between the current pixel color and its neighbor's color is large
 					// enough then we consider this an edge pixel
-					if distSquared > ColorThreshold {
+					if distSquared > colorThresholdSquared {
 						imgMap[pixIndex] |= UInt8(EdgeMask)
 						imgMap[neighborIndex] |= UInt8(NoEdgeMask)
 						break
