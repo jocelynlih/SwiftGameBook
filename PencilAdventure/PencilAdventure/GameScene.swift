@@ -35,11 +35,7 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
     public var currentLevel = 1
     public override func didMoveToView(view: SKView) {
 		super.didMoveToView(view)
-        if currentLevel == 3 || currentLevel == 4 {
-            setupOutdoorBackground()
-        } else {
-            setupBackground(true)
-        }
+		setupBackground(true)
 		
         // Setup physics
         physicsWorld.gravity = CGVector(dx: 0.0, dy: -9.8)
@@ -55,13 +51,10 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
         // Give our root scene a name
         name = "SceneRoot"
 		
-        if currentLevel == 3 || currentLevel == 4 {
-        
-        } else {
-            // Convert everyting in the level into sketches
-            convertToSketch()
-        }
-        // Create our hero
+		// Convert everyting in the level into sketches
+		convertToSketch()
+
+		// Create our hero
         steveTheSprite = HeroNode(scene: self, withPhysicsBody: true)
         steveTheSprite.position = CGPoint(x: scene!.frame.size.width * 0.25, y: scene!.frame.size.height * 0.5)
         
