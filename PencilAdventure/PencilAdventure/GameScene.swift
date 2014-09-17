@@ -35,7 +35,7 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
     public var currentLevel = 1
     public override func didMoveToView(view: SKView) {
 		super.didMoveToView(view)
-        if currentLevel == 3 {
+        if currentLevel == 3 || currentLevel == 4 {
             setupOutdoorBackground()
         } else {
             setupBackground(true)
@@ -55,7 +55,7 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
         // Give our root scene a name
         name = "SceneRoot"
 		
-        if currentLevel == 3 {
+        if currentLevel == 3 || currentLevel == 4 {
         
         } else {
             // Convert everyting in the level into sketches
@@ -245,7 +245,6 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
         ground.position = CGPoint(x: frame.size.width * 0.5, y: self.viewableArea.origin.y)
         ground.physicsBody = SKPhysicsBody(rectangleOfSize: ground.size)
         ground.physicsBody?.dynamic = false
-        //TODO: need to have this comment out for building the game level.
         ground.physicsBody?.categoryBitMask = groundCategory
         ground.physicsBody?.collisionBitMask = heroCategory
         self.addChild(ground)
