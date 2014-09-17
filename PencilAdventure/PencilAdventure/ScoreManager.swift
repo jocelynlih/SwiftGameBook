@@ -9,12 +9,9 @@
 import UIKit
 import GameKit
 
-var lastScore: Int!
-
 public class ScoreManager {
     
     class func saveScore(score: Int, forLevel level: Int) {
-        lastScore = score
         var leaderboard = NSUserDefaults.standardUserDefaults().objectForKey("LeaderBoard") as? NSMutableDictionary ?? NSMutableDictionary()
         if let highestScore = leaderboard[level] as? Int {
             leaderboard.setValue(highestScore < score ? score : highestScore, forKey: "Level \(level)")
@@ -65,9 +62,6 @@ public class ScoreManager {
             return .None
         }
     }
-    
-    class func getLastScore() -> Int {
-        return lastScore
-    }
+
 }
 

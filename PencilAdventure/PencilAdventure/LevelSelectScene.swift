@@ -71,12 +71,7 @@ class LevelSelectScene : PaperScene {
         
         // For every level, add a level selector.
         for i in 1...levelsToShow {
-            // The first two levels we statically enable,
-            // while we leave the last two disabled.
-            var suffix = "disabled"
-            if i != 4 {
-                suffix = "enabled"
-            }
+            var suffix = "enabled"
             
             // Create a level selector node and add it to
             // the scene.
