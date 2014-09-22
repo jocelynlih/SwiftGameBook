@@ -35,12 +35,32 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
     public var currentLevel = 1
     public override func didMoveToView(view: SKView) {
 		super.didMoveToView(view)
+		
+		// Create our hero
+		steveTheSprite = HeroNode(scene: self, withPhysicsBody: true)
+		steveTheSprite.position = CGPoint(x: scene!.frame.size.width * 0.25, y: scene!.frame.size.height * 0.5)
+		
+		lifeLineNode = LifeLineNode(forScene: self)
+		starCountNode = StarCountNode(forScene: self)
+		
+		addChild(steveTheSprite)
+		addChild(lifeLineNode)
+		addChild(starCountNode)
+		
+		// Setup the moving sprites
+		setupMovingSprites()
+		
+		// Add ground level
+		addGroundLevel()
+    }
+	
+	public func prepareLevel() {
 		setupBackground(true)
 		
-        // Setup physics
-        physicsWorld.gravity = CGVector(dx: 0.0, dy: -9.8)
-        physicsWorld.contactDelegate = self
-        
+		// Setup physics
+		physicsWorld.gravity = CGVector(dx: 0.0, dy: -9.8)
+		physicsWorld.contactDelegate = self
+		
 		// Setup our level accessories (backgground items, powerups and deathtraps)
 		//
 		// It's important to do this before we add any of our additional nodes to
@@ -48,29 +68,12 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
 		// nodes and may modify their properties.
 		setupAccessories()
 		
-        // Give our root scene a name
-        name = "SceneRoot"
+		// Give our root scene a name
+		name = "SceneRoot"
 		
 		// Convert everyting in the level into sketches
 		convertToSketch()
-
-		// Create our hero
-        steveTheSprite = HeroNode(scene: self, withPhysicsBody: true)
-        steveTheSprite.position = CGPoint(x: scene!.frame.size.width * 0.25, y: scene!.frame.size.height * 0.5)
-        
-        lifeLineNode = LifeLineNode(forScene: self)
-        starCountNode = StarCountNode(forScene: self)
-        
-        addChild(steveTheSprite)
-        addChild(lifeLineNode)
-        addChild(starCountNode)
-        
-		// Setup the moving sprites
-		setupMovingSprites()
-		
-        // Add ground level
-        addGroundLevel()
-    }
+	}
 	
 	private func ensurePhysicsBody(sprite: SKSpriteNode, useTextureAlpha: Bool = true) -> Bool {
 		// Make sure our sprite has a physicsBody

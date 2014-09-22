@@ -12,6 +12,7 @@ class ProgressLoaderNode: SKCropNode {
 	
 	private let markerSprite: HeroNode!
 	private let progressBarSprite: SKSpriteNode!
+	private let ProgressMarkerScalar: CGFloat = 0.3
 
 	required init(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
@@ -31,13 +32,12 @@ class ProgressLoaderNode: SKCropNode {
 		// Add our moving marker
 		markerSprite = HeroNode(scene: scene, withPhysicsBody: false)
 		
-		// Let's scale our marker so it's a a bit smaller than the height of the progressBarSprite
-		let scale = progressBarSprite.frame.size.height / markerSprite.frame.size.height * 0.5
-		markerSprite.setScale(scale)
+		// Let's scale our marker
+		markerSprite.setScale(ProgressMarkerScalar)
 		
 		self.addChild(markerSprite)
 	}
-
+	
 	func setProgress (progress: CGFloat) {
 		if let marker = markerSprite {
 			// We move the total distance of the progressBarSprite minus the width of our marker (so it moves from inside

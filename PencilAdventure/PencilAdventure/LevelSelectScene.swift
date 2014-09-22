@@ -16,7 +16,9 @@ class LevelSelectScene : PaperScene {
     // Variables
     var progressLoader: ProgressLoaderNode!
     var isLoading = false
-    
+	var levelSelectSprite: SKSpriteNode!
+	var levelSelectNodes = [SKSpriteNode]()
+	
 	override func didMoveToView(view: SKView) {
 		super.didMoveToView(view)
 		
@@ -31,12 +33,12 @@ class LevelSelectScene : PaperScene {
         
         chooseLevelImage.filteringMode = SKTextureFilteringMode.Nearest
         
-        let levelSprite = SKSpriteNode(texture: chooseLevelImage)
-        levelSprite.size = frame.size
-        levelSprite.position = CGPoint(x: frame.size.width/2.0, y: frame.size.height/2.0)
-        levelSprite.zPosition = -1
-        addChild(levelSprite)
-        
+        levelSelectSprite = SKSpriteNode(texture: chooseLevelImage)
+        levelSelectSprite.size = frame.size
+        levelSelectSprite.position = CGPoint(x: frame.size.width/2.0, y: frame.size.height/2.0)
+        levelSelectSprite.zPosition = -1
+		addChild(levelSelectSprite)
+		
         // Add level select and high score nodes.
         addLevelSelectAndHighScoreNodes()
 		
@@ -87,6 +89,9 @@ class LevelSelectScene : PaperScene {
             level.yScale = getSceneScaleY()
             addChild(level)
             
+			// Add it to the level select nodes that we hide when we start loading the level
+			levelSelectNodes.append(level)
+			
             // Move the x value over, as to not render two
             // nodes on top of each other.
             x += tileWidth + gap
@@ -108,9 +113,15 @@ class LevelSelectScene : PaperScene {
     
     internal func addProgressLoaderNode () {
         progressLoader = ProgressLoaderNode(scene: self)
-        progressLoader.position = CGPoint(x: view!.frame.width / 2, y: view!.frame.height / 2 + 100)
+        progressLoader.position = levelSelectSprite.position
         progressLoader.setProgress(0)
         addChild(progressLoader)
+		
+		// Hide the level select nodes
+		for node in levelSelectNodes {
+			node.hidden = true
+		}
+		levelSelectSprite.alpha = 0.2
     }
     
     internal func loadLevel(level: String) {
@@ -124,15 +135,29 @@ class LevelSelectScene : PaperScene {
         
         var scene: GameScene? = nil
         var work: [Void -> Any?] = []
+		var sketchNodes = 0
         
         // Add our progress to the scene
         addProgressLoaderNode()
         
-        // Unarchive scene.
-        work.append {
-            scene = GameScene.unarchiveFromFile(level) as? GameScene
-        }
-        
+		// Unarchive scene
+		work.append {
+			scene = GameScene.unarchiveFromFile(level) as? GameScene
+		}
+		
+		// Prepare the level
+		work.append {
+			if scene != nil {
+				// Give the scene access to the progress loader so it can update progress while it loads
+				scene!.progressNode = self.progressLoader
+				
+				// Prepare the level, which takes time
+				scene!.prepareLevel()
+			}
+
+			return scene
+		}
+		
         // Perform all the work and move the progress
         // along, this is done in the background as to
         // not block the main thread which renders the
@@ -142,7 +167,6 @@ class LevelSelectScene : PaperScene {
             for job in work {
                 done++
                 job()
-                self.progressLoader.setProgress(CGFloat(done) / CGFloat(work.count))
             }
             
             // Present our new scene

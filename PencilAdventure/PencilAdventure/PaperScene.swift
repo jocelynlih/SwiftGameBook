@@ -26,6 +26,9 @@ public class PaperScene : SKScene {
     private let BackgroundScrollSpeedUnitsPerSecond: CGFloat = 200
     private var background:SKTexture!
 	
+	// Progress for loading
+	var progressNode:ProgressLoaderNode?
+	
     // Our viewable area. This originates at the bottom/left corner and extends up/right in scene points.
     public var viewableArea: CGRect!
     
@@ -116,10 +119,14 @@ public class PaperScene : SKScene {
 	public func convertToSketch()
 	{
 		// Attach our sketch nodes to all sprites
-		SketchRender.attachSketchNodes(self)
+		SketchRender.attachSketchNodes(self, progress: progressNode)
 		
 		// Setup a timer for the update
-		sketchAnimationTimer = NSTimer.scheduledTimerWithTimeInterval(1.0 / SketchAnimationFPS, target: self, selector: Selector("sketchAnimationTimer:"), userInfo: nil, repeats: true)
+		//
+		// This must be done on the main queue
+		dispatch_async(dispatch_get_main_queue()) {
+			self.sketchAnimationTimer = NSTimer.scheduledTimerWithTimeInterval(1.0 / self.SketchAnimationFPS, target: self, selector: Selector("sketchAnimationTimer:"), userInfo: nil, repeats: true)
+		}
 	}
 	
     private func scaleToFillScreenWithAspect(srcSize: CGSize, targetSize: CGSize) -> CGFloat {

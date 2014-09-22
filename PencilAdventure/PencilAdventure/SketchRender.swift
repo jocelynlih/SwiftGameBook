@@ -87,13 +87,12 @@ class SketchRender {
 		}
 	}
 	
-	internal class func attachSketchNodes(node: SKNode) {
-		let atlas = SKTextureAtlas(named: "Sprites")
-		let transparentTexture = atlas.textureNamed("transparent")
-				
+	internal class func countSketchNodes(node: SKNode) -> Int {
+		var totalSketchNodes = 0
+		
 		for child in node.children as [SKNode] {
 			// Let's do depth-first traversal so that we don't end up traversing the children we're about to add
-			attachSketchNodes(child)
+			totalSketchNodes += countSketchNodes(child)
 			
 			// We are only concerned with SKSpriteNodes
 			if let sprite = child as? SKSpriteNode {
@@ -104,6 +103,52 @@ class SketchRender {
 					// to be safe!
 					if name == SketchName {
 						continue
+					}
+					
+					// Count our sketch nodes
+					totalSketchNodes += 1
+				}
+			}
+		}
+		
+		return totalSketchNodes
+	}
+	
+	internal class func attachSketchNodes(node: SKNode, progress: ProgressLoaderNode?, totalNodes: Int = -1) {
+		var totalSketchNodes = totalNodes
+		
+		// If we don't have a count, count them now
+		if progress != nil && totalSketchNodes < 0 {
+			totalSketchNodes = countSketchNodes(node)
+		}
+		
+		var sketchNodesProcessed = 0
+		
+		let atlas = SKTextureAtlas(named: "Sprites")
+		let transparentTexture = atlas.textureNamed("transparent")
+				
+		for child in node.children as [SKNode] {
+			// Let's do depth-first traversal so that we don't end up traversing the children we're about to add
+			self.attachSketchNodes(child, progress: progress, totalNodes: totalSketchNodes)
+			
+			// We are only concerned with SKSpriteNodes
+			if let sprite = child as? SKSpriteNode {
+				if let name = sprite.name {
+					// Don't sketch our sketches
+					//
+					// Since we're doing a depth-first traversal, this shouldn't be necessary, but it doesn't hurt
+					// to be safe!
+					if name == SketchName {
+						continue
+					}
+					
+					// Count our sketch nodes
+					sketchNodesProcessed += 1
+					
+					// Update our progress
+					if progress != nil
+					{
+						progress!.setProgress(CGFloat(sketchNodesProcessed) / CGFloat(totalSketchNodes))
 					}
 					
 					// !HACK! - At the present time, XCode's level designer forces us to select a specific resolution/density
@@ -136,7 +181,7 @@ class SketchRender {
 							var imageSize = CGSize(width: imageWidthPix, height: imageHeightPix)
 							
 							// Create a new shape from the path and attach it to this sprite node
-							if let sketchSprite = renderSketchSprite(pathArray, size: imageSize, parent: sprite) {
+							if let sketchSprite = self.renderSketchSprite(pathArray, size: imageSize, parent: sprite) {
 								// Ensure we draw in front of our parent
 								sketchSprite.zPosition = 1
 								
