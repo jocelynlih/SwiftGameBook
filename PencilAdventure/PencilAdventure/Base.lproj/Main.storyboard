@@ -45,18 +45,40 @@
                                     <action selector="startGame:" destination="LVB-YS-i5n" eventType="touchUpInside" id="3Bx-wv-Qta"/>
                                 </connections>
                             </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sketch Mode" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B7f-e7-IbI">
+                                <rect key="frame" x="425.5" y="404" width="97.5" height="157"/>
+                                <fontDescription key="fontDescription" name="Noteworthy-Bold" family="Noteworthy" pointSize="18"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" on="YES" translatesAutoresizingMaskIntoConstraints="NO" id="y4d-9g-JoH">
+                                <rect key="frame" x="527" y="467" width="51" height="31"/>
+                                <variation key="heightClass=regular-widthClass=regular" misplaced="YES">
+                                    <rect key="frame" x="728" y="567" width="51" height="131"/>
+                                </variation>
+                                <connections>
+                                    <action selector="sketchModeOption:" destination="LVB-YS-i5n" eventType="valueChanged" id="lME-Xy-TrQ"/>
+                                </connections>
+                            </switch>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="y4d-9g-JoH" firstAttribute="top" relation="greaterThanOrEqual" secondItem="yAY-Eb-tKI" secondAttribute="bottom" constant="30" id="1Vd-mS-CEi"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="y4d-9g-JoH" secondAttribute="trailing" constant="8" id="A9D-p2-50L"/>
                             <constraint firstItem="IhP-oE-pRy" firstAttribute="top" secondItem="ubL-yK-d3C" secondAttribute="bottom" id="FSh-41-re2"/>
+                            <constraint firstItem="y4d-9g-JoH" firstAttribute="leading" secondItem="B7f-e7-IbI" secondAttribute="trailing" constant="4" id="I9k-wN-ysr"/>
                             <constraint firstItem="IhP-oE-pRy" firstAttribute="leading" secondItem="bdc-N1-crn" secondAttribute="leadingMargin" id="MGz-ny-MZP"/>
                             <constraint firstItem="7mm-Rp-UuW" firstAttribute="top" secondItem="ubL-yK-d3C" secondAttribute="bottom" id="Qay-do-pPt"/>
                             <constraint firstAttribute="centerY" secondItem="yAY-Eb-tKI" secondAttribute="centerY" constant="-4" id="SXF-jN-se3"/>
                             <constraint firstItem="7mm-Rp-UuW" firstAttribute="trailing" secondItem="bdc-N1-crn" secondAttribute="trailingMargin" id="X7t-iV-p9t"/>
+                            <constraint firstItem="BKx-HY-NrO" firstAttribute="top" relation="lessThanOrEqual" secondItem="y4d-9g-JoH" secondAttribute="bottom" constant="102" id="eGh-vB-AOA"/>
+                            <constraint firstItem="B7f-e7-IbI" firstAttribute="centerY" secondItem="y4d-9g-JoH" secondAttribute="centerY" id="l6Z-Tj-f1d"/>
+                            <constraint firstItem="B7f-e7-IbI" firstAttribute="top" secondItem="yAY-Eb-tKI" secondAttribute="bottom" constant="30" id="rYH-ah-s4k"/>
                             <constraint firstAttribute="centerX" secondItem="yAY-Eb-tKI" secondAttribute="centerX" id="tCm-2Y-Frt"/>
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="sketchModeSwitch" destination="y4d-9g-JoH" id="EQc-eH-N8O"/>
                         <outlet property="startGameButton" destination="yAY-Eb-tKI" id="mBJ-E9-wzY"/>
                     </connections>
                 </viewController>

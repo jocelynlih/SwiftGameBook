@@ -12,9 +12,10 @@ import GameKit
 class GameViewController: UIViewController {    
     @IBOutlet var startGameButton: UIButton!
     
+    @IBOutlet var sketchModeSwitch: UISwitch!
     override func viewDidLoad() {
         super.viewDidLoad()
-                
+        sketchModeSwitch.on = NSUserDefaults.standardUserDefaults().boolForKey("SketchMode")
         // Setup our SpriteKit view.
         let view = self.view as SKView
 //		view.showsFPS = true
@@ -29,6 +30,7 @@ class GameViewController: UIViewController {
         SoundManager.playBackgroundMusic()
     }
     
+
     @IBAction func startGame (sender: AnyObject) {
         let view = self.view as SKView
         
@@ -40,6 +42,13 @@ class GameViewController: UIViewController {
             if let sView = subview as? UIView {
                 sView.hidden = true
             }
+        }
+    }
+    
+    @IBAction func sketchModeOption(sender: AnyObject) {
+        if let sw = sender as? UISwitch {
+            NSUserDefaults.standardUserDefaults().setBool(sw.on, forKey:"SketchMode")
+            NSUserDefaults.standardUserDefaults().synchronize()
         }
     }
 }

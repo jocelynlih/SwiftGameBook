@@ -55,7 +55,17 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
     }
 	
 	public func prepareLevel() {
-		setupBackground(true)
+        var isSketchMode = NSUserDefaults.standardUserDefaults().boolForKey("SketchMode")
+        
+        if isSketchMode {
+            setupBackground(true)
+        } else {
+            if currentLevel == 3 || currentLevel == 4 {
+                setupOutdoorBackground()
+            } else {
+                setupBackground(true)
+            }
+        }
 		
 		// Setup physics
 		physicsWorld.gravity = CGVector(dx: 0.0, dy: -9.8)
@@ -70,9 +80,11 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
 		
 		// Give our root scene a name
 		name = "SceneRoot"
-		
-		// Convert everyting in the level into sketches
-		convertToSketch()
+        
+        if currentLevel == 1 || isSketchMode {
+            // Convert everyting in the level into sketches
+            convertToSketch()
+        }
 	}
 	
 	private func ensurePhysicsBody(sprite: SKSpriteNode, useTextureAlpha: Bool = true) -> Bool {
