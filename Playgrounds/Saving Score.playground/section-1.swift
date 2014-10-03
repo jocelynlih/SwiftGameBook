@@ -3,15 +3,18 @@ import GameKit
 import XCPlayground
 
 public class ScoreManager {
-    
+
     class func saveScore(score: Int, forLevel level: Int) {
-        var leaderboard = NSUserDefaults.standardUserDefaults().objectForKey("LeaderBoard") as? NSMutableDictionary ?? NSMutableDictionary()
+        var leaderboard = NSUserDefaults.standardUserDefaults().objectForKey("LeaderBoard") as? NSDictionary ?? NSMutableDictionary()
+        var leaderboardMDict = leaderboard.mutableCopy() as NSMutableDictionary
+        
         if let highestScore = leaderboard[level] as? Int {
-            leaderboard.setValue(highestScore < score ? score : highestScore, forKey: "Level \(level)")
+            leaderboardMDict.setValue(highestScore < score ? score : highestScore, forKey: "Level \(level)")
         } else {
-            leaderboard.setValue(score, forKey: "Level \(level)")
+            leaderboardMDict.setValue(score, forKey: "Level \(level)")
         }
-        NSUserDefaults.standardUserDefaults().setObject(leaderboard, forKey: "LeaderBoard")
+        NSUserDefaults.standardUserDefaults().setObject(leaderboardMDict, forKey: "LeaderBoard")
+        NSUserDefaults.standardUserDefaults().synchronize()
         
         var localPlayer = GKLocalPlayer.localPlayer()
         // Authenticate User using authenticateHandler
@@ -45,7 +48,6 @@ public class ScoreManager {
             return .None
         }
     }
-    
 }
 
 ScoreManager.saveScore(10, forLevel: 1)
