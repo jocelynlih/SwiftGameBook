@@ -2,13 +2,12 @@
   "images" : [
     {
       "idiom" : "iphone",
-      "scale" : "1x",
-      "filename" : "outdoorbackdrop~ipad.png"
+      "scale" : "1x"
     },
     {
       "idiom" : "iphone",
       "scale" : "2x",
-      "filename" : "outdoorbackdrop@2x~ipad.png"
+      "filename" : "house_background@2x~iphone.png"
     },
     {
       "idiom" : "iphone",
@@ -17,7 +16,7 @@
     {
       "idiom" : "ipad",
       "scale" : "1x",
-      "filename" : "outdoorbackdrop~ipad-1.png"
+      "filename" : "house_background~ipad.png"
     },
     {
       "idiom" : "ipad",
