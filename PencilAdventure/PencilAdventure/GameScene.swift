@@ -35,7 +35,19 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
     public var currentLevel = 1
     public override func didMoveToView(view: SKView) {
 		super.didMoveToView(view)
-		
+        var isSketchMode = NSUserDefaults.standardUserDefaults().boolForKey("SketchMode")
+        
+        if isSketchMode {
+            setupBackground(true)
+        } else {
+            if currentLevel == 1 {
+                setupBackgroundWithImage("indoorbackground", scrolling: true)
+            }
+            if currentLevel == 3 || currentLevel == 4 {
+                setupOutdoorBackground()
+            }
+        }
+
 		// Create our hero
 		steveTheSprite = HeroNode(scene: self, withPhysicsBody: true)
 		steveTheSprite.position = CGPoint(x: scene!.frame.size.width * 0.25, y: scene!.frame.size.height * 0.5)
@@ -55,18 +67,7 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
     }
 	
 	public func prepareLevel() {
-        var isSketchMode = NSUserDefaults.standardUserDefaults().boolForKey("SketchMode")
-        
-        if isSketchMode {
-            setupBackground(true)
-        } else {
-            if currentLevel == 3 || currentLevel == 4 {
-                setupOutdoorBackground()
-            } else {
-                setupBackground(true)
-            }
-        }
-		
+        var isSketchMode = NSUserDefaults.standardUserDefaults().boolForKey("SketchMode")		
 		// Setup physics
 		physicsWorld.gravity = CGVector(dx: 0.0, dy: -9.8)
 		physicsWorld.contactDelegate = self
@@ -81,7 +82,7 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
 		// Give our root scene a name
 		name = "SceneRoot"
         
-        if currentLevel == 1 || isSketchMode {
+        if isSketchMode {
             // Convert everyting in the level into sketches
             convertToSketch()
         }

@@ -52,67 +52,63 @@ public class PaperScene : SKScene {
 	}
 	
 	public func setupBackground(scrolling: Bool) {
-		// Our texture for the background
-		let background = SKTexture(imageNamed: "paper")
-		
-		// Make it cheap to draw
-		background.filteringMode = SKTextureFilteringMode.Nearest
-		
-		if scrolling {
-			// Note that our background width uses 'frame.width'. This is because our scene is set to
-			// AspectFill (and because we're a landscape game) SpriteKit will automatically scale everything
-			// in the scene's viewport (including the background) to fill the screen horizontally. These
-			// scaled dimensions are stored in 'SKScene.frame'.
-			let backgroundWidth = frame.width
-			
-			// Our total scroll distance. We calculate this based on the width of the background sprite
-			// which will be tiled backgroundTiles times. Note that we scroll one less than this to avoid
-			// scrolling past the trailing edge of the last tile.
-			let backgroundScrollDist = backgroundWidth
-			let frameCenter = CGPoint(x: frame.width / 2.0, y: frame.height / 2.0)
-			
-			// Setup our parallax scrolling actions
-			//
-			// The speed is based on the distance we need to travel, the relative speed and the number of tiles we
-			// have to cover. Doing this allows our speed to stay the same even if we change backgroundTileCount.
-			let scrollTime = backgroundScrollDist / BackgroundScrollSpeedUnitsPerSecond
-			let scrollBgSprite = SKAction.moveByX(-backgroundScrollDist, y: 0, duration: NSTimeInterval(scrollTime))
-			let resetBgSprite = SKAction.moveByX(backgroundScrollDist, y: 0, duration: 0.0)
-			let moveBgSpritesForever = SKAction.repeatActionForever(SKAction.sequence([scrollBgSprite,resetBgSprite]))
-			
-			// Finally we can add the background tiles. We use two so we always have coverage
-			for i in 0 ..< 2 {
-				let bgSprite = SKSpriteNode(texture: background)
-				bgSprite.size = frame.size
-				bgSprite.position = CGPoint(x: frame.size.width/2.0 + backgroundScrollDist * CGFloat(i), y: frame.size.height/2.0)
-				bgSprite.zPosition = SceneBackgroundZPosition
-				bgSprite.runAction(moveBgSpritesForever)
-				addChild(bgSprite)
-			}
-		}
-		else {
-			let frameCenter = CGPoint(x: frame.width / 2.0, y: frame.height / 2.0)
-			let bgSprite = SKSpriteNode(texture: background)
-			bgSprite.size = frame.size
-			bgSprite.position = CGPoint(x: frame.size.width/2.0, y: frame.size.height/2.0)
-			bgSprite.zPosition = SceneBackgroundZPosition
-			addChild(bgSprite)
-		}
+        //quick access for paper background
+        setupBackgroundWithImage("paper", scrolling: scrolling)
     }
 	
     public func setupOutdoorBackground() {
-        // Our texture for the outdoor background
-        let background = SKTexture(imageNamed: "outdoorbackdrop")
+        //quick access for outddor background
+        setupBackgroundWithImage("outdoorbackdrop", scrolling: true)
+    }
+    
+    public func setupBackgroundWithImage(image: NSString, scrolling: Bool) {
+        // Our texture for the background from image
+        let background = SKTexture(imageNamed: image)
         
         // Make it cheap to draw
         background.filteringMode = SKTextureFilteringMode.Nearest
+        
+        if scrolling {
+            // Note that our background width uses 'frame.width'. This is because our scene is set to
+            // AspectFill (and because we're a landscape game) SpriteKit will automatically scale everything
+            // in the scene's viewport (including the background) to fill the screen horizontally. These
+            // scaled dimensions are stored in 'SKScene.frame'.
+            let backgroundWidth = frame.width
+            
+            // Our total scroll distance. We calculate this based on the width of the background sprite
+            // which will be tiled backgroundTiles times. Note that we scroll one less than this to avoid
+            // scrolling past the trailing edge of the last tile.
+            let backgroundScrollDist = backgroundWidth
+            let frameCenter = CGPoint(x: frame.width / 2.0, y: frame.height / 2.0)
+            
+            // Setup our parallax scrolling actions
+            //
+            // The speed is based on the distance we need to travel, the relative speed and the number of tiles we
+            // have to cover. Doing this allows our speed to stay the same even if we change backgroundTileCount.
+            let scrollTime = backgroundScrollDist / BackgroundScrollSpeedUnitsPerSecond
+            let scrollBgSprite = SKAction.moveByX(-backgroundScrollDist, y: 0, duration: NSTimeInterval(scrollTime))
+            let resetBgSprite = SKAction.moveByX(backgroundScrollDist, y: 0, duration: 0.0)
+            let moveBgSpritesForever = SKAction.repeatActionForever(SKAction.sequence([scrollBgSprite,resetBgSprite]))
+            
+            // Finally we can add the background tiles. We use two so we always have coverage
+            for i in 0 ..< 2 {
+                let bgSprite = SKSpriteNode(texture: background)
+                bgSprite.size = frame.size
+                bgSprite.position = CGPoint(x: frame.size.width/2.0 + backgroundScrollDist * CGFloat(i), y: frame.size.height/2.0)
+                bgSprite.zPosition = SceneBackgroundZPosition
+                bgSprite.runAction(moveBgSpritesForever)
+                addChild(bgSprite)
+            }
+        }
+        else {
+            let frameCenter = CGPoint(x: frame.width / 2.0, y: frame.height / 2.0)
+            let bgSprite = SKSpriteNode(texture: background)
+            bgSprite.size = frame.size
+            bgSprite.position = CGPoint(x: frame.size.width/2.0, y: frame.size.height/2.0)
+            bgSprite.zPosition = SceneBackgroundZPosition
+            addChild(bgSprite)
+        }
 
-        let frameCenter = CGPoint(x: frame.width / 2.0, y: frame.height / 2.0)
-        let bgSprite = SKSpriteNode(texture: background)
-        bgSprite.size = frame.size
-        bgSprite.position = CGPoint(x: frame.size.width/2.0, y: frame.size.height/2.0)
-        bgSprite.zPosition = SceneBackgroundZPosition
-        addChild(bgSprite)
     }
 
     

@@ -64,7 +64,7 @@ class LevelSelectScene : PaperScene {
         var x = (view!.frame.width - selectorWidth) / 2 + tileWidth / 2
         var y = view!.frame.height / 2
         
-        var levelsToShow = MaxLevels
+        var levelsToShow = 1
         for (key, value) in enumerate(ScoreManager.getScoreDict()) {
             if levelsToShow < MaxLevels {
                 levelsToShow++
