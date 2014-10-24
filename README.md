@@ -12,7 +12,7 @@ This book is intended for beginners to intermediate developers who might already
 In this book we dive into the core of Swift and show readers how expressive and fun the Swift language is. Along the way you will learn how to create a 2D casual Pencil Adventure game that will help you learn the aspects of the Swift language. By the end, you will not only be comfortable with the Swift programming language, but you will be familiar working with Cocoa API's, having the tools and understanding necessary to tackle applications of any nature or size.
 
 # Build Environment
-The project requires iOS 8.0 or higher with [Xcode 6](https://itunes.apple.com/us/app/xcode/id497799835?ls=1&mt=12).
+The project requires iOS 8.0 or higher with [Xcode 6.0.1](http://adcdownload.apple.com/Developer_Tools/xcode_6.0.1/xcode_6.0.1.dmg). There is a known issue with Xcode 6.1 which we are fixing.
 
 # Programing Language 
 [Swift](https://developer.apple.com/swift/)
