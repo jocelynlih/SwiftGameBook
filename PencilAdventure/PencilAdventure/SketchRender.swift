@@ -158,7 +158,7 @@ class SketchRender {
 					if img == .None {
 						continue
 					}
-					sprite.texture = SKTexture(image: img)
+					sprite.texture = SKTexture(image: img!)
 					if sprite.texture == .None {
 						NSLog("Unable to create texture from image for sprite named \(name)")
 						continue
@@ -176,8 +176,8 @@ class SketchRender {
 						
 						for i in 0 ..< MaxAnimationSprites {
 							// We'll need our image size (in pixels)
-							let imageWidthPix = CGFloat(CGImageGetWidth(img.CGImage))
-							let imageHeightPix = CGFloat(CGImageGetHeight(img.CGImage))
+							let imageWidthPix = CGFloat(CGImageGetWidth(img?.CGImage))
+							let imageHeightPix = CGFloat(CGImageGetHeight(img?.CGImage))
 							var imageSize = CGSize(width: imageWidthPix, height: imageHeightPix)
 							
 							// Create a new shape from the path and attach it to this sprite node
