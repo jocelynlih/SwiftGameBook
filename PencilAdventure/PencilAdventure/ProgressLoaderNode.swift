@@ -14,7 +14,7 @@ class ProgressLoaderNode: SKCropNode {
 	private let progressBarSprite: SKSpriteNode!
 	private let ProgressMarkerScalar: CGFloat = 0.3
 
-	required init(coder aDecoder: NSCoder) {
+	required init?(coder aDecoder: NSCoder) {
 		super.init(coder: aDecoder)
 	}
 

@@ -83,8 +83,8 @@ class ImageTools {
 		// Here is our bitmap array
 		var data = [UInt8](count: heightPix * stride, repeatedValue: UInt8(0))
 		let colorSpace = CGColorSpaceCreateDeviceRGB()
-		let bitmapInfo = CGBitmapInfo.fromRaw(CGImageAlphaInfo.PremultipliedLast.toRaw() | CGBitmapInfo.ByteOrderDefault.toRaw())
-		let contextRef = CGBitmapContextCreate(&data, UInt(widthPix), UInt(heightPix), 8, UInt(stride), colorSpace, bitmapInfo!);
+		let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.PremultipliedLast.rawValue | CGBitmapInfo.ByteOrderDefault.rawValue)
+		let contextRef = CGBitmapContextCreate(&data, UInt(widthPix), UInt(heightPix), 8, UInt(stride), colorSpace, bitmapInfo);
 		let cgImage = image.CGImage;
 		let rect = CGRect(x: 0, y: 0, width: CGFloat(widthPix), height: CGFloat(heightPix));
 		CGContextDrawImage(contextRef, rect, cgImage);
@@ -367,7 +367,7 @@ class ImageTools {
 
 		let filePath = getPathArrayFilename(name)
 		let pathArrayArr = NSArray(contentsOfFile: filePath)
-		if pathArrayArr == .None || pathArrayArr.count == 0 {
+		if pathArrayArr == .None || pathArrayArr?.count == 0 {
 			return .None
 		}
 		
