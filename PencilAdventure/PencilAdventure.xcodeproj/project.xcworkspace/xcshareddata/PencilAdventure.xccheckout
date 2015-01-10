@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>2E096895-E1B6-4144-A6F8-C2A5A81C8096</string>
+	<key>IDESourceControlProjectName</key>
+	<string>PencilAdventure</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>2FD8FAB78CA24298918DF67C607E0802D4EBA0D9</key>
+		<string>https://github.com/jocelynlih/SwiftGameBook.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>PencilAdventure/PencilAdventure.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>2FD8FAB78CA24298918DF67C607E0802D4EBA0D9</key>
+		<string>../../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/jocelynlih/SwiftGameBook.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>2FD8FAB78CA24298918DF67C607E0802D4EBA0D9</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>2FD8FAB78CA24298918DF67C607E0802D4EBA0D9</string>
+			<key>IDESourceControlWCCName</key>
+			<string>SwiftGameBook</string>
+		</dict>
+	</array>
+</dict>
+</plist>
