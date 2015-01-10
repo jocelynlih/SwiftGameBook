@@ -4,4 +4,5 @@
         <documentation relative-path='section-1.html'/>
         <code source-file-name='section-2.swift'/>
     </sections>
+    <timeline fileName='timeline.xctimeline'/>
 </playground>
