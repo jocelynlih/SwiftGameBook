@@ -22,6 +22,8 @@ let finishCategory: UInt32 = 1 << 5
 public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
 	// Scrolling speed
 	private let ScrollSpeedInUnitsPerSecond: CGFloat = 200
+    // Middle layer scrolling speed
+    private let MiddleLayerScrollSpeed: CGFloat = 100
     
 	// Steve (our hero)
 	private var steveTheSprite: HeroNode!
@@ -110,18 +112,18 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
 	}
 	
 	private func setupAccessories() {
-		// The Xcode level designer doesn't currently allow for any custom
-		// data to be added to a node. So we've used the name field to add
-		// additional information in the form of a sprite specification. We
-		// format it like so:
-		//
-		//   <sprite name>|<accessory type>
-		//
-		// Therefore, a sprite named "picture|background" would represent a
-		// sprite named "picture" that is a background accessory type. We
-		// then remove the accessory type from the name and setup that accessory
-		// type appropriately. That might include collision/contact masks,
-		// z-position and/or other properties.
+//		 The Xcode level designer doesn't currently allow for any custom
+//		 data to be added to a node. So we've used the name field to add
+//		 additional information in the form of a sprite specification. We
+//		 format it like so:
+//		
+//		   <sprite name>|<accessory type>
+//		
+//		 Therefore, a sprite named "picture|background" would represent a
+//		 sprite named "picture" that is a background accessory type. We
+//		 then remove the accessory type from the name and setup that accessory
+//		 type appropriately. That might include collision/contact masks,
+//		 z-position and/or other properties.
 		for child in self.children as [SKNode] {
 			if var sprite = child as? SKSpriteNode {
 				
@@ -206,12 +208,22 @@ public class GameScene : PaperScene, SKPhysicsContactDelegate, GameProtocol {
         sprite.runAction(SKAction.repeatActionForever(movePlatform))
     }
     
+    func movingMiddleLayerFromLevel(sprite: SKSpriteNode) {
+        // Move the middle layer horizontally at a constant rate
+        let moveLayer = SKAction.moveByX(-MiddleLayerScrollSpeed, y:0.0, duration:NSTimeInterval(1))
+        sprite.runAction(SKAction.repeatActionForever(moveLayer))
+    }
+    
     private func setupMovingSprites() {
-        // Find our sprites at z<=0 (this will be all of our level items)
         for child in self.children as [SKNode] {
             if let sprite = child as? SKSpriteNode {
-                if sprite.zPosition > SceneBackgroundZPosition && sprite.zPosition <= levelItemZPosition  {
+                //ascrolling level items
+                if sprite.zPosition > BackgroundZPosition && sprite.zPosition <= levelItemZPosition  {
                     movingPlatformFromLevel(sprite)
+                }
+                //scrolling middlelayer
+                if sprite.zPosition == BackgroundZPosition {
+                    movingMiddleLayerFromLevel(sprite)
                 }
             }
         }
