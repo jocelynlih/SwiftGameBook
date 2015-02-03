@@ -1,10 +1,3 @@
-//
-//  Constants.swift
-//  PencilAdventure
-//
-//  Created by Ankur Patel on 8/25/14.
-//  Copyright (c) 2014 backstopmedia. All rights reserved.
-//
 
 import SpriteKit
 
